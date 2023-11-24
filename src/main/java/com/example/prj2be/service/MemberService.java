@@ -16,6 +16,7 @@ public class MemberService {
     }
 
     public String getId(String id) {
+
         return mapper.selectId(id);
     }
 }
