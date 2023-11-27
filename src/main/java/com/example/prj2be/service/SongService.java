@@ -66,8 +66,51 @@ public class SongService {
   public List<Song> autoComplete(String keyword, String category) {
     List<Song> songList = AllSongDTO.getSongList();
 
-    if (keyword.equals("ㄱ")) songList = songList.stream().filter(a -> a.getCode() == 1).toList();
+    switch (keyword) {
+      case "ㄱ" -> {
+        return songList.stream().filter(a -> a.getCode() == 1).toList();
+      }
+      case "ㄴ" -> {
+        return songList.stream().filter(a -> a.getCode() == 2).toList();
+      }
+      case "ㄷ" -> {
+        return songList.stream().filter(a -> a.getCode() == 3).toList();
+      }
+      case "ㄹ" -> {
+        return songList.stream().filter(a -> a.getCode() == 4).toList();
+      }
+      case "ㅁ" -> {
+        return songList.stream().filter(a -> a.getCode() == 5).toList();
+      }
+      case "ㅂ" -> {
+        return songList.stream().filter(a -> a.getCode() == 6).toList();
+      }
+      case "ㅅ" -> {
+        return songList.stream().filter(a -> a.getCode() == 7).toList();
+      }
+      case "ㅇ" -> {
+        return songList.stream().filter(a -> a.getCode() == 8).toList();
+      }
+      case "ㅈ" -> {
+        return songList.stream().filter(a -> a.getCode() == 9).toList();
+      }
+      case "ㅊ" -> {
+        return songList.stream().filter(a -> a.getCode() == 10).toList();
+      }
+      case "ㅋ" -> {
+        return songList.stream().filter(a -> a.getCode() == 11).toList();
+      }
+      case "ㅌ" -> {
+        return songList.stream().filter(a -> a.getCode() == 12).toList();
+      }
+      case "ㅍ" -> {
+        return songList.stream().filter(a -> a.getCode() == 13).toList();
+      }
+      case "ㅎ" -> {
+        return songList.stream().filter(a -> a.getCode() == 14).toList();
+      }
+    };
 
-    return songList;
+    return songList.stream().filter(a -> a.getTitle().contains(keyword)).toList();
   }
 }
