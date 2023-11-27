@@ -4,6 +4,7 @@ import com.example.prj2be.domain.Member;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface MemberMapper {
@@ -19,4 +20,19 @@ public interface MemberMapper {
             WHERE id = #{id}
             """)
     String selectId(String id);
+
+    @Update("""
+            UPDATE member
+            SET password = #{newPassword},
+                securityQuestion = #{securityQuestion},
+                securityAnswer = #{securityAnswer}
+            WHERE id = #{id}
+            """)
+    int updatePassword(String id, String securityQuestion, String securityAnswer, String newPassword);
+
+    @Select("""
+            SELECT * FROM member
+            WHERE id = #{id}
+            """)
+    Member selectById(String id);
 }
