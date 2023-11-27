@@ -8,4 +8,6 @@ public class Member {
     private String password;
     private String nickName;
     private String email;
+    private String securityQuestion;
+    private String securityAnswer;
 }
