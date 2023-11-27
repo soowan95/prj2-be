@@ -11,7 +11,7 @@ import java.util.Map;
 public interface SongMapper {
 
   @Select("""
-  SELECT s.title, s.genre, s.mood, s.id
+  SELECT s.title, s.genre, s.mood, s.id, s.artistName
   FROM song s JOIN songpoint sp ON s.title = sp.title AND s.artistName = sp.artistName
   ORDER BY sp.songPoint DESC 
   LIMIT 0, 100
@@ -32,16 +32,16 @@ public interface SongMapper {
 
   @Select("""
   <script>
-  SELECT s.title, s.genre, s.mood, s.id
+  SELECT s.title, s.genre, s.mood, s.id, s.artistName
   FROM song s JOIN songpoint sp ON s.title = sp.title AND s.artistName = sp.artistName
   <trim prefix="WHERE" prefixOverrides="AND">
-  <if test='genreIncludeList.length > 0'>
+  <if test='genreIncludeList.size() > 0'>
   s.genre
   <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
   #{elem}
   </foreach>
   </if>
-  <if test='moodIncludeList.length > 0'>
+  <if test='moodIncludeList.size() > 0'>
   AND s.mood
   <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
   #{elem}
@@ -52,11 +52,11 @@ public interface SongMapper {
   LIMIT 0, 100
   </script>
   """)
-  List<Song> getByFilter(String[] genreIncludeList, String[] moodIncludeList);
+  List<Song> getByFilter(List<String> genreIncludeList, List<String> moodIncludeList);
 
   @Select("""
   <script>
-  SELECT title, genre, mood, id
+  SELECT title, genre, mood, id, artistName
   FROM song
   WHERE 
   <if test='category == "가수"'>
@@ -68,13 +68,25 @@ public interface SongMapper {
   <if test='category == "가사"'>
   lyric
   </if>
-   LIKE #{keyword}
+  LIKE #{keyword}
+  <if test='genreIncludeList.size() > 0'>
+  AND genre
+  <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
+  #{elem}
+  </foreach>
+  </if>
+  <if test='moodIncludeList.size() > 0'>
+  AND mood
+  <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
+  #{elem}
+  </foreach>
+  </if>
   </script>
   """)
-  List<Song> getByCategoryAndKeyword(String category, String keyword);
+  List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreIncludeList, List<String> moodIncludeList);
 
   @Select("""
-  SELECT title, genre, mood, id
+  SELECT title, genre, mood, id, artistName
   FROM song
   WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{id}
   """)
