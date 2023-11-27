@@ -17,7 +17,7 @@ public class SongController {
   private final SongService songService;
 
 //  top100 찾기
-  @GetMapping("top100/")
+  @GetMapping("top100")
   public List<Song> top100() {
     return songService.getSongLimit100();
   }
@@ -35,9 +35,12 @@ public class SongController {
   }
 
 //  필터 거친 top100 찾기
-  @GetMapping("top100/{include}")
-  public List<Song> filter(@PathVariable String include) {
-    return songService.getByFilter(include);
+  @GetMapping("ft100")
+  public List<Song> filter(@RequestParam(value = "genre", required = false) List<String> genreList,
+                           @RequestParam(value = "mood", required = false) List<String> moodList
+                           ) {
+
+    return songService.getByFilter(genreList, moodList);
   }
 
 //  검색

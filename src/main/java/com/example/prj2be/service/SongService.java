@@ -30,12 +30,11 @@ public class SongService {
     return songMapper.getGenre();
   }
 
-  public List<Song> getByFilter(String include) {
-    String[] genreIncludeList = include.split("\\$")[0].split(",");
-    String[] moodIncludeList = include.split("\\$")[1].split(",");
-    genreIncludeList = Arrays.stream(genreIncludeList).filter(a -> !a.isEmpty()).toArray(String[]::new);
-    moodIncludeList = Arrays.stream(moodIncludeList).filter(a -> !a.isEmpty()).toArray(String[]::new);
-    return songMapper.getByFilter(genreIncludeList, moodIncludeList);
+  public List<Song> getByFilter(List<String> genreList, List<String> moodList) {
+    genreList = genreList.stream().filter(a -> !a.isEmpty()).toList();
+    moodList = moodList.stream().filter(a -> !a.isEmpty()).toList();
+
+    return songMapper.getByFilter(genreList, moodList);
   }
 
   public List<Song> getByCategoryAndKeyword(String category, String keyword) {
