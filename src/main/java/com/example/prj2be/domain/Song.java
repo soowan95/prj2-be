@@ -15,4 +15,5 @@ public class Song {
   private String artistName;
   private Date release;
   private String genre;
+  private Integer code;
 }

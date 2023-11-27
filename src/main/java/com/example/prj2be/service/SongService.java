@@ -1,5 +1,6 @@
 package com.example.prj2be.service;
 
+import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +61,13 @@ public class SongService {
     }
 
     return newList;
+  }
+
+  public List<Song> autoComplete(String keyword, String category) {
+    List<Song> songList = AllSongDTO.getSongList();
+
+    if (keyword.equals("ㄱ")) songList = songList.stream().filter(a -> a.getCode() == 1).toList();
+
+    return songList;
   }
 }
