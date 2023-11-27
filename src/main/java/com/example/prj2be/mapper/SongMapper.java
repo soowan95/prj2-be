@@ -68,10 +68,22 @@ public interface SongMapper {
   <if test='category == "가사"'>
   lyric
   </if>
-   LIKE #{keyword}
+  LIKE #{keyword}
+  <if test='genreIncludeList.size() > 0'>
+  AND genre
+  <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
+  #{elem}
+  </foreach>
+  </if>
+  <if test='moodIncludeList.size() > 0'>
+  AND mood
+  <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
+  #{elem}
+  </foreach>
+  </if>
   </script>
   """)
-  List<Song> getByCategoryAndKeyword(String category, String keyword);
+  List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreIncludeList, List<String> moodIncludeList);
 
   @Select("""
   SELECT title, genre, mood, id, artistName

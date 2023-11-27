@@ -46,8 +46,10 @@ public class SongController {
 //  검색
   @GetMapping("search")
   public List<Song> search(@RequestParam("sc") String category,
-                           @RequestParam("sk") String keyword) {
-    return songService.getByCategoryAndKeyword(category, keyword);
+                           @RequestParam("sk") String keyword,
+                           @RequestParam(value = "genre", required = false) List<String> genreList,
+                           @RequestParam(value = "mood", required = false) List<String> moodList) {
+    return songService.getByCategoryAndKeyword(category, keyword, genreList, moodList);
   }
 
 //  비슷한 곡 탐색
