@@ -13,14 +13,15 @@ import java.util.Map;
 public class LikeService {
     private final LikeMapper mapper;
 
-    public void update(Like like, Member login) {
+    public Map<String,Object> update(Like like, Member login) {
         like.setMamberId(login.getId());
         int count = 0;
         if(mapper.delete(like) == 0) {
             count = mapper.insert(like); // 1
         }
+        int countLike = mapper.countByMemberId(like.getMamberId());
 
-
-
+        return Map.of("like",count == 1,
+                "countlike",countLike);
     }
 }

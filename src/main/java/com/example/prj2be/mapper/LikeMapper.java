@@ -4,24 +4,31 @@ import com.example.prj2be.domain.Like;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface LikeMapper {
         @Delete("""
-        DELETE FROM memberlike
-        WHERE memberId = #{mamberId}
+            DELETE FROM memberlike
+            WHERE memberId = #{mamberId}
         """)
     int delete(Like like);
 
         @Insert("""
-        INSERT INTO memberlike (memberId)
-        values (#{mamberId})
-""")
+            INSERT INTO memberlike (memberId)
+            values (#{mamberId})
+        """)
     int insert(Like like);
 
         @Insert("""
-select count(id) from memberlike
-where mamberId = #{mamberId}
-""")
+            select count(id) from memberlike
+            where mamberId = #{mamberId}
+        """)
     int Count(String mamberId);
+
+        @Select("""
+            SELECT count(id) FROM memberLike
+            WHERE  memberId= #{memberId}
+        """)
+    int countByMemberId(String memberId);
 }

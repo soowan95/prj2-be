@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,14 +21,14 @@ public class likeController {
     private final LikeService service;
 
     @PostMapping("like")
-    public ResponseEntity like(@RequestBody Like like,
-                               @SessionAttribute(value = "login", required = false)Member login) {
+    public ResponseEntity <Map<String, Object>>like(@RequestBody Like like,
+                                                     @SessionAttribute(value = "login", required = false)Member login) {
         if(login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } else {
             service.update(like,login);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(service.update(like, login));
     }
 }
 
