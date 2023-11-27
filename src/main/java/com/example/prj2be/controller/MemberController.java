@@ -12,7 +12,9 @@ import org.springframework.web.context.request.WebRequest;
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 public class MemberController {
+
     private final MemberService service;
+
     @PostMapping("login")
     public ResponseEntity login(@RequestBody Member member, WebRequest request) {
         if (service.login(member, request)) {
@@ -20,5 +22,10 @@ public class MemberController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @GetMapping("login")
+    public Member login(@SessionAttribute(value = "login", required = false) Member login) {
+        return login;
     }
 }

@@ -17,8 +17,6 @@ public class MemberService {
         Member dbMember = mapper.selectById(member.getId());
         if (dbMember != null) {
             if (dbMember.getPassword().equals(member.getPassword())) {
-
-
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
                 return true;
