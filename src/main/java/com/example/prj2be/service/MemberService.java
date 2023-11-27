@@ -25,6 +25,7 @@ public class MemberService {
         if (dbMember != null){
             if (dbMember.getPassword().equals(member.getPassword())){
                 return true;
+
             }
         }
         return false;
