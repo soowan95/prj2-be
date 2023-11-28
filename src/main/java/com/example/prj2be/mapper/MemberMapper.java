@@ -1,12 +1,12 @@
 package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.Member;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface MemberMapper {
