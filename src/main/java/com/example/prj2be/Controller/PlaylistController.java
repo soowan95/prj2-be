@@ -39,7 +39,7 @@ public class PlaylistController {
     }
 
     @GetMapping("get")
-    public List<MyPlaylist> getList(@RequestParam(value="id", required = false) String listId) {
+    public List<MyPlaylist> getList(String listId) {
         System.out.println(listId);
 
         return service.getMyPlayList(listId);
