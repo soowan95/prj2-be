@@ -1,14 +1,12 @@
-package com.example.prj2be.Service;
+package com.example.prj2be.service;
 
-import com.example.prj2be.Domain.Member;
-import com.example.prj2be.Mapper.MemberMapper;
+import com.example.prj2be.domain.Member;
+import com.example.prj2be.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

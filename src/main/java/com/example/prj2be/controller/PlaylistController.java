@@ -1,9 +1,9 @@
-package com.example.prj2be.Controller;
+package com.example.prj2be.controller;
 
 
-import com.example.prj2be.Domain.Member;
-import com.example.prj2be.Domain.MyPlaylist;
-import com.example.prj2be.Service.PlaylistService;
+import com.example.prj2be.domain.Member;
+import com.example.prj2be.domain.MyPlaylist;
+import com.example.prj2be.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

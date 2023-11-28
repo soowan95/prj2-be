@@ -1,8 +1,7 @@
-package com.example.prj2be.Controller;
+package com.example.prj2be.controller;
 
-import com.example.prj2be.Domain.Member;
-import com.example.prj2be.Service.MemberService;
-import jakarta.servlet.http.HttpSession;
+import com.example.prj2be.domain.Member;
+import com.example.prj2be.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

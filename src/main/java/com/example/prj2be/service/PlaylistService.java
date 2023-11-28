@@ -1,14 +1,13 @@
-package com.example.prj2be.Service;
+package com.example.prj2be.service;
 
-import com.example.prj2be.Domain.Member;
-import com.example.prj2be.Domain.MyPlaylist;
-import com.example.prj2be.Mapper.myPlaylistMapper;
+import com.example.prj2be.domain.Member;
+import com.example.prj2be.domain.MyPlaylist;
+import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
-package com.example.prj2be.Mapper;
+package com.example.prj2be.mapper;
 
-import com.example.prj2be.Domain.MyPlaylist;
+import com.example.prj2be.domain.MyPlaylist;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

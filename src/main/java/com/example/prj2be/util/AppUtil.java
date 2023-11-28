@@ -1,4 +1,4 @@
-package com.example.prj2be.Util;
+package com.example.prj2be.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,9 +1,6 @@
-package com.example.prj2be.Domain;
+package com.example.prj2be.domain;
 
-import com.example.prj2be.Util.AppUtil;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class MyPlaylist {
