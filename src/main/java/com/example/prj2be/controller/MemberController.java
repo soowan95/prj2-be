@@ -63,7 +63,7 @@ public class MemberController {
         }
     }
   
-    @PutMapping("/update-password")
+    @RequestMapping("/update-password")
     public ResponseEntity updateMember(
             @RequestParam("id") String idForRecovery,
             @RequestParam("q") String securityQuestion,

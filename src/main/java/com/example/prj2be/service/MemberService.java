@@ -63,11 +63,11 @@ public class MemberService {
     }
 
     public String getEmail(String email) {
-        return mapper.selectEmail(email);
+        return mapper.selectByEmail(email);
     }
 
     public String getNickName(String nickName) {
-        return mapper.selectNickName(nickName);
+        return mapper.selectByNickName(nickName);
     }
   
     public boolean isValidIdAndAnswer(String id, String answer) {
