@@ -19,7 +19,7 @@ public class LikeService {
         if(mapper.delete(like) == 0) {
             count = mapper.insert(like); // 1
         }
-        int countLike = mapper.countByMemberId(like.getMamberId());
+        int countLike = mapper.countByMemberId(like.getBoardIdId());
 
         return Map.of("like",count == 1,
                 "countlike",countLike);
