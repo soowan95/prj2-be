@@ -65,4 +65,11 @@ public class SongController {
 
     return songService.autoComplete(keyword, category);
   }
+
+  // 요청 받은 곡 insert
+  @PostMapping("request")
+  public ResponseEntity request(@RequestBody Map<String, String> request) {
+    if (songService.insertRequest(request)) return ResponseEntity.ok().build();
+    return ResponseEntity.internalServerError().build();
+  }
 }

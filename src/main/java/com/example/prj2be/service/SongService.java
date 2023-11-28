@@ -4,6 +4,7 @@ import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,5 +126,9 @@ public class SongService {
     };
 
     return songList.stream().filter(a -> getByCategory(category, a).contains(keyword)).toList();
+  }
+
+  public boolean insertRequest(Map<String, String> request) {
+    return songMapper.insertRequest(request) == 1;
   }
 }
