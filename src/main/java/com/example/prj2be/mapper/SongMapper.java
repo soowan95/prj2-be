@@ -11,6 +11,12 @@ import java.util.Map;
 public interface SongMapper {
 
   @Select("""
+  SELECT *
+  FROM song
+  """)
+  List<Song> getAll();
+
+  @Select("""
   SELECT s.title, s.genre, s.mood, s.id, s.artistName
   FROM song s JOIN songpoint sp ON s.title = sp.title AND s.artistName = sp.artistName
   ORDER BY sp.songPoint DESC 

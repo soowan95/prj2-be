@@ -1,5 +1,6 @@
 package com.example.prj2be.service;
 
+import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +61,69 @@ public class SongService {
     }
 
     return newList;
+  }
+
+  public Integer getCode(String category, Song s) {
+    if (category.equals("가수")) return s.getArtistCode();
+    else if (category.equals("제목")) return s.getTitleCode();
+    else return s.getLyricCode();
+  }
+
+  public String getByCategory(String category, Song s) {
+    if (category.equals("가수")) return s.getArtistName();
+    else if (category.equals("제목")) return s.getTitle();
+    else return s.getLyric();
+  }
+
+  public List<Song> autoComplete(String keyword, String category) {
+
+    List<Song> songList = AllSongDTO.getSongList();
+
+    switch (keyword) {
+      case "ㄱ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 1).toList();
+      }
+      case "ㄴ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 2).toList();
+      }
+      case "ㄷ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 3).toList();
+      }
+      case "ㄹ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 4).toList();
+      }
+      case "ㅁ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 5).toList();
+      }
+      case "ㅂ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 6).toList();
+      }
+      case "ㅅ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 7).toList();
+      }
+      case "ㅇ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 8).toList();
+      }
+      case "ㅈ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 9).toList();
+      }
+      case "ㅊ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 10).toList();
+      }
+      case "ㅋ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 11).toList();
+      }
+      case "ㅌ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 12).toList();
+      }
+      case "ㅍ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 13).toList();
+      }
+      case "ㅎ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 14).toList();
+      }
+    };
+
+    return songList.stream().filter(a -> getByCategory(category, a).contains(keyword)).toList();
   }
 }
