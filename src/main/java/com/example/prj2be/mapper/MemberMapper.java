@@ -1,16 +1,24 @@
 package com.example.prj2be.mapper;
 
+import org.apache.ibatis.annotations.*;
 import com.example.prj2be.domain.Member;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
 @Mapper
 public interface MemberMapper {
+    @Select("""
+select * from member
+where email =  #{email}
+""")
+    String selectByEmail(String email);
 
+    @Select("""
+            select * from member
+            where nickName = #{nickName}
+            """)
+    String selectByNickName(String nickName);
+            
     @Insert("""
             INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer)
             VALUES (#{id}, #{password}, #{nickName}, #{email}, #{securityQuestion}, #{securityAnswer})
