@@ -9,10 +9,12 @@ import java.util.List;
 public class Member {
     private String id;
     private String password;
-    private String email;
-    private String nickName;
-    private LocalDateTime inserted;
     private List<Auth> auth;
+    private String nickName;
+    private String email;
+    private LocalDateTime inserted;
+    private String securityQuestion;
+    private String securityAnswer;
 
     public boolean isAdmin() {
         if (auth != null) {
@@ -24,4 +26,3 @@ public class Member {
         return false;
     }
 }
-
