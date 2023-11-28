@@ -14,22 +14,52 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/member")
-
 public class MemberController {
     private final MemberService service;
 
+    @PostMapping("signup")
+    public void signup(@RequestBody Member member) {
+        System.out.println("member = " + member);
+        service.add(member);
+    }
 
-    @PostMapping("login")
-    public ResponseEntity login(@RequestBody Member member, WebRequest request) {
-
-
-
-        if (service.login(member, request)) {
-            return ResponseEntity.ok().build();
+    @GetMapping(value = "check", params = "id")
+    public ResponseEntity checkId(String id) {
+        if (service.getId(id) == null) {
+            return ResponseEntity.notFound().build();
         } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity updateMember(
+            @RequestParam("id") String idForRecovery,
+            @RequestParam("q") String securityQuestion,
+            @RequestParam("a") String securityAnswer,
+            @RequestParam("p") String newPassword
+    ) {
+        if (idForRecovery == null || idForRecovery.isEmpty() ||
+                securityQuestion == null || securityQuestion.isEmpty() ||
+                securityAnswer == null || securityAnswer.isEmpty() ||
+                newPassword == null || newPassword.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        if (! service.updatePassword(idForRecovery, securityQuestion, securityAnswer, newPassword)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        return ResponseEntity.ok().build();
+      }
+      
+    @PostMapping("login")
+    public ResponseEntity login(@RequestBody Member member, WebRequest request) {
+      if (service.login(member, request)) {
+          return ResponseEntity.ok().build();
+      } else {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
     }
 
 
@@ -40,30 +70,8 @@ public class MemberController {
         }
     }
 
-@GetMapping("login")
-    public Member login(@SessionAttribute(value = "login", required = false) Member login){
-        return login;
+  @GetMapping("login")
+      public Member login(@SessionAttribute(value = "login", required = false) Member login){
+          return login;
+  }
 }
-
-
-// TODO: 로그인 창에서 회원가입 누르면 해당페이지로 이동
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
