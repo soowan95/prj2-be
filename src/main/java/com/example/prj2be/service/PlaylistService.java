@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +32,9 @@ public class PlaylistService {
 
     public List<MyPlaylist> getMyPlayList(String listId) {
         return mapper.getMyPlayList(listId);
+    }
+
+    public List<MyPlaylist> list(String listId, String listName) {
+        return mapper.myListByListName(listId, listName);
     }
 }

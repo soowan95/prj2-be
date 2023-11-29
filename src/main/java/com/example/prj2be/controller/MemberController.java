@@ -22,9 +22,16 @@ public class MemberController {
     private final MemberService service;
 
     @PostMapping("signup")
-    public void signup(@RequestBody Member member) {
-        System.out.println("member = " + member);
-        service.add(member);
+    public ResponseEntity signup(@RequestBody Member member) {
+        if(service.validate(member)) {
+            if (service.add(member)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping(value = "check", params = "id")
@@ -47,7 +54,7 @@ public class MemberController {
 
     @GetMapping(value = "check", params = "nickName")
     public ResponseEntity checkNickName(String nickName) {
-        if (service.getNickName(nickName) == null) {
+        if (!service.getNickName(nickName) ) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok().build();
@@ -106,6 +113,23 @@ public class MemberController {
           return login;
   }
 
+  @GetMapping
+  public ResponseEntity<Member> view(String id,
+                                           @SessionAttribute(value = "login",required = false)Member login) {
+
+      if (login == null) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+//      if (!service.hasAccess(id, login)) {
+//          return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//      }
+      Member member = service.getMember(id);
+
+      return ResponseEntity.ok(member);
+
+
+  }
+
 
 
     @PutMapping("edit")
@@ -115,9 +139,9 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }
 
-        if (!service.hasAccess(member.getId(), login)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403
-        }
+//        if (!service.hasAccess(member.getId(), login)) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403
+//        }
 
         if (service.update(member)) {
             return ResponseEntity.ok().build();

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -43,5 +44,13 @@ public class PlaylistController {
         System.out.println(listId);
 
         return service.getMyPlayList(listId);
+    }
+
+    @GetMapping("my")
+    public List<MyPlaylist> myList(
+            @RequestParam("id") String listId,
+            @RequestParam("listName") String listName
+    ) {
+        return service.list(listId,listName);
     }
 }

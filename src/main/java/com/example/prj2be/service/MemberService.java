@@ -66,8 +66,8 @@ public class MemberService {
         return mapper.selectByEmail(email);
     }
 
-    public String getNickName(String nickName) {
-        return mapper.selectByNickName(nickName);
+    public boolean getNickName(String nickName) {
+        return mapper.selectByNickName(nickName) == 1 ;
     }
   
     public boolean isValidIdAndAnswer(String id, String answer) {
@@ -102,6 +102,6 @@ public class MemberService {
     }
 
     public boolean update(Member member) {
-        return mapper.update(member) ==1;
+        return mapper.update(member) == 1;
     }
 }

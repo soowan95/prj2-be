@@ -14,10 +14,10 @@ public interface MemberMapper {
     String selectByEmail(String email);
 
     @Select("""
-            select * from member
+            select count(*) from member
             where nickName = #{nickName}
             """)
-    String selectByNickName(String nickName);
+    Integer selectByNickName(String nickName);
 
     @Insert("""
             INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer)
@@ -47,19 +47,11 @@ public interface MemberMapper {
     Member selectById(String id);
 
     @Update("""
-
-                        <script>
                     UPDATE member
                     SET
-                      <if test="password != ''">
-                      password = #{password},
-                      </if>
                       email = #{email},
                       nickName = #{nickName}
-                      securityQuestion = #{securityQuestion}
-                      securityAnswer = #{securityAnswer}
                     WHERE id = #{id}
-                    </script>
             """)
     int update(Member member);
 }
