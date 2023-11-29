@@ -41,19 +41,13 @@ public interface SongMapper {
   <script>
   SELECT s.title, s.genre, s.mood, s.id, s.artistName
   FROM song s JOIN songpoint sp ON s.title = sp.title AND s.artistName = sp.artistName
-  <trim prefix="WHERE" prefixOverrides="AND">
-  <if test='genreIncludeList.size() > 0'>
-  s.genre
-  <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <trim prefix="WHERE" suffixOverrides="AND">
+  <foreach collection="genreIncludeList" item="elem" open="(" separator="OR" close=") AND" nullable="true">
+  s.genre LIKE #{elem}
   </foreach>
-  </if>
-  <if test='moodIncludeList.size() > 0'>
-  AND s.mood
-  <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <foreach collection="moodIncludeList" item="elem" open="(" separator="OR" close=")">
+  s.mood LIKE #{elem}
   </foreach>
-  </if>
   </trim>
   ORDER BY sp.songPoint DESC 
   LIMIT 0, 100
@@ -76,18 +70,12 @@ public interface SongMapper {
   lyric
   </if>
   LIKE #{keyword}
-  <if test='genreIncludeList.size() > 0'>
-  AND genre
-  <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <foreach collection="genreIncludeList" item="elem" open="AND ( " separator="OR" close=")" nullable="true">
+  genre LIKE #{elem}
   </foreach>
-  </if>
-  <if test='moodIncludeList.size() > 0'>
-  AND mood
-  <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <foreach collection="moodIncludeList" item="elem" open=" AND ( " separator="OR" close=")" nullable="true">
+  mood LIKE #{elem}
   </foreach>
-  </if>
   </script>
   """)
   List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreIncludeList, List<String> moodIncludeList);

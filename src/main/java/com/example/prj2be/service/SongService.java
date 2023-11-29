@@ -33,16 +33,16 @@ public class SongService {
   }
 
   public List<Song> getByFilter(List<String> genreList, List<String> moodList) {
-    genreList = genreList.stream().filter(a -> !a.isEmpty()).toList();
-    moodList = moodList.stream().filter(a -> !a.isEmpty()).toList();
+    genreList = genreList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
+    moodList = moodList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
 
     return songMapper.getByFilter(genreList, moodList);
   }
 
   // 필터 추가하여 검색
   public List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreList, List<String> moodList) {
-    genreList = genreList.stream().filter(a -> !a.isEmpty()).toList();
-    moodList = moodList.stream().filter(a -> !a.isEmpty()).toList();
+    genreList = genreList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
+    moodList = moodList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
 
     return songMapper.getByCategoryAndKeyword(category, "%" + keyword + "%", genreList, moodList);
   }
