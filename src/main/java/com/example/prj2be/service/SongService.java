@@ -135,4 +135,10 @@ public class SongService {
 
     return songMapper.insertRequest(request) == 1;
   }
+
+  public Boolean isExist(String title, String artist) {
+    List<Song> songList = AllSongDTO.getSongList();
+
+    return songList.stream().filter(a -> a.getArtistName().equals(artist) && a.getTitle().equals(title)).count() >= 1;
+  }
 }

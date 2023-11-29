@@ -31,7 +31,7 @@ public class SongController {
     return songService.getMood();
   }
 
-  //  모드 genre 찾기
+  //  모든 genre 찾기
   @GetMapping("genre")
   public List<Map<String, Object>> genre() {
     return songService.getGenre();
@@ -61,11 +61,18 @@ public class SongController {
     return songService.getByGenreAndMood(genre, mood, id);
   }
 
+  // 자동 완성
   @GetMapping("autoComplete")
   public List<Song> autoComplete(@RequestParam("sc") String category,
                                  @RequestParam("sk") String keyword) {
 
     return songService.autoComplete(keyword, category);
+  }
+
+  // 요청 받기 전에 그 곡이 db에 있는지 확인
+  @GetMapping("isExist")
+  public Boolean isExist(String title, String artist) {
+    return songService.isExist(title, artist);
   }
 
   // 요청 받은 곡 insert
