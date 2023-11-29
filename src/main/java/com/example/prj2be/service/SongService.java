@@ -47,6 +47,7 @@ public class SongService {
     return songMapper.getByCategoryAndKeyword(category, "%" + keyword + "%", genreList, moodList);
   }
 
+  // 비슷한 곡 랜덤으로 5개 추출
   public List<Song> getByGenreAndMood(String genre, String mood, Integer id) {
     List<Song> list = songMapper.getByGenreAndMood(genre, mood, id);
     List<Song> newList = new ArrayList<>();

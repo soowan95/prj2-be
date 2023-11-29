@@ -1,9 +1,11 @@
 package com.example.prj2be.controller;
 
 import com.example.prj2be.AllSongDTO;
+import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.service.SongService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,8 +70,13 @@ public class SongController {
 
   // 요청 받은 곡 insert
   @PostMapping("request")
-  public ResponseEntity request(@RequestBody Map<String, String> request) {
+  public ResponseEntity request(@RequestBody Map<String, String> request,
+                                @SessionAttribute(value = "login", required = false) Member login) {
+
+    if (login == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
     if (songService.insertRequest(request)) return ResponseEntity.ok().build();
+
     return ResponseEntity.internalServerError().build();
   }
 }
