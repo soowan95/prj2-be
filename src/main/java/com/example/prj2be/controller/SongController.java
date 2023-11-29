@@ -76,7 +76,6 @@ public class SongController {
     if (login == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     if (songService.insertRequest(request)) return ResponseEntity.ok().build();
-
-    return ResponseEntity.internalServerError().build();
+    else return ResponseEntity.badRequest().build();
   }
 }

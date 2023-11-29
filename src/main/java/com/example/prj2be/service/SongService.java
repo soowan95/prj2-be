@@ -130,6 +130,9 @@ public class SongService {
   }
 
   public boolean insertRequest(Map<String, String> request) {
+
+    if (request.get("title").isBlank() || request.get("artist").isBlank()) return false;
+
     return songMapper.insertRequest(request) == 1;
   }
 }
