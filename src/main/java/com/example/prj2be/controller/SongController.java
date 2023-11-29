@@ -1,10 +1,8 @@
 package com.example.prj2be.controller;
 
-import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.service.SongService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,4 +63,21 @@ public class SongController {
 
     return songService.autoComplete(keyword, category);
   }
+
+  @GetMapping("requestList")
+  public List<Map<String, Object>> requestList(){
+
+    return songService.requestList();
+  }
+
+
+
+
+
+
+
+
+
+
+
 }

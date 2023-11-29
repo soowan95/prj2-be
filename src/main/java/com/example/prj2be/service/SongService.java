@@ -126,4 +126,9 @@ public class SongService {
 
     return songList.stream().filter(a -> getByCategory(category, a).contains(keyword)).toList();
   }
+
+  public List<Map<String, Object>> requestList() {
+    return songMapper.getByRequestList();
+
+  }
 }
