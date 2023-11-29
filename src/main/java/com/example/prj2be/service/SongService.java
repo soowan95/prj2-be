@@ -139,6 +139,6 @@ public class SongService {
   public Boolean isExist(String title, String artist) {
     List<Song> songList = AllSongDTO.getSongList();
 
-    return songList.stream().filter(a -> a.getArtistName().equals(artist) && a.getTitle().equals(title)).count() >= 1;
+    return songList.stream().filter(a -> a.getArtistName().equalsIgnoreCase(artist) && a.getTitle().equalsIgnoreCase(title)).count() >= 1;
   }
 }
