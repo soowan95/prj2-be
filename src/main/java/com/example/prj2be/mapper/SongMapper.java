@@ -85,7 +85,7 @@ public interface SongMapper {
   @Select("""
   SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
   FROM song s JOIN artist a ON s.artistCode = a.id
-  WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{id}
+  WHERE (genre=#{genre} OR mood=#{mood}) AND s.id != #{s.id}
   """)
   List<Song> getByGenreAndMood(String genre, String mood, Integer id);
 

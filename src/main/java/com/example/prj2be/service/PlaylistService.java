@@ -2,6 +2,7 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
+import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class PlaylistService {
 
     private final myPlaylistMapper mapper;
+    private final LikeMapper likeMapper;
 
 
     public boolean validate(MyPlaylist playlist) {
@@ -31,5 +33,19 @@ public class PlaylistService {
 
     public List<MyPlaylist> getMyPlayList(String listId) {
         return mapper.getMyPlayList(listId);
+    }
+
+    public List<MyPlaylist> getAllList(Member login) {
+        List<MyPlaylist> allList = mapper.getAllList();
+
+        if (login != null) {
+            allList.forEach((e) -> {
+                Integer i = likeMapper.isLike(login.getId(), e.getId());
+                e.setIsLike(i == 1);
+                // 회원아이디랑 차트아이디랑 같은지 아닌지
+            });
+        }
+
+        return mapper.getAllList();
     }
 }
