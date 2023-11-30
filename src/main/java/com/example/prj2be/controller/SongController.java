@@ -7,6 +7,7 @@ import com.example.prj2be.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -84,5 +85,11 @@ public class SongController {
 
     if (songService.insertRequest(request)) return ResponseEntity.ok().build();
     else return ResponseEntity.badRequest().build();
+  }
+
+  @GetMapping("requestList")
+  public List<Map<String, Object>> requestList(){
+
+    return songService.requestList();
   }
 }

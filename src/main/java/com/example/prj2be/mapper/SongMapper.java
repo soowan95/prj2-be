@@ -94,4 +94,27 @@ public interface SongMapper {
   VALUE (#{title}, #{artist}, #{member}) 
   """)
   int insertRequest(Map<String, String> request);
+
+  @Select("""
+  SELECT *
+  FROM songrequest
+  """)
+  List<Map<String, Object>> getByRequestList();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
