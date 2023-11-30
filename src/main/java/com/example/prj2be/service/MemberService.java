@@ -84,4 +84,7 @@ public class MemberService {
         return true;
     }
 
+    public boolean update(Member member) {
+        return mapper.update(member)==1;
+    }
 }
