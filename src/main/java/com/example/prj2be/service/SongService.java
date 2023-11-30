@@ -4,6 +4,7 @@ import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,20 +33,21 @@ public class SongService {
   }
 
   public List<Song> getByFilter(List<String> genreList, List<String> moodList) {
-    genreList = genreList.stream().filter(a -> !a.isEmpty()).toList();
-    moodList = moodList.stream().filter(a -> !a.isEmpty()).toList();
+    genreList = genreList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
+    moodList = moodList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
 
     return songMapper.getByFilter(genreList, moodList);
   }
 
   // 필터 추가하여 검색
   public List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreList, List<String> moodList) {
-    genreList = genreList.stream().filter(a -> !a.isEmpty()).toList();
-    moodList = moodList.stream().filter(a -> !a.isEmpty()).toList();
+    genreList = genreList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
+    moodList = moodList.stream().filter(a -> !a.isEmpty()).map(a -> "%" + a + "%").toList();
 
     return songMapper.getByCategoryAndKeyword(category, "%" + keyword + "%", genreList, moodList);
   }
 
+  // 비슷한 곡 랜덤으로 5개 추출
   public List<Song> getByGenreAndMood(String genre, String mood, Integer id) {
     List<Song> list = songMapper.getByGenreAndMood(genre, mood, id);
     List<Song> newList = new ArrayList<>();
@@ -64,9 +66,9 @@ public class SongService {
   }
 
   public Integer getCode(String category, Song s) {
-    if (category.equals("가수")) return s.getArtistCode();
-    else if (category.equals("제목")) return s.getTitleCode();
-    else return s.getLyricCode();
+    if (category.equals("가수")) return s.getArtistHangulCode();
+    else if (category.equals("제목")) return s.getTitleHangulCode();
+    else return s.getLyricHangulCode();
   }
 
   public String getByCategory(String category, Song s) {
@@ -127,8 +129,20 @@ public class SongService {
     return songList.stream().filter(a -> getByCategory(category, a).contains(keyword)).toList();
   }
 
+  public boolean insertRequest(Map<String, String> request) {
+
+    if (request.get("title").isBlank() || request.get("artist").isBlank()) return false;
+
+    return songMapper.insertRequest(request) == 1;
+  }
+
+  public Boolean isExist(String title, String artist) {
+    List<Song> songList = AllSongDTO.getSongList();
+
+    return songList.stream().filter(a -> a.getArtistName().equalsIgnoreCase(artist) && a.getTitle().equalsIgnoreCase(title)).count() >= 1; 
+  }
+  
   public List<Map<String, Object>> requestList() {
     return songMapper.getByRequestList();
-
   }
 }

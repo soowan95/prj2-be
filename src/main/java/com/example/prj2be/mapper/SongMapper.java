@@ -12,14 +12,15 @@ import java.util.Map;
 public interface SongMapper {
 
   @Select("""
-  SELECT *
-  FROM song
+  SELECT s.id, title, lyric, album, mood, `release`, genre, a.name `artistName`,a.`group` `artistGroup` , titleHangulCode, artistHangulCode, lyricHangulCode
+  FROM song s JOIN artist a ON s.artistCode = a.id
   """)
   List<Song> getAll();
 
   @Select("""
-  SELECT s.title, s.genre, s.mood, s.id, s.artistName
-  FROM song s JOIN songpoint sp ON s.title = sp.title AND s.artistName = sp.artistName
+  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  FROM song s JOIN artist a ON s.artistCode = a.id
+              JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistName
   ORDER BY sp.songPoint DESC 
   LIMIT 0, 100
   """)
@@ -39,21 +40,16 @@ public interface SongMapper {
 
   @Select("""
   <script>
-  SELECT s.title, s.genre, s.mood, s.id, s.artistName
-  FROM song s JOIN songpoint sp ON s.title = sp.title AND s.artistName = sp.artistName
-  <trim prefix="WHERE" prefixOverrides="AND">
-  <if test='genreIncludeList.size() > 0'>
-  s.genre
-  <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  FROM song s JOIN artist a ON s.artistCode = a.id
+              JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistName
+  <trim prefix="WHERE" suffixOverrides="AND">
+  <foreach collection="genreIncludeList" item="elem" open="(" separator="OR" close=") AND" nullable="true">
+  s.genre LIKE #{elem}
   </foreach>
-  </if>
-  <if test='moodIncludeList.size() > 0'>
-  AND s.mood
-  <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <foreach collection="moodIncludeList" item="elem" open="(" separator="OR" close=")">
+  s.mood LIKE #{elem}
   </foreach>
-  </if>
   </trim>
   ORDER BY sp.songPoint DESC 
   LIMIT 0, 100
@@ -63,11 +59,11 @@ public interface SongMapper {
 
   @Select("""
   <script>
-  SELECT title, genre, mood, id, artistName
-  FROM song
+  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE 
   <if test='category == "가수"'>
-  artistName
+  a.name
   </if>
   <if test='category == "제목"'>
   title
@@ -76,35 +72,34 @@ public interface SongMapper {
   lyric
   </if>
   LIKE #{keyword}
-  <if test='genreIncludeList.size() > 0'>
-  AND genre
-  <foreach collection="genreIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <foreach collection="genreIncludeList" item="elem" open="AND ( " separator="OR" close=")" nullable="true">
+  genre LIKE #{elem}
   </foreach>
-  </if>
-  <if test='moodIncludeList.size() > 0'>
-  AND mood
-  <foreach collection="moodIncludeList" item="elem" open=" IN ( " separator="," close=")">
-  #{elem}
+  <foreach collection="moodIncludeList" item="elem" open=" AND ( " separator="OR" close=")" nullable="true">
+  mood LIKE #{elem}
   </foreach>
-  </if>
   </script>
   """)
   List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreIncludeList, List<String> moodIncludeList);
 
   @Select("""
-  SELECT title, genre, mood, id, artistName
-  FROM song
+  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{id}
   """)
   List<Song> getByGenreAndMood(String genre, String mood, Integer id);
+
+  @Insert("""
+  INSERT INTO songRequest (title, artist, member)
+  VALUE (#{title}, #{artist}, #{member}) 
+  """)
+  int insertRequest(Map<String, String> request);
 
   @Select("""
   SELECT *
   FROM songrequest
   """)
   List<Map<String, Object>> getByRequestList();
-
 }
 
 
