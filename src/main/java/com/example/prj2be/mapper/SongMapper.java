@@ -85,7 +85,7 @@ public interface SongMapper {
   @Select("""
   SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
   FROM song s JOIN artist a ON s.artistCode = a.id
-  WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{id}
+  WHERE (genre=#{genre} OR mood=#{mood}) AND s.id != #{id}
   """)
   List<Song> getByGenreAndMood(String genre, String mood, Integer id);
 
@@ -100,6 +100,19 @@ public interface SongMapper {
   FROM songrequest
   """)
   List<Map<String, Object>> getByRequestList();
+
+  @Select("""
+  SELECT id
+  FROM artist
+  WHERE name = #{artistName} AND `group` = #{artistGroup}
+  """)
+  Integer getArtistCode(String artistGroup, String artistName);
+
+  @Insert("""
+  INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode)
+  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{mood}, #{song.releas}, #{genre}, #{artistCod}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode})
+  """)
+  Boolean insertSong(Song song, Integer artistCode);
 }
 
 
