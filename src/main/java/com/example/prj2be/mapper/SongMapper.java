@@ -1,6 +1,7 @@
 package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.Song;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -97,4 +98,28 @@ public interface SongMapper {
   WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{id}
   """)
   List<Song> getByGenreAndMood(String genre, String mood, Integer id);
+
+  @Select("""
+  SELECT *
+  FROM songrequest
+  """)
+  List<Map<String, Object>> getByRequestList();
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

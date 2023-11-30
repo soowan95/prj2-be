@@ -14,6 +14,7 @@ where email =  #{email}
     String selectByEmail(String email);
 
     @Select("""
+            
             select * from member
             where nickName = #{nickName}
             """)
