@@ -66,9 +66,9 @@ public class SongService {
   }
 
   public Integer getCode(String category, Song s) {
-    if (category.equals("가수")) return s.getArtistCode();
-    else if (category.equals("제목")) return s.getTitleCode();
-    else return s.getLyricCode();
+    if (category.equals("가수")) return s.getArtistHangulCode();
+    else if (category.equals("제목")) return s.getTitleHangulCode();
+    else return s.getLyricHangulCode();
   }
 
   public String getByCategory(String category, Song s) {

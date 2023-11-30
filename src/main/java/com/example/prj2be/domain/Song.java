@@ -13,9 +13,10 @@ public class Song {
   private String album;
   private String mood;
   private String artistName;
+  private String artistGroup;
   private Date release;
   private String genre;
-  private Integer titleCode;
-  private Integer artistCode;
-  private Integer lyricCode;
+  private Integer titleHangulCode;
+  private Integer artistHangulCode;
+  private Integer lyricHangulCode;
 }
