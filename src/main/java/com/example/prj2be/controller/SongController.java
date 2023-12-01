@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,4 +93,22 @@ public class SongController {
 
     return songService.requestList();
   }
+
+  @GetMapping("{id}")
+  public ResponseEntity<Song> getSongById(@PathVariable Integer id) {
+    Song song = songService.getSongById(id);
+    if (song != null) {
+      return ResponseEntity.ok(song);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+  @PutMapping("plusSongPoint")
+  public ResponseEntity plusSP(@RequestBody Song song) {
+
+    if (songService.updateSongPointById(song.getId())) return ResponseEntity.ok().build();
+    return ResponseEntity.internalServerError().build();
+  }
+
 }

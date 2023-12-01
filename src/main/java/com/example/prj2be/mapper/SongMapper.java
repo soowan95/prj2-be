@@ -4,6 +4,7 @@ import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public interface SongMapper {
   @Select("""
   SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
   FROM song s JOIN artist a ON s.artistCode = a.id
-  WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{id}
+  WHERE (genre=#{genre} OR mood=#{mood}) AND id != #{s.id}
   """)
   List<Song> getByGenreAndMood(String genre, String mood, Integer id);
 
@@ -100,21 +101,18 @@ public interface SongMapper {
   FROM songrequest
   """)
   List<Map<String, Object>> getByRequestList();
+
+  @Select("""
+  SELECT s.id, s.title, s.lyric, s.album, s.mood, s.`release`, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
+  FROM song s JOIN artist a ON s.artistCode = a.id
+  WHERE s.id = #{id}
+  """)
+  Song getSongById(Integer id);
+
+  @Update("""
+  UPDATE songpoint
+  SET songPoint = songPoint + 1
+  WHERE title = #{title} AND artistName = #{artistName}
+  """)
+  Integer updateSongPoint2(Song song);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

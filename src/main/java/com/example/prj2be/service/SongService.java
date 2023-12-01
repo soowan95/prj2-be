@@ -1,6 +1,7 @@
 package com.example.prj2be.service;
 
 import com.example.prj2be.AllSongDTO;
+import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
 import lombok.RequiredArgsConstructor;
@@ -144,5 +145,15 @@ public class SongService {
   
   public List<Map<String, Object>> requestList() {
     return songMapper.getByRequestList();
+  }
+
+  public Song getSongById(Integer id) {
+    return songMapper.getSongById(id);
+  }
+
+  public boolean updateSongPointById(Integer songId) {
+    Song song = songMapper.getSongById(songId);
+
+    return songMapper.updateSongPoint2(song) >= 1;
   }
 }
