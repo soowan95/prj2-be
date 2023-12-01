@@ -92,4 +92,8 @@ public class SongController {
 
     return songService.requestList();
   }
+  @GetMapping("chartlist")
+  public List<Song> chartlist() {
+    return songService.chartlist();
+  }
 }

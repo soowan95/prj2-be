@@ -100,6 +100,12 @@ public interface SongMapper {
   FROM songrequest
   """)
   List<Map<String, Object>> getByRequestList();
+
+  @Select("""
+  SELECT id,title,album,mood,`release`,genre
+  FROM song 
+""")
+  List<Song> chartlist();
 }
 
 

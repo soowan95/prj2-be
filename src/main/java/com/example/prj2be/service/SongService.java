@@ -145,4 +145,8 @@ public class SongService {
   public List<Map<String, Object>> requestList() {
     return songMapper.getByRequestList();
   }
+
+  public List<Song> chartlist() {
+    return songMapper.chartlist();
+  }
 }
