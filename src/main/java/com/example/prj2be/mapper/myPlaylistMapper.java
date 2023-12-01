@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface myPlaylistMapper {
@@ -21,4 +22,11 @@ public interface myPlaylistMapper {
             where listId = #{listId}
             """)
     List<MyPlaylist> getMyPlayList(String listId);
+
+
+    @Select("""
+            select title,lyric,album,`release`,genre, artist.name
+            from song join artist on song.artistCode = artist.id
+            """)
+    List<Map<String,Object>> selectRecommended();
 }
