@@ -46,4 +46,11 @@ where email =  #{email}
             WHERE id = #{id}
             """)
     Member selectById(String id);
+
+    @Select("""
+    SELECT COUNT(id)
+    FROM member
+    WHERE id = #{id}
+    """)
+    int checkId(String id);
 }
