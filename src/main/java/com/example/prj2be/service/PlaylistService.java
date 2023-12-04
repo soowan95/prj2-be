@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +48,9 @@ public class PlaylistService {
         }
 
         return mapper.getAllList();
+    }
+  
+    public List<Map<String,Object>> getRecommended() {
+        return mapper.selectRecommended();
     }
 }

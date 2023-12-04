@@ -10,11 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/myList")
+@RequestMapping("/main/api/myList")
 public class PlaylistController {
 
     private final PlaylistService service;
@@ -48,5 +49,9 @@ public class PlaylistController {
     @GetMapping("getAll")
     public List<MyPlaylist> getAllList(@SessionAttribute(value = "login", required = false) Member login) {
         return service.getAllList(login);
+
+    @GetMapping("recommended")
+    public List<Map<String,Object>> recommendedList() {
+        return service.getRecommended();
     }
 }

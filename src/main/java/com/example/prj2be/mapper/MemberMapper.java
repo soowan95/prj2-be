@@ -8,18 +8,18 @@ import java.util.List;
 @Mapper
 public interface MemberMapper {
     @Select("""
-select * from member
-where email =  #{email}
-""")
+            select * from member
+            where email =  #{email}
+            """)
     String selectByEmail(String email);
 
     @Select("""
-            
+                        
             select * from member
             where nickName = #{nickName}
             """)
     String selectByNickName(String nickName);
-            
+
     @Insert("""
             INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer)
             VALUES (#{id}, #{password}, #{nickName}, #{email}, #{securityQuestion}, #{securityAnswer})
@@ -46,4 +46,18 @@ where email =  #{email}
             WHERE id = #{id}
             """)
     Member selectById(String id);
+
+    @Update("""
+            update member
+            set nickName = #{nickName}, email=#{email}
+            where id = #{id}
+            """)
+    int update(Member member);
+            
+    @Select("""
+    SELECT COUNT(id)
+    FROM member
+    WHERE id = #{id}
+    """)
+    int checkId(String id);
 }
