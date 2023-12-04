@@ -4,6 +4,7 @@ import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 import java.util.Map;
@@ -120,21 +121,18 @@ public interface SongMapper {
   VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{mood}, #{song.releas}, #{genre}, #{artistCod}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode})
   """)
   Boolean insertSong(Song song, Integer artistCode);
+
+  @Select("""
+  SELECT s.id, s.title, s.lyric, s.album, s.mood, s.`release`, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
+  FROM song s JOIN artist a ON s.artistCode = a.id
+  WHERE s.id = #{id}
+  """)
+  Song getSongById(Integer id);
+
+  @Update("""
+  UPDATE songpoint
+  SET songPoint = songPoint + 1
+  WHERE title = #{title} AND artistName = #{artistName}
+  """)
+  Integer updateSongPoint2(Song song);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
