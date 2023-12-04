@@ -22,11 +22,9 @@ public class KakaoService {
       member.setPassword("1234");
       member.setInserted(LocalDateTime.now());
       memberService.add(member);
-    } else {
+    }
       System.out.println(member);
       member.setPassword("1234");
       return memberService.login(member, request);
-    }
-    return false;
   };
 }
