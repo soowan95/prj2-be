@@ -102,6 +102,12 @@ public interface SongMapper {
   List<Map<String, Object>> getByRequestList();
 
   @Select("""
+  SELECT id,title,album,mood,`release`,genre
+  FROM song 
+""")
+  List<Song> chartlist();
+          
+  @Select("""
   SELECT id
   FROM artist
   WHERE name = #{artistName} AND `group` = #{artistGroup}

@@ -7,6 +7,7 @@ public class MyPlaylist {
     private Integer id;
     private String listId;
     private String listName;
+    private Boolean isLike;
 
 
 

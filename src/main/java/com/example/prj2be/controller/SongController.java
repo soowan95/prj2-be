@@ -92,6 +92,10 @@ public class SongController {
 
     return songService.requestList();
   }
+  
+  @GetMapping("chartlist")
+  public List<Song> chartlist() {
+    return songService.chartlist();
 
   @PostMapping("insert")
   public ResponseEntity insert(@RequestBody Song song) {

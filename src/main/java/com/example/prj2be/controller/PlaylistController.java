@@ -46,6 +46,9 @@ public class PlaylistController {
         return service.getMyPlayList(listId);
     }
 
+    @GetMapping("getAll")
+    public List<MyPlaylist> getAllList(@SessionAttribute(value = "login", required = false) Member login) {
+        return service.getAllList(login);
 
     @GetMapping("recommended")
     public List<Map<String,Object>> recommendedList() {

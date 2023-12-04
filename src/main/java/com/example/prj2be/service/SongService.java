@@ -147,6 +147,10 @@ public class SongService {
     return songMapper.getByRequestList();
   }
 
+  public List<Song> chartlist() {
+    return songMapper.chartlist();
+  }
+  
   public Boolean insertSong(Song song) {
     song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
     song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));

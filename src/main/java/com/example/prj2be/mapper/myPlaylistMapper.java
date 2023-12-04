@@ -22,7 +22,12 @@ public interface myPlaylistMapper {
             where listId = #{listId}
             """)
     List<MyPlaylist> getMyPlayList(String listId);
-
+            
+    @Select("""
+    SELECT *
+    FROM myplaylist
+    """)
+    List<MyPlaylist> getAllList();
 
     @Select("""
             select title,lyric,album,`release`,genre, artist.name
