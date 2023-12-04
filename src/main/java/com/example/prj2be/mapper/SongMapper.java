@@ -135,4 +135,12 @@ public interface SongMapper {
   WHERE title = #{title} AND artistName = #{artistName}
   """)
   Integer updateSongPoint2(Song song);
+
+  @Select("""
+SELECT song.id, title, name, genre,`release`, album
+FROM artist JOIN song
+ON artist.id = song.artistCode
+WHERE album = #{album}
+""")
+  List<Map<String, Object>> getByAlbumList(String album);
 }

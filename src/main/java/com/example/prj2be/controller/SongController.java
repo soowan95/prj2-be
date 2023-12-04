@@ -121,4 +121,12 @@ public class SongController {
     if (songService.insertSong(song)) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
   }
+
+  @GetMapping("albumList")
+  public List<Map<String,Object>> albumList(@RequestParam String album){
+    return songService.albumList(album);
+  }
+
+
+
 }

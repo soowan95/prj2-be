@@ -171,4 +171,8 @@ public class SongService {
 
     return songMapper.insertSong(song, artistCode);
   }
+
+  public List<Map<String, Object>> albumList(String album) {
+    return songMapper.getByAlbumList(album);
+  }
 }
