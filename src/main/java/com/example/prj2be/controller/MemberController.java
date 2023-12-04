@@ -53,15 +53,6 @@ public class MemberController {
             return ResponseEntity.ok().build();
         }
     }
-
-    @GetMapping("logininfo")
-    public ResponseEntity<Member> logininfo(@SessionAttribute(value = "login", required = false) Member login) {
-        if (login == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else {
-            return ResponseEntity.ok(login);
-        }
-    }
   
     @RequestMapping("/update-password")
     public ResponseEntity updateMember(
