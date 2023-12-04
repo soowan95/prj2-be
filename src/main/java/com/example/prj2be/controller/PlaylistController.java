@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/main/api/myList")
+@RequestMapping("/api/myList")
 public class PlaylistController {
 
     private final PlaylistService service;
