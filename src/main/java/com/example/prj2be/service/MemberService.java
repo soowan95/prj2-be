@@ -86,5 +86,8 @@ public class MemberService {
 
     public boolean update(Member member) {
         return mapper.update(member)==1;
+      
+    public int checkId(String id) {
+        return mapper.checkId(id);
     }
 }

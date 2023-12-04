@@ -53,4 +53,11 @@ public interface MemberMapper {
             where id = #{id}
             """)
     int update(Member member);
+            
+    @Select("""
+    SELECT COUNT(id)
+    FROM member
+    WHERE id = #{id}
+    """)
+    int checkId(String id);
 }
