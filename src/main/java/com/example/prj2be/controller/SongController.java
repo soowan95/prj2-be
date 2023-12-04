@@ -93,7 +93,7 @@ public class SongController {
 
     return songService.requestList();
   }
-
+  
   @GetMapping("{id}")
   public ResponseEntity<Song> getSongById(@PathVariable Integer id) {
     Song song = songService.getSongById(id);
@@ -110,5 +110,14 @@ public class SongController {
     if (songService.updateSongPointById(song.getId())) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
   }
+  
+  @GetMapping("chartlist")
+  public List<Song> chartlist() {
+    return songService.chartlist();
 
+  @PostMapping("insert")
+  public ResponseEntity insert(@RequestBody Song song) {
+    if (songService.insertSong(song)) return ResponseEntity.ok().build();
+    return ResponseEntity.internalServerError().build();
+  }
 }

@@ -105,4 +105,18 @@ public class MemberController {
       public Member login(@SessionAttribute(value = "login", required = false) Member login){
           return login;
   }
+
+
+  @PostMapping("edit")
+    public ResponseEntity edit(@RequestBody Member member,
+                               @SessionAttribute(value = "login",required = false) Member login) {
+      if (login == null) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+      if (service.update(member)) {
+          return ResponseEntity.ok().build();
+      } else {
+          return ResponseEntity.internalServerError().build();
+      }
+  }
 }
