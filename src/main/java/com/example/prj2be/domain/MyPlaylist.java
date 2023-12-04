@@ -8,6 +8,9 @@ public class MyPlaylist {
     private String listId;
     private String listName;
     private Boolean isLike;
+    private Integer songId;
+    private String playlistId;
+
 
 
 
