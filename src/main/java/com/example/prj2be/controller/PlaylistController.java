@@ -40,16 +40,15 @@ public class PlaylistController {
     }
 
     @GetMapping("get")
-    public List<MyPlaylist> getList(String listId) {
-        System.out.println(listId);
-
-        return service.getMyPlayList(listId);
+    public List<MyPlaylist> getList(String id) {
+        System.out.println(id);
+        return service.getMyPlayList(id);
     }
 
-    @GetMapping("getAll")
-    public List<MyPlaylist> getAllList(@SessionAttribute(value = "login", required = false) Member login) {
-        return service.getAllList(login);
-    }
+//    @GetMapping("getAll")
+//    public List<MyPlaylist> getAllList(@SessionAttribute(value = "login", required = false) Member login) {
+//        return service.getAllList(login);
+//    }
 
     @GetMapping("recommended")
     public List<Map<String,Object>> recommendedList() {

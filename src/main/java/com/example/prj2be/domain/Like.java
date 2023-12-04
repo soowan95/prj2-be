@@ -6,6 +6,6 @@ import lombok.Data;
 public class Like {
     private Integer id;
     private String memberId;
-    private Integer boardId;
+    private Integer listId;
     private Boolean isLike;
 }

@@ -32,8 +32,8 @@ public class PlaylistService {
         return mapper.insert(playlist)==1;
     }
 
-    public List<MyPlaylist> getMyPlayList(String listId) {
-        return mapper.getMyPlayList(listId);
+    public List<MyPlaylist> getMyPlayList(String id) {
+        return mapper.getMyPlayList(id);
     }
 
     public List<MyPlaylist> getAllList(Member login) {

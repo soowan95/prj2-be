@@ -22,17 +22,13 @@ public class likeController {
 
     @PostMapping("/like")
     public ResponseEntity <Map<String, Object>>like(@SessionAttribute(value = "login", required = false)Member login,
-                                                    @RequestBody Map<String, Object> map ) {
-        // map으로 로그인 정보를 담았다
-        Like like = new Like();
-
-        like.setBoardId(Integer.parseInt(map.get("listId").toString()));
+                                                    @RequestBody Like like ) {
 
         if(login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        return ResponseEntity.ok().body(service.update(like, login));
+        return ResponseEntity.ok().body(service.update(like));
     }
     @GetMapping("board/{boardId}")
 //  --> 좋아요 눌렀을 때

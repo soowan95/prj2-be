@@ -17,11 +17,13 @@ public interface myPlaylistMapper {
     int insert(MyPlaylist playlist);
 
     @Select("""
-            SELECT *
-            FROM myplaylist
-            where listId = #{listId}
+
+            SELECT a.memberId, a.listName FROM memberplaylist a
+            join member b on a.memberId = b.id
+            where b.id = #{id}
+            
             """)
-    List<MyPlaylist> getMyPlayList(String listId);
+    List<MyPlaylist> getMyPlayList(String id);
             
     @Select("""
     SELECT *

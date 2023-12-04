@@ -10,34 +10,34 @@ import org.apache.ibatis.annotations.Select;
 public interface LikeMapper {
     @Delete("""
                 DELETE FROM memberlike
-                WHERE memberId = #{memberId} AND boardId = #{boardId}
+                WHERE memberId = #{memberId} AND playlistId = #{listId}
             """)
     int delete(Like like);
 
     @Insert("""
-                INSERT INTO memberlike (memberId, boardId)
-                values (#{memberId}, #{boardId})
+                INSERT INTO memberlike (memberId, playlistId)
+                values (#{memberId}, #{listId})
             """)
     int insert(Like like);
 
 
     @Select("""
             SELECT count(id) FROM memberlike
-            WHERE  boardId = #{boardId}
+            WHERE  playlistId = #{listId}
             """)
-    int countByBoardId(Integer boardId);
+    int countByBoardId(Integer listId);
 
     @Select("""
             SELECT * FROM memberlike
-            WHERE boardId = #{boardId}
+            WHERE playlistId = #{listId}
             AND memberId = #{memberId}
             """)
-    Like selectByBoardIdAndMemberId(Integer boardId, String memberId);
+    Like selectByBoardIdAndMemberId(Integer listId, String memberId);
 
     @Select("""
     SELECT COUNT(id)
     FROM memberlike
-    WHERE memberId = #{memberId} AND boardId = #{boardId}
+    WHERE memberId = #{memberId} AND playlistId = #{listId}
     """)
-    Integer isLike(String memberId, Integer boardId);
+    Integer isLike(String memberId, Integer listId);
 }
