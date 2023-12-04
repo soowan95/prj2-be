@@ -92,4 +92,10 @@ public class SongController {
 
     return songService.requestList();
   }
+
+  @PostMapping("insert")
+  public ResponseEntity insert(@RequestBody Song song) {
+    if (songService.insertSong(song)) return ResponseEntity.ok().build();
+    return ResponseEntity.internalServerError().build();
+  }
 }
