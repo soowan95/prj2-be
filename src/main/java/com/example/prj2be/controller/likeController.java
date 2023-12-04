@@ -20,15 +20,27 @@ public class likeController {
 
     private final LikeService service;
 
-    @PostMapping("like")
-    public ResponseEntity <Map<String, Object>>like(@RequestBody Like like,
-                                                     @SessionAttribute(value = "login", required = false)Member login) {
+    @PostMapping("/like")
+    public ResponseEntity <Map<String, Object>>like(@SessionAttribute(value = "login", required = false)Member login,
+                                                    @RequestBody Map<String, Object> map ) {
+        // map으로 로그인 정보를 담았다
+        Like like = new Like();
+
+        like.setBoardId(Integer.parseInt(map.get("listId").toString()));
+
         if(login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else {
-            service.update(like,login);
         }
+
         return ResponseEntity.ok().body(service.update(like, login));
+    }
+    @GetMapping("board/{boardId}")
+//  --> 좋아요 눌렀을 때
+    public ResponseEntity<Map<String, Object>> get(
+            @PathVariable Integer boardId,
+            @SessionAttribute(value = "login", required = false) Member login) {
+
+        return ResponseEntity.ok(service.get(boardId,login));
     }
 }
 

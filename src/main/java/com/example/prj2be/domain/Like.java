@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class Like {
     private Integer id;
-    private String mamberId;
-    private Integer boardIdId;
+    private String memberId;
+    private Integer boardId;
+    private Boolean isLike;
 }

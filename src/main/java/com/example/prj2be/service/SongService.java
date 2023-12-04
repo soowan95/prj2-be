@@ -3,6 +3,7 @@ package com.example.prj2be.service;
 import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
+import com.example.prj2be.util.Parse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -58,8 +59,8 @@ public class SongService {
       if (!numberList.contains(number)) numberList.add(number);
     }
 
-    for (int i = 0; i < list.size(); i++) {
-      if (numberList.contains(i)) newList.add(list.get(i));
+    for (int i : numberList) {
+      newList.add(list.get(i));
     }
 
     return newList;
@@ -144,5 +145,19 @@ public class SongService {
   
   public List<Map<String, Object>> requestList() {
     return songMapper.getByRequestList();
+  }
+
+  public List<Song> chartlist() {
+    return songMapper.chartlist();
+  }
+  
+  public Boolean insertSong(Song song) {
+    song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
+    song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));
+    song.setLyricHangulCode(Parse.hangulCode(song.getLyric()));
+
+    Integer artistCode = songMapper.getArtistCode(song.getArtistGroup(), song.getArtistName());
+
+    return songMapper.insertSong(song, artistCode);
   }
 }
