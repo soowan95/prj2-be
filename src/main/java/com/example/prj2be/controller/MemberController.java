@@ -27,8 +27,8 @@ public class MemberController {
         service.add(member);
     }
 
-    @GetMapping(value = "check", params = "id")
-    public ResponseEntity checkId(String id) {
+    @GetMapping(value = "check")
+    public ResponseEntity checkId(@RequestParam String id) {
         if (service.getId(id) == null) {
             return ResponseEntity.notFound().build();
         } else {
