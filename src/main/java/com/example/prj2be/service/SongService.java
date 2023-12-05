@@ -173,6 +173,11 @@ public class SongService {
   }
 
   public List<Map<String, Object>> albumList(String album) {
-    return songMapper.getByAlbumList(album);
+    List<Map<String, Object>> albumList = songMapper.getByAlbumList(album);
+    for (int i = 0; i < albumList.size(); i++) {
+      albumList.get(i).put("id", i + 1);
+    }
+
+    return albumList;
   }
 }
