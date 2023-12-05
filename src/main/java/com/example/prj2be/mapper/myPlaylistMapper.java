@@ -11,11 +11,11 @@ import java.util.Map;
 
 @Mapper
 public interface myPlaylistMapper {
-    @Insert("""
-            insert into myplaylist (listId,listName)
-            values (#{listId}, #{listName})
-            """)
-    int insert(MyPlaylist playlist);
+//    @Insert("""
+//            insert into myplaylist (listId,listName)
+//            values (#{listId}, #{listName})
+//            """)
+//    int insert(MyPlaylist playlist);
 
     @Select("""
             SELECT b.id, a.listName from memberplaylist a 
@@ -43,8 +43,9 @@ public interface myPlaylistMapper {
     int deleteByMemberId(String id);
 
     @Select("""
-            select b.memberId, b.listName from memberlike a
-            join memberplaylist b on a.playlistId = b.id
+            select b.memberId, b.listName as songs from memberlike a
+            join memberplaylist b on a.likelistId = b.id
+        
             where a.memberId = #{id}
             """)
     List<Map<String, Object>> selectFavoriteList(String id);

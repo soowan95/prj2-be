@@ -27,10 +27,10 @@ public class PlaylistService {
         return true;
     }
 
-    public boolean add(MyPlaylist playlist, Member login) {
-        playlist.setListId(login.getId());
-        return mapper.insert(playlist)==1;
-    }
+//    public boolean add(MyPlaylist playlist, Member login) {
+//        playlist.setListId(login.getId());
+//        return mapper.insert(playlist)==1;
+//    }
 
     public List<MyPlaylist> getMyPlayList(String id) {
         return mapper.getMyPlayList(id);
