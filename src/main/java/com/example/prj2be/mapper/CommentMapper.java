@@ -1,9 +1,7 @@
 package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.Comment;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -17,9 +15,41 @@ public interface CommentMapper {
     int insert(Comment comment);
 
     @Select("""
-        SELECT *
-        FROM comment
+        SELECT
+            c.id,
+            c.comment,
+            c.inserted,
+            c.songId,
+            c.memberId,
+            m.nickName memberNickName
+        FROM comment c JOIN member m ON c.memberId = m.id
         WHERE songId = #{songId}
+        ORDER BY c.id DESC ;
         """)
-    List<Comment> selectBySongId(Integer songId);
+    List<Comment> selectBySongId(String songId);
+
+    @Delete("""
+        DELETE FROM comment
+        WHERE memberId = #{memberId}
+        """)
+    int deleteByMemberId(String memberId);
+
+    @Delete("""
+        DELETE FROM comment
+        WHERE id = #{id}
+        """)
+    int deleteById(Integer id);
+
+    @Select("""
+        SELECT * FROM comment
+        WHERE id = #{id}
+        """)
+    Comment selectById(Integer id);
+
+    @Update("""
+        UPDATE comment
+            SET comment = #{comment}
+        WHERE id = #{id}
+        """)
+    int update(Comment comment);
 }

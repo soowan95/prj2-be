@@ -3,6 +3,7 @@ package com.example.prj2be.service;
 import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.Song;
+import com.example.prj2be.mapper.CommentMapper;
 import com.example.prj2be.mapper.SongMapper;
 import com.example.prj2be.util.Parse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class SongService {
 
   private final SongMapper songMapper;
+  private final CommentMapper commentMapper;
 
   public List<Song> getSongLimit100() {
     return songMapper.getSongLimit100();
@@ -155,7 +157,7 @@ public class SongService {
   public boolean updateSongPointById(Integer songId) {
     Song song = songMapper.getSongById(songId);
 
-    return songMapper.updateSongPoint2(song) >= 1;
+    return songMapper.updateSongPoint(song) >= 1;
   }
   
   public List<Song> chartlist() {
@@ -170,5 +172,15 @@ public class SongService {
     Integer artistCode = songMapper.getArtistCode(song.getArtistGroup(), song.getArtistName());
 
     return songMapper.insertSong(song, artistCode);
+  }
+
+  public boolean deleteMember(String id) {
+    // 멤버가 작성한 댓글 삭제
+    commentMapper.deleteByMemberId(id);
+
+//    // songPage에 달린 댓글들 지우기
+//    commentMapper.deleteBySongId(id);
+
+    return songMapper.deleteById(id) == 1;
   }
 }
