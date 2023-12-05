@@ -1,6 +1,7 @@
 package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.MyPlaylist;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -22,16 +23,29 @@ public interface myPlaylistMapper {
             where b.id = #{id}
             """)
     List<MyPlaylist> getMyPlayList(String id);
-            
+
     @Select("""
-    SELECT *
-    FROM myplaylist
-    """)
+            SELECT *
+            FROM myplaylist
+            """)
     List<MyPlaylist> getAllList();
 
     @Select("""
             select title,lyric,album,`release`,genre, artist.name
             from song join artist on song.artistCode = artist.id
             """)
-    List<Map<String,Object>> selectRecommended();
+    List<Map<String, Object>> selectRecommended();
+
+    @Delete("""
+            delete from memberplaylist
+            where memberId = #{id}
+            """)
+    int deleteByMemberId(String id);
+
+    @Select("""
+            select b.memberId, b.listName from memberlike a
+            join memberplaylist b on a.playlistId = b.id
+            where a.memberId = #{id}
+            """)
+    List<Map<String, Object>> selectFavoriteList(String id);
 }

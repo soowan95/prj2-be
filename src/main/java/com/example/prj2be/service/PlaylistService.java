@@ -53,4 +53,8 @@ public class PlaylistService {
     public List<Map<String,Object>> getRecommended() {
         return mapper.selectRecommended();
     }
+
+    public List<Map<String, Object>> getFavoriteList(String id) {
+        return mapper.selectFavoriteList(id);
+    }
 }

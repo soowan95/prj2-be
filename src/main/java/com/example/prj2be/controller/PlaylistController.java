@@ -55,4 +55,11 @@ public class PlaylistController {
     public List<Map<String,Object>> recommendedList() {
         return service.getRecommended();
     }
+
+    @GetMapping("favorite")
+    public List<Map<String,Object>> favoriteList(String id) {
+        return service.getFavoriteList(id);
+    }
+
+
 }
