@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -117,9 +118,18 @@ public class SongController {
   }
 
   @PostMapping("insert")
-  public ResponseEntity insert(@RequestBody Song song) {
-    if (songService.insertSong(song)) return ResponseEntity.ok().build();
-    return ResponseEntity.internalServerError().build();
+  public ResponseEntity insert( Song song,
+                               @RequestParam(value = "file[]", required = false) MultipartFile file) {
+
+    if (file != null){
+      System.out.println("file = " + file.getSize());
+    }
+
+    if (songService.insertSong(song)) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @GetMapping("albumList")

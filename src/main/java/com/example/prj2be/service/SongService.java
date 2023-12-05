@@ -1,17 +1,15 @@
 package com.example.prj2be.service;
 
 import com.example.prj2be.AllSongDTO;
-import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.SongMapper;
 import com.example.prj2be.util.Parse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
