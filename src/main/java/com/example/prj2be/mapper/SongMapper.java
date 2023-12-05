@@ -19,7 +19,7 @@ public interface SongMapper {
   List<Song> getAll();
 
   @Select("""
-  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, a.name, s.lyric, s.album, s.`release`, s.songUrl
   FROM song s JOIN artist a ON s.artistCode = a.id
               JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistName
   ORDER BY sp.songPoint DESC 

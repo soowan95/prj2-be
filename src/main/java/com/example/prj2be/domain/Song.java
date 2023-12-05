@@ -20,4 +20,5 @@ public class Song {
   private Integer artistHangulCode;
   private Integer lyricHangulCode;
   private String genre;
+  private String songUrl;
 }
