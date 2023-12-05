@@ -91,4 +91,8 @@ public class MemberService {
     public int checkId(String id) {
         return mapper.checkId(id);
     }
+
+    public boolean deleteMember(String id) {
+        return mapper.deleteByMemberId(id)==1;
+    }
 }
