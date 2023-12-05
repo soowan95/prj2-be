@@ -4,12 +4,13 @@ import lombok.Data;
 
 @Data
 public class MyPlaylist {
-    private Integer id;
+    private String id;
     private String listId;
     private String listName;
     private Boolean isLike;
     private Integer songId;
     private String playlistId;
+    private Integer countLike;
 
 
 

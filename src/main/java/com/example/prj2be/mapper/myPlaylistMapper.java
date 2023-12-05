@@ -18,12 +18,14 @@ public interface myPlaylistMapper {
 
     @Select("""
 
-            SELECT a.memberId, a.listName FROM memberplaylist a
+            SELECT a.memberId as id, a.listName, a.id listId FROM memberplaylist a
             join member b on a.memberId = b.id
-            where b.id = #{id}
+            where b.id = #{id} 
+          
             
             """)
     List<MyPlaylist> getMyPlayList(String id);
+//    where에 memeber에 Id가 같으면 SELECT실행
             
     @Select("""
     SELECT *

@@ -30,13 +30,13 @@ public class likeController {
 
         return ResponseEntity.ok().body(service.update(like));
     }
-    @GetMapping("board/{boardId}")
+    @GetMapping("board/{likelistId}")
 //  --> 좋아요 눌렀을 때
     public ResponseEntity<Map<String, Object>> get(
-            @PathVariable Integer boardId,
+            @PathVariable String likelistId,
             @SessionAttribute(value = "login", required = false) Member login) {
 
-        return ResponseEntity.ok(service.get(boardId,login));
+        return ResponseEntity.ok(service.get(likelistId,login));
     }
 }
 
