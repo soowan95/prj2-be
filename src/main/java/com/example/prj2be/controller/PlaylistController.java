@@ -41,7 +41,6 @@ public class PlaylistController {
 
     @GetMapping("get")
     public List<MyPlaylist> getList(String id) {
-        System.out.println(id);
 
         return service.getMyPlayList(id);
     }
