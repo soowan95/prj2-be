@@ -23,7 +23,6 @@ public class MemberController {
 
     @PostMapping("signup")
     public void signup(@RequestBody Member member) {
-        System.out.println("member = " + member);
         service.add(member);
     }
 
@@ -98,16 +97,46 @@ public class MemberController {
   }
 
 
-  @PostMapping("edit")
+    @PutMapping("edit")
     public ResponseEntity edit(@RequestBody Member member,
-                               @SessionAttribute(value = "login",required = false) Member login) {
-      if (login == null) {
-          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-      }
-      if (service.update(member)) {
-          return ResponseEntity.ok().build();
-      } else {
-          return ResponseEntity.internalServerError().build();
-      }
-  }
+                               @SessionAttribute(value = "login",required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.update(member)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<Member> view(String id,
+                                       @SessionAttribute(value = "login", required = false) Member login) {
+
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Member member = service.getMember(id);
+
+        return ResponseEntity.ok(member);
+    }
+
+
+    @DeleteMapping
+    public ResponseEntity delete (String id,
+                                  HttpSession session,
+                                  @SessionAttribute(value = "login",required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.deleteMember(id)) {
+            session.invalidate();
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.internalServerError().build();
+    }
+
+
 }
