@@ -10,36 +10,36 @@ import org.apache.ibatis.annotations.Select;
 public interface LikeMapper {
     @Delete("""
                 DELETE FROM memberlike
-                WHERE memberId = #{memberId} AND boardId = #{boardId}
+                WHERE memberId = #{memberId} AND likelistId = #{likelistId}
             """)
     int delete(Like like);
 
     @Insert("""
-                INSERT INTO memberlike (memberId, boardId)
-                values (#{memberId}, #{boardId})
+                INSERT INTO memberlike (memberId, likelistId)
+                values (#{memberId}, #{likelistId})
             """)
     int insert(Like like);
 
 
     @Select("""
             SELECT count(id) FROM memberlike
-            WHERE  boardId = #{boardId}
+            WHERE  likelistId = #{likelistId}
             """)
-    int countByBoardId(Integer boardId);
+    Integer countByBoardId(String likelistId);
 
     @Select("""
             SELECT * FROM memberlike
-            WHERE boardId = #{boardId}
+            WHERE likelistId = #{likelistId}
             AND memberId = #{memberId}
             """)
-    Like selectByBoardIdAndMemberId(Integer boardId, String memberId);
+    Like selectByBoardIdAndMemberId(String likelistId, String memberId);
 
     @Select("""
-            SELECT COUNT(id)
-            FROM memberlike
-            WHERE memberId = #{memberId} AND boardId = #{boardId}
-            """)
-    Integer isLike(String memberId, Integer boardId);
+    SELECT COUNT(id)
+    FROM memberlike
+    WHERE memberId = #{memberId} AND likelistId = #{likelistId}
+    """)
+    Integer isLike(String memberId, String likelistId);
 
     @Delete("""
             delete from memberlike

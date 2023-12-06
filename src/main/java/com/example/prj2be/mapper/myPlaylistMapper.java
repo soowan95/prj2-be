@@ -11,12 +11,6 @@ import java.util.Map;
 
 @Mapper
 public interface myPlaylistMapper {
-//    @Insert("""
-//            insert into myplaylist (listId,listName)
-//            values (#{listId}, #{listName})
-//            """)
-//    int insert(MyPlaylist playlist);
-
     @Select("""
             SELECT b.id, a.listName from memberplaylist a 
             join member b on a.memberId = b.id
@@ -25,9 +19,17 @@ public interface myPlaylistMapper {
     List<MyPlaylist> getMyPlayList(String id);
 
     @Select("""
-            SELECT *
-            FROM myplaylist
+            SELECT a.memberId as id, a.listName, a.id listId FROM memberplaylist a
+            join member b on a.memberId = b.id
+            where b.id = #{id}
             """)
+    List<MyPlaylist> getMyPlayList(String id);
+//    where에 memeber에 Id가 같으면 SELECT실행
+            
+    @Select("""
+    SELECT *
+    FROM myplaylist
+    """)
     List<MyPlaylist> getAllList();
 
     @Select("""

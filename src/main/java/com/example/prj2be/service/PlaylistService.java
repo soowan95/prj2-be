@@ -26,13 +26,12 @@ public class PlaylistService {
         }
         return true;
     }
-
-//    public boolean add(MyPlaylist playlist, Member login) {
-//        playlist.setListId(login.getId());
-//        return mapper.insert(playlist)==1;
-//    }
-
+  
     public List<MyPlaylist> getMyPlayList(String id) {
+        List<MyPlaylist> playList = mapper.getMyPlayList(id);
+        for (MyPlaylist list : playList) {
+            list.setCountLike(likeMapper.countByBoardId(list.getListId()));
+            //countByBoardId는 라이크가 몇개인지
         return mapper.getMyPlayList(id);
     }
 
@@ -47,7 +46,8 @@ public class PlaylistService {
             });
         }
 
-        return mapper.getAllList();
+        return playList;
+        // 모르니까 수완이에게 물어보자
     }
   
     public List<Map<String,Object>> getRecommended() {
