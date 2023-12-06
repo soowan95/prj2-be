@@ -52,17 +52,39 @@ public class MemberController {
             return ResponseEntity.ok().build();
         }
     }
-  
+
+    @PostMapping("/get-password")
+    public ResponseEntity foundPassword(
+            @RequestParam("id") String idForRecovery,
+            @RequestParam("q") String securityQuestion,
+            @RequestParam("a") String securityAnswer) {
+        if (idForRecovery == null || idForRecovery.isEmpty() ||
+                securityQuestion == null || securityQuestion.isEmpty() ||
+                securityAnswer == null || securityAnswer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        String fetchedPassword = service.getPassword(idForRecovery, securityQuestion, securityAnswer);
+
+        if (fetchedPassword != null) {
+            // 가져온 비밀번호 반환
+            return ResponseEntity.ok(fetchedPassword);
+        } else {
+            // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증에 실패하였습니다.");
+        }
+    }
+
     @RequestMapping("/update-password")
-    public ResponseEntity updateMember(
+    public ResponseEntity updatePassword(
             @RequestParam("id") String idForRecovery,
             @RequestParam("q") String securityQuestion,
             @RequestParam("a") String securityAnswer,
-            @RequestParam("p") String newPassword
+        @RequestParam("p") String newPassword
     ) {
-        if (idForRecovery == null || idForRecovery.isEmpty() ||
-                securityQuestion == null || securityQuestion.isEmpty() ||
-                securityAnswer == null || securityAnswer.isEmpty() ||
+            if (idForRecovery == null || idForRecovery.isEmpty() ||
+                    securityQuestion == null || securityQuestion.isEmpty() ||
+                    securityAnswer == null || securityAnswer.isEmpty() ||
                 newPassword == null || newPassword.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

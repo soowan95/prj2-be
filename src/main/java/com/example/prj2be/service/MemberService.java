@@ -78,6 +78,17 @@ public class MemberService {
         Member member = mapper.selectById(id);
         return member != null && member.getSecurityAnswer().equals(answer);
     }
+    public String getPassword(String id, String securityQuestion, String securityAnswer) {
+        Member member = mapper.selectById(id);
+        if (isValidIdAndAnswer(id, securityAnswer)) {
+            // 가져온 비밀번호 반만 보여주기
+            String originalPassword = member.getPassword();
+            int len = originalPassword.length() / 2;
+            String maskedPassword = originalPassword.substring(0, len) + "*".repeat(originalPassword.length() - len);
+            return maskedPassword;
+        }
+        return null;
+    }
 
     public boolean updatePassword(String id, String securityQuestion, String securityAnswer, String newPassword) {
         if (!isValidIdAndAnswer(id, securityAnswer)) {
@@ -106,4 +117,6 @@ public class MemberService {
         //멤버 삭제
         return mapper.deleteByMemberId(id)==1;
     }
+
+
 }
