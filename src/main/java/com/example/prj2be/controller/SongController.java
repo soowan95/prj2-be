@@ -120,19 +120,14 @@ public class SongController {
   @PostMapping("insert")
   public ResponseEntity insert( Song song,
                                @RequestParam(value = "file[]", required = false) MultipartFile file) {
-
-    if (songService.insertSong(song)) {
-      return ResponseEntity.ok().build();
-    } else {
-      return ResponseEntity.internalServerError().build();
-    }
+    // 가수 정보 없으면 저장
+    if (songService.getArtistCode(song) == null) songService.insertArtist(song);
+    if (songService.insertSong(song)) return ResponseEntity.ok().build();
+    return ResponseEntity.internalServerError().build();
   }
 
   @GetMapping("albumList")
   public List<Map<String,Object>> albumList(@RequestParam String album){
     return songService.albumList(album);
   }
-
-
-
 }

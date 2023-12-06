@@ -2,6 +2,7 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
+import com.example.prj2be.mapper.CommentMapper;
 import com.example.prj2be.mapper.SongMapper;
 import com.example.prj2be.util.Parse;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,16 @@ import java.util.Map;
 public class SongService {
 
   private final SongMapper songMapper;
+  private final CommentMapper commentMapper;
 
   public List<Song> getSongLimit100() {
-    return songMapper.getSongLimit100();
+    List<Song> songList = songMapper.getSongLimit100();
+
+    for (int i = 0; i < songList.size(); i++) {
+      songList.get(i).setIndexForPlay(i);
+    }
+
+    return songList;
   }
 
   public List<Map<String, Object>> getMood() {
@@ -49,6 +57,8 @@ public class SongService {
 
   // 비슷한 곡 랜덤으로 5개 추출
   public List<Song> getByGenreAndMood(String genre, String mood, Integer id) {
+    genre = "%" + genre + "%";
+    mood = "%" + mood + "%";
     List<Song> list = songMapper.getByGenreAndMood(genre, mood, id);
     List<Song> newList = new ArrayList<>();
     List<Integer> numberList = new ArrayList<>();
@@ -153,7 +163,7 @@ public class SongService {
   public boolean updateSongPointById(Integer songId) {
     Song song = songMapper.getSongById(songId);
 
-    return songMapper.updateSongPoint2(song) >= 1;
+    return songMapper.updateSongPoint(song) >= 1;
   }
   
   public List<Song> chartlist() {
@@ -161,13 +171,41 @@ public class SongService {
   }
   
   public Boolean insertSong(Song song) {
+    // 한글 코드 파싱해서 저장
     song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
     song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));
     song.setLyricHangulCode(Parse.hangulCode(song.getLyric()));
 
-    Integer artistCode = songMapper.getArtistCode(song.getArtistGroup(), song.getArtistName());
+    songMapper.insertSongPoint(song);
+    songMapper.updateSongRequest(song);
 
-    return songMapper.insertSong(song, artistCode);
+    // artistCode 찾기 위함
+    if (song.getArtistGroup().isBlank()) song.setArtistGroup("solo");
+
+    // 자동완성 위한 전역에 새로 저장한 song 추가
+    AllSongDTO.getSongList().add(song);
+
+    Integer artistCode = songMapper.getArtistCode(song);
+
+    return songMapper.insertSong(song, artistCode) == 1;
+  }
+
+  public Integer getArtistCode(Song song) {
+    return songMapper.getArtistCode(song);
+  }
+
+  public void insertArtist(Song song) {
+    songMapper.insertArtist(song);
+  }
+
+  public boolean deleteMember(String id) {
+    // 멤버가 작성한 댓글 삭제
+    commentMapper.deleteByMemberId(id);
+
+//    // songPage에 달린 댓글들 지우기
+//    commentMapper.deleteBySongId(id);
+
+    return songMapper.deleteById(id) == 1;
   }
 
   public List<Map<String, Object>> albumList(String album) {

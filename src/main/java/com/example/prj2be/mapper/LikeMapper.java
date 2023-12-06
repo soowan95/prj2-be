@@ -35,9 +35,15 @@ public interface LikeMapper {
     Like selectByBoardIdAndMemberId(Integer boardId, String memberId);
 
     @Select("""
-    SELECT COUNT(id)
-    FROM memberlike
-    WHERE memberId = #{memberId} AND boardId = #{boardId}
-    """)
+            SELECT COUNT(id)
+            FROM memberlike
+            WHERE memberId = #{memberId} AND boardId = #{boardId}
+            """)
     Integer isLike(String memberId, Integer boardId);
+
+    @Delete("""
+            delete from memberlike
+            where memberId = #{id}
+            """)
+    int deleteByMemberId(String id);
 }
