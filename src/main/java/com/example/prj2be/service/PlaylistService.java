@@ -27,13 +27,13 @@ public class PlaylistService {
         return true;
     }
 
-    public boolean add(MyPlaylist playlist, Member login) {
-        playlist.setListId(login.getId());
-        return mapper.insert(playlist)==1;
-    }
+//    public boolean add(MyPlaylist playlist, Member login) {
+//        playlist.setListId(login.getId());
+//        return mapper.insert(playlist)==1;
+//    }
 
-    public List<MyPlaylist> getMyPlayList(String listId) {
-        return mapper.getMyPlayList(listId);
+    public List<MyPlaylist> getMyPlayList(String id) {
+        return mapper.getMyPlayList(id);
     }
 
     public List<MyPlaylist> getAllList(Member login) {
@@ -52,5 +52,9 @@ public class PlaylistService {
   
     public List<Map<String,Object>> getRecommended() {
         return mapper.selectRecommended();
+    }
+
+    public List<Map<String, Object>> getFavoriteList(String id) {
+        return mapper.selectFavoriteList(id);
     }
 }
