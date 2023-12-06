@@ -1,10 +1,7 @@
 package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.Song;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Map;
@@ -134,7 +131,13 @@ public interface SongMapper {
   SET songPoint = songPoint + 1
   WHERE title = #{title} AND artistName = #{artistName}
   """)
-  Integer updateSongPoint2(Song song);
+  Integer updateSongPoint(Song song);
+
+  @Delete("""
+    DELETE FROM song
+    WHERE id = #{id}
+    """)
+  int deleteById(String id);
 
   @Insert("""
   <script>
