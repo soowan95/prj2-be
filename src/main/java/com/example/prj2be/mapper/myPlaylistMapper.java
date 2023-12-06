@@ -18,12 +18,6 @@ public interface myPlaylistMapper {
             """)
     List<MyPlaylist> getMyPlayList(String id);
 //    where에 memeber에 Id가 같으면 SELECT실행
-            
-    @Select("""
-    SELECT *
-    FROM myplaylist
-    """)
-    List<MyPlaylist> getAllList();
 
     @Select("""
             select title,lyric,album,`release`,genre, artist.name
@@ -38,7 +32,7 @@ public interface myPlaylistMapper {
     int deleteByMemberId(String id);
 
     @Select("""
-            select b.memberId, b.listName as songs from memberlike a
+            select b.memberId, b.listName as songs from playlistlike a
             join memberplaylist b on a.likelistId = b.id
         
             where a.memberId = #{id}

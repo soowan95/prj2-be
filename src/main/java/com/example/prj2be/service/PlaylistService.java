@@ -1,5 +1,6 @@
 package com.example.prj2be.service;
 
+import com.example.prj2be.domain.Like;
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.mapper.LikeMapper;
@@ -31,11 +32,12 @@ public class PlaylistService {
         List<MyPlaylist> playList = mapper.getMyPlayList(id);
         for (MyPlaylist list : playList) {
             list.setCountLike(likeMapper.countByBoardId(list.getListId()));
-            //countByBoardId는 라이크가 몇개인지
+            //첫페이지 //countByBoardId는 라이크가 몇개인지
+            list.setIsLike(likeMapper.isLike(list.getId(), list.getListId()) == 1);
+            //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
 
         }
         return playList;
-        // 모르니까 수완이에게 물어보자
     }
   
     public List<Map<String,Object>> getRecommended() {

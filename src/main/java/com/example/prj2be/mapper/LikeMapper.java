@@ -9,26 +9,26 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface LikeMapper {
     @Delete("""
-                DELETE FROM memberlike
+                DELETE FROM playlistlike
                 WHERE memberId = #{memberId} AND likelistId = #{likelistId}
             """)
     int delete(Like like);
 
     @Insert("""
-                INSERT INTO memberlike (memberId, likelistId)
+                INSERT INTO playlistlike (memberId, likelistId)
                 values (#{memberId}, #{likelistId})
             """)
     int insert(Like like);
 
 
     @Select("""
-            SELECT count(id) FROM memberlike
+            SELECT count(id) FROM playlistlike
             WHERE  likelistId = #{likelistId}
             """)
     Integer countByBoardId(String likelistId);
 
     @Select("""
-            SELECT * FROM memberlike
+            SELECT * FROM playlistlike
             WHERE likelistId = #{likelistId}
             AND memberId = #{memberId}
             """)
@@ -36,13 +36,13 @@ public interface LikeMapper {
 
     @Select("""
     SELECT COUNT(id)
-    FROM memberlike
+    FROM playlistlike
     WHERE memberId = #{memberId} AND likelistId = #{likelistId}
     """)
     Integer isLike(String memberId, String likelistId);
 
     @Delete("""
-            delete from memberlike
+            delete from playlistlike
             where memberId = #{id}
             """)
     int deleteByMemberId(String id);
