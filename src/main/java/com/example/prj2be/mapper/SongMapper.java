@@ -133,6 +133,14 @@ public interface SongMapper {
   """)
   Integer updateSongPoint(Song song);
 
+  @Select("""
+SELECT song.id, title, name, genre,`release`, album
+FROM artist JOIN song
+ON artist.id = song.artistCode
+WHERE album = #{album}
+""")
+  List<Map<String, Object>> getByAlbumList(String album);
+
   @Delete("""
     DELETE FROM song
     WHERE id = #{id}
