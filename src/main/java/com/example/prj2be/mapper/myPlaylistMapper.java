@@ -12,13 +12,6 @@ import java.util.Map;
 @Mapper
 public interface myPlaylistMapper {
     @Select("""
-            SELECT b.id, a.listName from memberplaylist a 
-            join member b on a.memberId = b.id
-            where b.id = #{id}
-            """)
-    List<MyPlaylist> getMyPlayList(String id);
-
-    @Select("""
             SELECT a.memberId as id, a.listName, a.id listId FROM memberplaylist a
             join member b on a.memberId = b.id
             where b.id = #{id}
