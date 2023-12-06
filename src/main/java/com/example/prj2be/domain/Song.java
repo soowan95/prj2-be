@@ -23,4 +23,5 @@ public class Song {
   private String songUrl;
   private String requestTitle;
   private String requestArtist;
+  private Integer indexForPlay;
 }
