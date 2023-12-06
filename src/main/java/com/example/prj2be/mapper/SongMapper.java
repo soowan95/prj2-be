@@ -1,5 +1,6 @@
 package com.example.prj2be.mapper;
 
+import com.example.prj2be.domain.Artist;
 import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.*;
 
@@ -172,4 +173,14 @@ WHERE album = #{album}
   WHERE (title = #{title} OR title = #{requestTitle}) AND (artist = #{artistName} OR artist = #{requestArtist})
   """)
   void updateSongRequest(Song song);
+
+  @Select("""
+SELECT *
+FROM artist
+WHERE id = #{id}
+""")
+
+  Artist getByArtistId(Integer id);
+
+
 }

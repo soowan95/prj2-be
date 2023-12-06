@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,11 +122,33 @@ public class SongController {
   }
 
   @PostMapping("insert")
-  public ResponseEntity insert( Song song,
-                               @RequestParam(value = "file[]", required = false) MultipartFile file) {
+  public ResponseEntity insert(Song song,
+                               @RequestParam(value = "file[]", required = false)
+                               MultipartFile[] files) throws IOException {
+
+//    if (files != null) {
+//      for(int i =0; i <files.length; i++){
+//
+//      System.out.println("file = " + files[i].getOriginalFilename());
+//      System.out.println("file = " + files[i].getSize());
+//      }
+//    }
+
+    // release 문자열을 Date로 변환
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    try {
+      Date releaseDate = dateFormat.parse(song.getRelease());
+      song.setReleaseDate(releaseDate); // Song 클래스에 setReleaseDate 메소드 추가
+    } catch (ParseException e) {
+      // 예외 처리: 유효한 날짜 형식이 아닌 경우
+      e.printStackTrace();
+      return ResponseEntity.badRequest().body("Invalid date format for release field");
+    }
+
+
     // 가수 정보 없으면 저장
     if (songService.getArtistCode(song) == null) songService.insertArtist(song);
-    if (songService.insertSong(song)) return ResponseEntity.ok().build();
+    if (songService.insertSong(song, files)) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
   }
 
