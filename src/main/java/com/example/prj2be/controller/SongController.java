@@ -118,6 +118,8 @@ public class SongController {
 
   @PostMapping("insert")
   public ResponseEntity insert(@RequestBody Song song) {
+    // 가수 정보 없으면 저장
+    if (songService.getArtistCode(song) == null) songService.insertArtist(song);
     if (songService.insertSong(song)) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
   }
