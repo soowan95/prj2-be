@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -117,8 +118,16 @@ public class SongController {
   }
 
   @PostMapping("insert")
-  public ResponseEntity insert(@RequestBody Song song) {
+  public ResponseEntity insert( Song song,
+                               @RequestParam(value = "file[]", required = false) MultipartFile file) {
+    // 가수 정보 없으면 저장
+    if (songService.getArtistCode(song) == null) songService.insertArtist(song);
     if (songService.insertSong(song)) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
+  }
+
+  @GetMapping("albumList")
+  public List<Map<String,Object>> albumList(@RequestParam String album){
+    return songService.albumList(album);
   }
 }

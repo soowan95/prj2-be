@@ -1,7 +1,9 @@
 package com.example.prj2be.service;
 
 import com.example.prj2be.domain.Member;
+import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.MemberMapper;
+import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
@@ -16,6 +18,8 @@ import java.util.List;
 public class MemberService {
 
     private final MemberMapper mapper;
+    private final myPlaylistMapper playlistMapper;
+    private final LikeMapper likeMapper;
 
     public Member getMember(String id){
         return mapper.selectById(id);
@@ -90,5 +94,16 @@ public class MemberService {
       
     public int checkId(String id) {
         return mapper.checkId(id);
+    }
+
+    public boolean deleteMember(String id) {
+        // 이 멤버의 플레이리스트 삭제
+        playlistMapper.deleteByMemberId(id);
+
+        // 이 멤버의 좋아요 클릭 삭제
+        likeMapper.deleteByMemberId(id);
+
+        //멤버 삭제
+        return mapper.deleteByMemberId(id)==1;
     }
 }

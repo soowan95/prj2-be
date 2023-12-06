@@ -20,4 +20,8 @@ public class Song {
   private Integer artistHangulCode;
   private Integer lyricHangulCode;
   private String genre;
+  private String songUrl;
+  private String requestTitle;
+  private String requestArtist;
+  private Integer indexForPlay;
 }

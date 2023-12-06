@@ -20,25 +20,6 @@ public class PlaylistController {
 
     private final PlaylistService service;
 
-    @PostMapping("add")
-    public ResponseEntity add(@RequestBody MyPlaylist playlist,
-                              @SessionAttribute(value = "login", required = false) Member login) {
-        if (login == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        if (service.validate(playlist)) {
-            if (service.add(playlist, login)) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.internalServerError().build();
-            }
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-
-
-    }
-
     @GetMapping("get")
     public List<MyPlaylist> getList(String id) {
         System.out.println(id);
@@ -48,5 +29,10 @@ public class PlaylistController {
     @GetMapping("recommended")
     public List<Map<String,Object>> recommendedList() {
         return service.getRecommended();
+    }
+
+    @GetMapping("favorite")
+    public List<Map<String,Object>> favoriteList(String id) {
+        return service.getFavoriteList(id);
     }
 }

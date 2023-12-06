@@ -1,10 +1,7 @@
 package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.Song;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +16,7 @@ public interface SongMapper {
   List<Song> getAll();
 
   @Select("""
-  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, a.name, s.lyric, s.album, s.`release`, s.songUrl
   FROM song s JOIN artist a ON s.artistCode = a.id
               JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistName
   ORDER BY sp.songPoint DESC 
@@ -86,7 +83,7 @@ public interface SongMapper {
   @Select("""
   SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
   FROM song s JOIN artist a ON s.artistCode = a.id
-  WHERE (genre=#{genre} OR mood=#{mood}) AND s.id != #{id}
+  WHERE (genre LIKE #{genre} OR mood LIKE #{mood}) AND s.id != #{id}
   """)
   List<Song> getByGenreAndMood(String genre, String mood, Integer id);
 
@@ -114,13 +111,13 @@ public interface SongMapper {
   FROM artist
   WHERE name = #{artistName} AND `group` = #{artistGroup}
   """)
-  Integer getArtistCode(String artistGroup, String artistName);
+  Integer getArtistCode(Song song);
 
   @Insert("""
   INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode)
-  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{mood}, #{song.releas}, #{genre}, #{artistCod}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode})
+  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode})
   """)
-  Boolean insertSong(Song song, Integer artistCode);
+  Integer insertSong(Song song, Integer artistCode);
 
   @Select("""
   SELECT s.id, s.title, s.lyric, s.album, s.mood, s.`release`, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
@@ -134,5 +131,45 @@ public interface SongMapper {
   SET songPoint = songPoint + 1
   WHERE title = #{title} AND artistName = #{artistName}
   """)
-  Integer updateSongPoint2(Song song);
+  Integer updateSongPoint(Song song);
+
+  @Select("""
+SELECT song.id, title, name, genre,`release`, album
+FROM artist JOIN song
+ON artist.id = song.artistCode
+WHERE album = #{album}
+""")
+  List<Map<String, Object>> getByAlbumList(String album);
+
+  @Delete("""
+    DELETE FROM song
+    WHERE id = #{id}
+    """)
+  int deleteById(String id);
+
+  @Insert("""
+  <script>
+  INSERT INTO artist 
+  <if test='artistGroup == ""'>
+  (name) VALUE (#{artistName})
+  </if>
+  <if test='artistGroup != ""'>
+  (name, `group`) VALUE (#{artistName}, #{artistGroup})
+  </if>
+  </script>
+  """)
+  Integer insertArtist(Song song);
+
+  @Insert("""
+  INSERT INTO songpoint (title, artistName)
+  VALUE (#{title}, #{artistName})
+  """)
+  Integer insertSongPoint(Song song);
+
+  @Update("""
+  UPDATE songrequest
+  SET updated = NOW()
+  WHERE (title = #{title} OR title = #{requestTitle}) AND (artist = #{artistName} OR artist = #{requestArtist})
+  """)
+  void updateSongRequest(Song song);
 }
