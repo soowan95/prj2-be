@@ -121,10 +121,6 @@ public class SongController {
   public ResponseEntity insert( Song song,
                                @RequestParam(value = "file[]", required = false) MultipartFile file) {
 
-    if (file != null){
-      System.out.println("file = " + file.getSize());
-    }
-
     if (songService.insertSong(song)) {
       return ResponseEntity.ok().build();
     } else {
