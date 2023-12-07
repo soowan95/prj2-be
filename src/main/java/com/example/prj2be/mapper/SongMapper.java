@@ -117,6 +117,7 @@ public interface SongMapper {
   INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode, songUrl)
   VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode},#{song.songUrl})
   """)
+  @Options(useGeneratedKeys = true, keyProperty = "id")
   Integer insertSong(Song song, Integer artistCode);
 
   @Select("""

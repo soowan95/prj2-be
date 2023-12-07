@@ -55,15 +55,20 @@ public class SongService {
 
         Integer artistCode = songMapper.getArtistCode(song);
 
-        return songMapper.insertSong(song, artistCode) == 1;
+        Integer cnt = songMapper.insertSong(song, artistCode);
+
+//        upload(song.getId(), null);
+
+        return cnt == 1;
+
     }
 
 
 
     // 파일 업로드  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
-    private void upload(MultipartFile file) throws IOException {
+    private void upload(Integer id, MultipartFile file) throws IOException {
 
-        String key = "prj2/" + "/" + file.getOriginalFilename();
+        String key = "prj2/" + id +  "/" + file.getOriginalFilename();
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
@@ -77,20 +82,6 @@ public class SongService {
 
 
 
-//         로컬 예시 ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
-
-//         파일 저장 경로
-//         C:\Temp\prj2\아티스트번호\파일명
-
-//            File folder = new File("C:\\Temp\\prj2\\" + id);
-//            if (!folder.exists()) {
-//                folder.mkdir();
-//            }
-//
-//            String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-//            File des = new File(path);
-//            file.transferTo(des);
-
 
     // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
     //  -> 기존 수완이가 작성한 코드에 fileName만 추가하면 되는거였음..
@@ -103,7 +94,6 @@ public class SongService {
     public Integer getArtistCode(Song song) {
         return songMapper.getArtistCode(song);
     }
-
 
 
     public List<Song> getSongLimit100() {
