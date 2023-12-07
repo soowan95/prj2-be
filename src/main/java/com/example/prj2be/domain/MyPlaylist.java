@@ -11,13 +11,5 @@ public class MyPlaylist {
     private Integer songId;
     private String playlistId;
     private Integer countLike;
-
-
-
-
-
-//    public String getAgo() {
-//        return AppUtil.getAgo(listId);
-//    }
-
+    private Integer totalSongCount;
 }

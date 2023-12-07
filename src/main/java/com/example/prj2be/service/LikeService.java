@@ -18,11 +18,9 @@ public class LikeService {
 
     public Map<String,Object> update(Like like) {
 
-//        like.setMemberId(login.getId());
         int count = 0;
         if(mapper.delete(like) == 0) { //지워서 0 이면 1을 count에 1을 추가 해라
             count = mapper.insert(like); // 1
-            System.out.println(count);
         }
 
         int countLike = mapper.countByBoardId(like.getLikelistId());

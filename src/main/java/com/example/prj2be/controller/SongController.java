@@ -113,8 +113,8 @@ public class SongController {
   }
   
   @GetMapping("chartlist")
-  public List<Song> chartlist() {
-    return songService.chartlist();
+  public  List<Song> chartlist(Integer id) {
+    return songService.chartlist(id);
   }
 
   @PostMapping("insert")

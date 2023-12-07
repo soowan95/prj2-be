@@ -2,8 +2,10 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
+import com.example.prj2be.mapper.ArtistMapper;
 import com.example.prj2be.mapper.CommentMapper;
 import com.example.prj2be.mapper.SongMapper;
+import com.example.prj2be.mapper.myPlaylistMapper;
 import com.example.prj2be.util.Parse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,8 @@ public class SongService {
 
   private final SongMapper songMapper;
   private final CommentMapper commentMapper;
-
+  private final ArtistMapper artistMapper;
+  private final myPlaylistMapper myPlaylistMapper;
   public List<Song> getSongLimit100() {
     List<Song> songList = songMapper.getSongLimit100();
 
@@ -149,9 +152,9 @@ public class SongService {
   public Boolean isExist(String title, String artist) {
     List<Song> songList = AllSongDTO.getSongList();
 
-    return songList.stream().filter(a -> a.getArtistName().equalsIgnoreCase(artist) && a.getTitle().equalsIgnoreCase(title)).count() >= 1; 
+    return songList.stream().filter(a -> a.getArtistName().equalsIgnoreCase(artist) && a.getTitle().equalsIgnoreCase(title)).count() >= 1;
   }
-  
+
   public List<Map<String, Object>> requestList() {
     return songMapper.getByRequestList();
   }
@@ -163,20 +166,30 @@ public class SongService {
   public boolean updateSongPointById(Integer songId) {
     Song song = songMapper.getSongById(songId);
 
-    return songMapper.updateSongPoint(song) >= 1;
+    Integer artistCode = artistMapper.getArtistCodeByNG(song.getArtistName(), song.getArtistGroup());
+
+    return songMapper.updateSongPoint(song, artistCode) >= 1;
   }
-  
-  public List<Song> chartlist() {
-    return songMapper.chartlist();
+
+  public List<Song> chartlist(Integer id) {
+    List<Song> chartList = new ArrayList<>(); // list Song 타입의 데이터와 배열을 생성
+    List<Integer> songIds = myPlaylistMapper.chartlist(id); // songIds의 아이디만 받아온것
+    for (Integer i : songIds) { // songIds의 아이디를 하나하나 i에 담은 것
+      chartList.add(songMapper.getSongById(i)); //songIds 아이디의 곡 정보들을 chartList에 add로 담은 것
+    }
+    return chartList;
   }
-  
+
   public Boolean insertSong(Song song) {
     // 한글 코드 파싱해서 저장
     song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
     song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));
     song.setLyricHangulCode(Parse.hangulCode(song.getLyric()));
 
-    songMapper.insertSongPoint(song);
+    // 가수 코드
+    Integer artistCode = songMapper.getArtistCode(song);
+
+    songMapper.insertSongPoint(song, artistCode);
     songMapper.updateSongRequest(song);
 
     // artistCode 찾기 위함
@@ -184,8 +197,6 @@ public class SongService {
 
     // 자동완성 위한 전역에 새로 저장한 song 추가
     AllSongDTO.getSongList().add(song);
-
-    Integer artistCode = songMapper.getArtistCode(song);
 
     return songMapper.insertSong(song, artistCode) == 1;
   }

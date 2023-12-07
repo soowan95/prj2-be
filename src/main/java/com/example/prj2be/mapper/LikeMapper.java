@@ -46,4 +46,11 @@ public interface LikeMapper {
             where memberId = #{id}
             """)
     int deleteByMemberId(String id);
+
+    @Select("""
+    SELECT Count(id)
+    FROM song
+    where id = #{id} 
+""")
+    Integer countBySongId(Integer id);
 }
