@@ -121,39 +121,38 @@ public class SongController {
     return songService.chartlist();
   }
 
+
   @PostMapping("insert")
   public ResponseEntity insert(Song song,
-                               @RequestParam(value = "file[]", required = false)
-                               MultipartFile[] files) throws IOException {
-
-//    if (files != null) {
-//      for(int i =0; i <files.length; i++){
-//
-//      System.out.println("file = " + files[i].getOriginalFilename());
-//      System.out.println("file = " + files[i].getSize());
-//      }
-//    }
-
-    // release 문자열을 Date로 변환
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    try {
-      Date releaseDate = dateFormat.parse(song.getRelease());
-      song.setReleaseDate(releaseDate); // Song 클래스에 setReleaseDate 메소드 추가
-    } catch (ParseException e) {
-      // 예외 처리: 유효한 날짜 형식이 아닌 경우
-      e.printStackTrace();
-      return ResponseEntity.badRequest().body("Invalid date format for release field");
-    }
+                               @RequestParam String fileName) throws IOException {
 
 
     // 가수 정보 없으면 저장
-    if (songService.getArtistCode(song) == null) songService.insertArtist(song);
-    if (songService.insertSong(song, files)) return ResponseEntity.ok().build();
-    return ResponseEntity.internalServerError().build();
+    if (songService.getArtistCode(song) == null) {
+      songService.insertArtist(song, fileName);
+    }
+
+    if (songService.insertSong(song)) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.internalServerError().build();
+    }
+
   }
+  @PostMapping("upload")
+  public void upload(@RequestParam MultipartFile file) throws IOException{
+
+
+
+  }
+
 
   @GetMapping("albumList")
   public List<Map<String,Object>> albumList(@RequestParam String album){
     return songService.albumList(album);
   }
+
+
+
+
 }

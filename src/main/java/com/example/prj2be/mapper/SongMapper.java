@@ -1,6 +1,5 @@
 package com.example.prj2be.mapper;
 
-import com.example.prj2be.domain.Artist;
 import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.*;
 
@@ -115,8 +114,8 @@ public interface SongMapper {
   Integer getArtistCode(Song song);
 
   @Insert("""
-  INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode)
-  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode})
+  INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode, songUrl)
+  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode},#{song.songUrl})
   """)
   Integer insertSong(Song song, Integer artistCode);
 
@@ -151,15 +150,15 @@ WHERE album = #{album}
   @Insert("""
   <script>
   INSERT INTO artist 
-  <if test='artistGroup == ""'>
-  (name) VALUE (#{artistName})
+  <if test='song.artistGroup == ""'>
+  (name, picture) VALUE (#{song.artistName}, #{fileName})
   </if>
-  <if test='artistGroup != ""'>
-  (name, `group`) VALUE (#{artistName}, #{artistGroup})
+  <if test='song.artistGroup != ""'>
+  (name, `group`, picture) VALUE (#{song.artistName}, #{song.artistGroup}, #{fileName})
   </if>
   </script>
   """)
-  Integer insertArtist(Song song);
+  Integer insertArtist(Song song, String fileName);
 
   @Insert("""
   INSERT INTO songpoint (title, artistName)
@@ -173,14 +172,6 @@ WHERE album = #{album}
   WHERE (title = #{title} OR title = #{requestTitle}) AND (artist = #{artistName} OR artist = #{requestArtist})
   """)
   void updateSongRequest(Song song);
-
-  @Select("""
-SELECT *
-FROM artist
-WHERE id = #{id}
-""")
-
-  Artist getByArtistId(Integer id);
+  }
 
 
-}

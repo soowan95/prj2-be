@@ -8,18 +8,15 @@ import java.util.List;
 
 @Mapper
 public interface FileMapper {
+
     @Insert("""
-INSERT INTO artist(id, picture)
-VALUES (#{id}, #{picture})
-""")
-    int insertArtist(Integer id, String picture);
+    INSERT INTO artist(id, picture)
+    VALUES (#{id}, #{picture})
+    """)
+
+    int insert(Integer id, String picture);
 
 
-    @Select("""
-
-SELECT picture
-FROM artist
-WHERE id = #{id}
-""")
-    List<String> selectNamesByArtistId(Integer id);
 }
+
+
