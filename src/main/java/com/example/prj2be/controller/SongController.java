@@ -124,12 +124,13 @@ public class SongController {
 
   @PostMapping("insert")
   public ResponseEntity insert(Song song,
-                               @RequestParam String fileName) throws IOException {
+                               @RequestParam(value = "files", required = false) MultipartFile files) throws IOException {
 
 
     // 가수 정보 없으면 저장
-    if (songService.getArtistCode(song) == null) {
-      songService.insertArtist(song, fileName);
+    Integer artistCode = songService.getArtistCode(song);
+    if (artistCode == null) {
+      songService.insertArtist(song, files);
     }
 
     if (songService.insertSong(song)) {

@@ -55,11 +55,7 @@ public class SongService {
 
         Integer artistCode = songMapper.getArtistCode(song);
 
-        Integer cnt = songMapper.insertSong(song, artistCode);
-
-//        upload(song.getId(), null);
-
-        return cnt == 1;
+        return songMapper.insertSong(song, artistCode) == 1;
 
     }
 
@@ -68,7 +64,7 @@ public class SongService {
     // 파일 업로드  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
     private void upload(Integer id, MultipartFile file) throws IOException {
 
-        String key = "prj2/" + id +  "/" + file.getOriginalFilename();
+        String key = "prj2/artist/" + id +  "/" + file.getOriginalFilename();
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
@@ -85,8 +81,13 @@ public class SongService {
 
     // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
     //  -> 기존 수완이가 작성한 코드에 fileName만 추가하면 되는거였음..
-    public void insertArtist(Song song, String fileName) {
-        songMapper.insertArtist(song, fileName);
+    public void insertArtist(Song song, MultipartFile files) throws IOException {
+        if (files == null) {
+            songMapper.insertArtist(song, "");
+        } else {
+            songMapper.insertArtist(song, files.getOriginalFilename());
+            upload(song.getArtistId(), files);
+        }
     }
 
 
@@ -232,7 +233,11 @@ public class SongService {
     }
 
     public Song getSongById(Integer id) {
-        return songMapper.getSongById(id);
+        // /prj2/artist/50/카라.jpeg
+        Song song = songMapper.getSongById(id);
+        System.out.println("song = " + song);
+        song.setArtistFileUrl(urlPrefix + "prj2/artist/" + song.getArtistId() + "/" + song.getArtistFileUrl());
+        return song;
     }
 
 

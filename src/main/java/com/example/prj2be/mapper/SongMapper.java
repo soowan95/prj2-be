@@ -18,7 +18,7 @@ public interface SongMapper {
   @Select("""
   SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, a.name, s.lyric, s.album, s.`release`, s.songUrl
   FROM song s JOIN artist a ON s.artistCode = a.id
-              JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistName
+              JOIN songpoint sp ON s.title = sp.title AND a.id = sp.artistId
   ORDER BY sp.songPoint DESC 
   LIMIT 0, 100
   """)
@@ -117,11 +117,12 @@ public interface SongMapper {
   INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode, songUrl)
   VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode},#{song.songUrl})
   """)
-  @Options(useGeneratedKeys = true, keyProperty = "id")
+  @Options(useGeneratedKeys = true, keyProperty = "song.id")
   Integer insertSong(Song song, Integer artistCode);
 
   @Select("""
   SELECT s.id, s.title, s.lyric, s.album, s.mood, s.`release`, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
+          , a.picture artistFileUrl, s.artistCode artistId
   FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE s.id = #{id}
   """)
@@ -130,7 +131,7 @@ public interface SongMapper {
   @Update("""
   UPDATE songpoint
   SET songPoint = songPoint + 1
-  WHERE title = #{title} AND artistName = #{artistName}
+  WHERE title = #{title} AND artistId = #{artistCode}
   """)
   Integer updateSongPoint(Song song);
 
@@ -159,11 +160,12 @@ WHERE album = #{album}
   </if>
   </script>
   """)
+  @Options(useGeneratedKeys = true, keyProperty = "song.artistId")
   Integer insertArtist(Song song, String fileName);
 
   @Insert("""
-  INSERT INTO songpoint (title, artistName)
-  VALUE (#{title}, #{artistName})
+  INSERT INTO songpoint (title, artistId)
+  VALUE (#{title}, #{artistId})
   """)
   Integer insertSongPoint(Song song);
 

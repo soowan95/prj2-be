@@ -15,8 +15,10 @@ public class Song {
   private String lyric;
   private String album;
   private String mood;
+  private Integer artistId;
   private String artistName;
   private String artistGroup;
+  private String artistFileUrl;
   private LocalDateTime release;
   private Integer titleHangulCode;
   private Integer artistHangulCode;
@@ -27,6 +29,5 @@ public class Song {
   private String requestArtist;
   private Integer indexForPlay;
 
-  private MultipartFile file;
 
 }
