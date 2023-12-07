@@ -2,6 +2,7 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
+import com.example.prj2be.mapper.ArtistMapper;
 import com.example.prj2be.mapper.CommentMapper;
 import com.example.prj2be.mapper.SongMapper;
 import com.example.prj2be.util.Parse;
@@ -21,6 +22,7 @@ public class SongService {
 
   private final SongMapper songMapper;
   private final CommentMapper commentMapper;
+  private final ArtistMapper artistMapper;
 
   public List<Song> getSongLimit100() {
     List<Song> songList = songMapper.getSongLimit100();
@@ -163,7 +165,9 @@ public class SongService {
   public boolean updateSongPointById(Integer songId) {
     Song song = songMapper.getSongById(songId);
 
-    return songMapper.updateSongPoint(song) >= 1;
+    Integer artistCode = artistMapper.getArtistCodeByNG(song.getArtistName(), song.getArtistGroup());
+
+    return songMapper.updateSongPoint(song, artistCode) >= 1;
   }
   
   public List<Song> chartlist() {
@@ -176,7 +180,10 @@ public class SongService {
     song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));
     song.setLyricHangulCode(Parse.hangulCode(song.getLyric()));
 
-    songMapper.insertSongPoint(song);
+    // 가수 코드
+    Integer artistCode = songMapper.getArtistCode(song);
+
+    songMapper.insertSongPoint(song, artistCode);
     songMapper.updateSongRequest(song);
 
     // artistCode 찾기 위함
@@ -184,8 +191,6 @@ public class SongService {
 
     // 자동완성 위한 전역에 새로 저장한 song 추가
     AllSongDTO.getSongList().add(song);
-
-    Integer artistCode = songMapper.getArtistCode(song);
 
     return songMapper.insertSong(song, artistCode) == 1;
   }
