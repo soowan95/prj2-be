@@ -66,4 +66,11 @@ public interface MemberMapper {
             where id = #{id}
             """)
     int deleteByMemberId(String id);
+
+    @Select("""
+    SELECT securityQuestion
+    FROM member
+    WHERE id = #{id}
+    """)
+    List<String> getQuestions(String id);
 }

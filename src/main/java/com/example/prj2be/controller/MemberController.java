@@ -138,5 +138,8 @@ public class MemberController {
         return ResponseEntity.internalServerError().build();
     }
 
-
+    @GetMapping("questions")
+    public List<String> getQuestions(@RequestParam String id) {
+        return service.getQuestions(id);
+    }
 }

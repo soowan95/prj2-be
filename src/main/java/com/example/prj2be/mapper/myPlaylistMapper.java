@@ -49,7 +49,7 @@ group by pl.id;
 
     @Select("""
 
-            SELECT *
+            SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, a.name, s.lyric, s.album, s.`release`, s.songUrl,myl.songId,myl.playlistId
 FROM myplaylist myl JOIN memberplaylist mpl ON myl.playlistId = mpl.id
 JOIN song s ON myl.songId = s.id
 JOIN artist a ON s.artistCode = a.id
