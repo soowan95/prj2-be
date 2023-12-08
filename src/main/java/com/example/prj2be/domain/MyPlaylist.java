@@ -12,4 +12,6 @@ public class MyPlaylist {
     private String playlistId;
     private Integer countLike;
     private Integer totalSongCount;
+    private String nickName;
+    private Integer HitsCount;
 }

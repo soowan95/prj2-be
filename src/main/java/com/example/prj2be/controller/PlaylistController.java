@@ -34,4 +34,9 @@ public class PlaylistController {
     public List<Map<String,Object>> favoriteList(String id) {
         return service.getFavoriteList(id);
     }
+
+    @GetMapping("getByListId")
+    public MyPlaylist getByListId(@RequestParam Integer listId) {
+        return service.getByListId(listId);
+    }
 }

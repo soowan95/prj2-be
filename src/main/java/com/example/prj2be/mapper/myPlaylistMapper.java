@@ -46,4 +46,14 @@ public interface myPlaylistMapper {
     where m.playlistId = #{id};
 """)
     List<Integer> chartlist(Integer id);
-}
+
+    @Select("""
+    
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName
+    FROM memberplaylist a
+            join member b on a.memberId = b.id 
+    WHERE a.id = #{id}
+    """)
+    MyPlaylist getByListId(Integer listId);
+
+    }

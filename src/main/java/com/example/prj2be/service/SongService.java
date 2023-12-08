@@ -175,7 +175,7 @@ public class SongService {
     List<Song> chartList = new ArrayList<>(); // list Song 타입의 데이터와 배열을 생성
     List<Integer> songIds = myPlaylistMapper.chartlist(id); // songIds의 아이디만 받아온것
     for (Integer i : songIds) { // songIds의 아이디를 하나하나 i에 담은 것
-      chartList.add(songMapper.getSongById(i)); //songIds 아이디의 곡 정보들을 chartList에 add로 담은 것
+      chartList.add(songMapper.getSongById(i)); //songIds 아이디의 곡 하나하나 정보들을 chartList에 add로 담은 것
     }
     return chartList;
   }
