@@ -140,18 +140,18 @@ public class SongController {
     }
 
   }
-  @PostMapping("upload")
-  public void upload(@RequestParam MultipartFile file) throws IOException{
-
-
-
-  }
-
 
   @GetMapping("albumList")
   public List<Map<String,Object>> albumList(@RequestParam String album){
     return songService.albumList(album);
   }
+
+  @GetMapping("songEdit/:id")
+  public void songEdit(Song song){
+
+  }
+
+
 
 
 
