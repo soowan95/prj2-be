@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -54,7 +55,7 @@ public class MemberController {
     }
 
     @PostMapping("/get-password")
-    public ResponseEntity foundPassword(
+    public ResponseEntity<Map<String, String>> foundPassword(
             @RequestParam("id") String idForRecovery,
             @RequestParam("q") String securityQuestion,
             @RequestParam("a") String securityAnswer) {
@@ -63,15 +64,14 @@ public class MemberController {
                 securityAnswer == null || securityAnswer.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        Map<String, String> response = service.getPassword(idForRecovery, securityQuestion, securityAnswer);
 
-        String fetchedPassword = service.getPassword(idForRecovery, securityQuestion, securityAnswer);
-
-        if (fetchedPassword != null) {
+        if (response != null) {
             // 가져온 비밀번호 반환
-            return ResponseEntity.ok(fetchedPassword);
+            return ResponseEntity.ok(response);
         } else {
             // 인증 실패 시 401 반환
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증에 실패하였습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
@@ -113,8 +113,8 @@ public class MemberController {
         }
     }
 
-  @GetMapping("login")
-      public Member login(@SessionAttribute(value = "login", required = false) Member login){
+     @GetMapping("login")
+     public Member login(@SessionAttribute(value = "login", required = false) Member login){
           return login;
   }
 
