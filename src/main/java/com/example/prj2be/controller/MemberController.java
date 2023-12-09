@@ -23,12 +23,11 @@ public class MemberController {
 
     @PostMapping("signup")
     public void signup(@RequestBody Member member) {
-        System.out.println("member = " + member);
         service.add(member);
     }
 
-    @GetMapping(value = "check", params = "id")
-    public ResponseEntity checkId(String id) {
+    @GetMapping(value = "check")
+    public ResponseEntity checkId(@RequestParam String id) {
         if (service.getId(id) == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -51,15 +50,6 @@ public class MemberController {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok().build();
-        }
-    }
-
-    @GetMapping("logininfo")
-    public ResponseEntity<Member> logininfo(@SessionAttribute(value = "login", required = false) Member login) {
-        if (login == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else {
-            return ResponseEntity.ok(login);
         }
     }
   
@@ -97,7 +87,7 @@ public class MemberController {
     @PostMapping("logout")
     public void logout(HttpSession session){
         if (session != null){
-            session.invalidate();;
+            session.invalidate();
         }
     }
 
@@ -105,4 +95,46 @@ public class MemberController {
       public Member login(@SessionAttribute(value = "login", required = false) Member login){
           return login;
   }
+
+
+    @PutMapping("edit")
+    public ResponseEntity edit(@RequestBody Member member,
+                               @SessionAttribute(value = "login",required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.update(member)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<Member> view(String id,
+                                       @SessionAttribute(value = "login", required = false) Member login) {
+
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Member member = service.getMember(id);
+
+        return ResponseEntity.ok(member);
+    }
+
+
+    @DeleteMapping
+    public ResponseEntity delete (String id,
+                                  HttpSession session,
+                                  @SessionAttribute(value = "login",required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.deleteMember(id)) {
+            session.invalidate();
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.internalServerError().build();
+    }
 }

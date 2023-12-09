@@ -2,12 +2,14 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
+import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +17,7 @@ import java.util.List;
 public class PlaylistService {
 
     private final myPlaylistMapper mapper;
+    private final LikeMapper likeMapper;
 
 
     public boolean validate(MyPlaylist playlist) {
@@ -23,13 +26,23 @@ public class PlaylistService {
         }
         return true;
     }
+  
+    public List<MyPlaylist> getMyPlayList(String id) {
+        List<MyPlaylist> playList = mapper.getMyPlayList(id);
+        for (MyPlaylist list : playList) {
+            list.setCountLike(likeMapper.countByBoardId(list.getListId()));
+            //countByBoardId는 라이크가 몇개인지
 
-    public boolean add(MyPlaylist playlist, Member login) {
-        playlist.setListId(login.getId());
-        return mapper.insert(playlist)==1;
+        }
+        return playList;
+        // 모르니까 수완이에게 물어보자
+    }
+  
+    public List<Map<String,Object>> getRecommended() {
+        return mapper.selectRecommended();
     }
 
-    public List<MyPlaylist> getMyPlayList(String listId) {
-        return mapper.getMyPlayList(listId);
+    public List<Map<String, Object>> getFavoriteList(String id) {
+        return mapper.selectFavoriteList(id);
     }
 }

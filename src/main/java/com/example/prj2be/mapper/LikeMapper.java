@@ -8,22 +8,42 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface LikeMapper {
-        @Delete("""
-            DELETE FROM memberlike
-            WHERE memberId = #{mamberId}
-        """)
+    @Delete("""
+                DELETE FROM memberlike
+                WHERE memberId = #{memberId} AND likelistId = #{likelistId}
+            """)
     int delete(Like like);
 
-        @Insert("""
-            INSERT INTO memberlike (memberId)
-            values (#{mamberId})
-        """)
+    @Insert("""
+                INSERT INTO memberlike (memberId, likelistId)
+                values (#{memberId}, #{likelistId})
+            """)
     int insert(Like like);
 
 
-        @Select("""
-            SELECT count(id) FROM memberLike
-            WHERE  boardIdId = #{boardIdId}
+    @Select("""
+            SELECT count(id) FROM memberlike
+            WHERE  likelistId = #{likelistId}
             """)
-    int countByMemberId(Integer boardIdId);
+    Integer countByBoardId(String likelistId);
+
+    @Select("""
+            SELECT * FROM memberlike
+            WHERE likelistId = #{likelistId}
+            AND memberId = #{memberId}
+            """)
+    Like selectByBoardIdAndMemberId(String likelistId, String memberId);
+
+    @Select("""
+    SELECT COUNT(id)
+    FROM memberlike
+    WHERE memberId = #{memberId} AND likelistId = #{likelistId}
+    """)
+    Integer isLike(String memberId, String likelistId);
+
+    @Delete("""
+            delete from memberlike
+            where memberId = #{id}
+            """)
+    int deleteByMemberId(String id);
 }

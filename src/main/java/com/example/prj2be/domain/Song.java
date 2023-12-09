@@ -3,6 +3,7 @@ package com.example.prj2be.domain;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class Song {
@@ -13,9 +14,14 @@ public class Song {
   private String album;
   private String mood;
   private String artistName;
+  private String artistGroup;
   private Date release;
+  private Integer titleHangulCode;
+  private Integer artistHangulCode;
+  private Integer lyricHangulCode;
   private String genre;
-  private Integer titleCode;
-  private Integer artistCode;
-  private Integer lyricCode;
+  private String songUrl;
+  private String requestTitle;
+  private String requestArtist;
+  private Integer indexForPlay;
 }
