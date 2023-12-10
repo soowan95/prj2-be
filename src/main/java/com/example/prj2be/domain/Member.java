@@ -15,6 +15,7 @@ public class Member {
     private LocalDateTime inserted;
     private String securityQuestion;
     private String securityAnswer;
+    private Boolean online;
 
     public boolean isAdmin() {
         if (auth != null) {

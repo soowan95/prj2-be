@@ -2,6 +2,8 @@ package com.example.prj2be.domain;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ChatMessage {
 
@@ -12,5 +14,5 @@ public class ChatMessage {
   private MessageType type;
   private String sender;
   private String message;
-  private Boolean isOnline;
+  private List<String> isOnline;
 }
