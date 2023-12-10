@@ -12,4 +12,5 @@ public class ChatMessage {
   private MessageType type;
   private String sender;
   private String message;
+  private Boolean isOnline;
 }

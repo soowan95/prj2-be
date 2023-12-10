@@ -21,6 +21,7 @@ public class MessageController {
   public void enter(ChatMessage message) {
     if (messageService.countSender(message) == 0 && ChatMessage.MessageType.ENTER.equals(message.getType()) && message.getSender() != null) {
       message.setMessage(message.getSender() + "님이 입장하였습니다.");
+      message.setIsOnline(true);
       sendingOperations.convertAndSend("/topic/chat/room", message);
     }
     if (messageService.countSender(message) == 0 && message.getSender() != null) messageService.addSender(message);
@@ -28,14 +29,15 @@ public class MessageController {
 
   @MessageMapping("/chat/leave")
   public void leave(ChatMessage message) {
-    System.out.println(message);
     if (ChatMessage.MessageType.LEAVE.equals(message.getType()) && message.getSender() != null) message.setMessage(message.getSender() + "님이 퇴장하였습니다.");
+    message.setIsOnline(false);
     sendingOperations.convertAndSend("/topic/chat/room", message);
     messageService.dropSender(message);
   }
 
-  @MessageMapping("topic/chat/room")
+  @MessageMapping("/topic/chat/room")
   public void talk(ChatMessage message) {
+    message.setIsOnline(true);
     template.convertAndSend("/topic/chat/room", message);
   }
 }
