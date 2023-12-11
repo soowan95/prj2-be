@@ -85,9 +85,11 @@ public class MemberController {
 
 
     @PostMapping("logout")
-    public void logout(HttpSession session){
-        if (session != null){
-            session.invalidate();;
+    public void logout(HttpSession session,
+                       @SessionAttribute(value = "login", required = false) Member login) {
+        if (session != null) {
+            service.logout(login);
+            session.invalidate();
         }
     }
 
@@ -137,6 +139,4 @@ public class MemberController {
         }
         return ResponseEntity.internalServerError().build();
     }
-
-
 }
