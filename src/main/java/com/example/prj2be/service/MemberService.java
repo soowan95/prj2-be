@@ -27,13 +27,13 @@ public class MemberService {
 
 
     public boolean login(Member member, WebRequest request) {
+        mapper.login(member);
         Member dbMember = mapper.selectById(member.getId());
         if (dbMember != null){
             if (dbMember.getPassword().equals(member.getPassword())){
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
                 return true;
-
             }
         }
         return false;
@@ -106,4 +106,16 @@ public class MemberService {
         //멤버 삭제
         return mapper.deleteByMemberId(id)==1;
     }
+  
+    public List<String> getQuestions(String id) {
+        return mapper.getQuestions(id);
+    }
+  
+    public void logout(Member login) {
+        mapper.logout(login);
+    }
+
+  public List<String> getLiveUser() {
+        return mapper.getLiveUser();
+  }
 }

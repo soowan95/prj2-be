@@ -1,6 +1,6 @@
 package com.example.prj2be.mapper;
 
-import com.example.prj2be.domain.Like;
+import com.example.prj2be.domain.PlaylistLike;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,13 +12,13 @@ public interface LikeMapper {
                 DELETE FROM playlistlike
                 WHERE memberId = #{memberId} AND likelistId = #{likelistId}
             """)
-    int delete(Like like);
+    int delete(PlaylistLike playlistLike);
 
     @Insert("""
                 INSERT INTO playlistlike (memberId, likelistId)
                 values (#{memberId}, #{likelistId})
             """)
-    int insert(Like like);
+    int insert(PlaylistLike playlistLike);
 
 
     @Select("""
@@ -32,7 +32,7 @@ public interface LikeMapper {
             WHERE likelistId = #{likelistId}
             AND memberId = #{memberId}
             """)
-    Like selectByBoardIdAndMemberId(String likelistId, String memberId);
+    PlaylistLike selectByBoardIdAndMemberId(String likelistId, String memberId);
 
     @Select("""
     SELECT COUNT(id)
