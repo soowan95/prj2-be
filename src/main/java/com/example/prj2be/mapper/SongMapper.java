@@ -99,13 +99,13 @@ public interface SongMapper {
   ORDER BY 5 DESC;
   """)
   List<Map<String, Object>> getByRequestList();
-          
+
   @Select("""
   SELECT id,title,album,mood,`release`,genre
   FROM song 
 """)
   List<Song> chartlist();
-          
+
   @Select("""
   SELECT id
   FROM artist
@@ -114,13 +114,15 @@ public interface SongMapper {
   Integer getArtistCode(Song song);
 
   @Insert("""
-  INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode)
-  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode})
+  INSERT INTO song (title, lyric, album, mood, `release`, genre, artistCode, titleHangulCode, artistHangulCode, lyricHangulCode, songUrl)
+  VALUE (#{song.title}, #{song.lyric}, #{song.album}, #{song.mood}, #{song.release}, #{song.genre}, #{artistCode}, #{song.titleHangulCode}, #{song.artistHangulCode}, #{song.lyricHangulCode},#{song.songUrl})
   """)
+  @Options(useGeneratedKeys = true, keyProperty = "song.id")
   Integer insertSong(Song song, Integer artistCode);
 
   @Select("""
   SELECT s.id, s.title, s.lyric, s.album, s.mood, s.`release`, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
+          , a.picture artistFileUrl, s.artistCode artistId
   FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE s.id = #{id}
   """)
@@ -129,7 +131,7 @@ public interface SongMapper {
   @Update("""
   UPDATE songpoint
   SET songPoint = songPoint + 1
-  WHERE title = #{title} AND artistId = #{artistCode}
+  WHERE title = #{song.title} AND artistId = #{artistCode}
   """)
   Integer updateSongPoint(Song song, Integer artistCode);
 
@@ -150,15 +152,16 @@ WHERE album = #{album}
   @Insert("""
   <script>
   INSERT INTO artist 
-  <if test='artistGroup == ""'>
-  (name) VALUE (#{artistName})
+  <if test='song.artistGroup == ""'>
+  (name, picture) VALUE (#{song.artistName}, #{fileName})
   </if>
-  <if test='artistGroup != ""'>
-  (name, `group`) VALUE (#{artistName}, #{artistGroup})
+  <if test='song.artistGroup != ""'>
+  (name, `group`, picture) VALUE (#{song.artistName}, #{song.artistGroup}, #{fileName})
   </if>
   </script>
   """)
-  Integer insertArtist(Song song);
+  @Options(useGeneratedKeys = true, keyProperty = "song.artistId")
+  Integer insertArtist(Song song, String fileName);
 
   @Insert("""
   INSERT INTO songpoint (title, artistId)
@@ -172,4 +175,4 @@ WHERE album = #{album}
   WHERE (title = #{title} OR title = #{requestTitle}) AND (artist = #{artistName} OR artist = #{requestArtist})
   """)
   void updateSongRequest(Song song);
-}
+  }

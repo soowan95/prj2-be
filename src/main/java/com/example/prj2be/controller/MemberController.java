@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -52,17 +53,38 @@ public class MemberController {
             return ResponseEntity.ok().build();
         }
     }
-  
+
+    @PostMapping("/get-password")
+    public ResponseEntity<Map<String, String>> foundPassword(
+            @RequestParam("id") String idForRecovery,
+            @RequestParam("q") String securityQuestion,
+            @RequestParam("a") String securityAnswer) {
+        if (idForRecovery == null || idForRecovery.isEmpty() ||
+                securityQuestion == null || securityQuestion.isEmpty() ||
+                securityAnswer == null || securityAnswer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        Map<String, String> response = service.getPassword(idForRecovery, securityQuestion, securityAnswer);
+
+        if (response != null) {
+            // 가져온 비밀번호 반환
+            return ResponseEntity.ok(response);
+        } else {
+            // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
     @RequestMapping("/update-password")
-    public ResponseEntity updateMember(
+    public ResponseEntity updatePassword(
             @RequestParam("id") String idForRecovery,
             @RequestParam("q") String securityQuestion,
             @RequestParam("a") String securityAnswer,
-            @RequestParam("p") String newPassword
+        @RequestParam("p") String newPassword
     ) {
-        if (idForRecovery == null || idForRecovery.isEmpty() ||
-                securityQuestion == null || securityQuestion.isEmpty() ||
-                securityAnswer == null || securityAnswer.isEmpty() ||
+            if (idForRecovery == null || idForRecovery.isEmpty() ||
+                    securityQuestion == null || securityQuestion.isEmpty() ||
+                    securityAnswer == null || securityAnswer.isEmpty() ||
                 newPassword == null || newPassword.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -85,14 +107,16 @@ public class MemberController {
 
 
     @PostMapping("logout")
-    public void logout(HttpSession session){
-        if (session != null){
-            session.invalidate();;
+    public void logout(HttpSession session,
+                       @SessionAttribute(value = "login", required = false) Member login) {
+        if (session != null) {
+            service.logout(login);
+            session.invalidate();
         }
     }
 
-  @GetMapping("login")
-      public Member login(@SessionAttribute(value = "login", required = false) Member login){
+     @GetMapping("login")
+     public Member login(@SessionAttribute(value = "login", required = false) Member login){
           return login;
   }
 
@@ -138,5 +162,8 @@ public class MemberController {
         return ResponseEntity.internalServerError().build();
     }
 
-
+    @GetMapping("questions")
+    public List<String> getQuestions(@RequestParam String id) {
+        return service.getQuestions(id);
+    }
 }

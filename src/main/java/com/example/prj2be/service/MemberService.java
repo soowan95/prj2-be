@@ -10,7 +10,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +29,13 @@ public class MemberService {
 
 
     public boolean login(Member member, WebRequest request) {
+        mapper.login(member);
         Member dbMember = mapper.selectById(member.getId());
         if (dbMember != null){
             if (dbMember.getPassword().equals(member.getPassword())){
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
                 return true;
-
             }
         }
         return false;
@@ -78,6 +80,24 @@ public class MemberService {
         Member member = mapper.selectById(id);
         return member != null && member.getSecurityAnswer().equals(answer);
     }
+    public Map<String, String> getPassword(String id, String securityQuestion, String securityAnswer) {
+        if (!isValidIdAndAnswer(id, securityAnswer)) {
+            return null;
+        }
+
+        Member member = mapper.selectById(id);
+
+        // 가져온 비밀번호 반만 보여주기
+        String originalPassword = member.getPassword();
+        int len = originalPassword.length() / 2;
+        String maskedPassword = originalPassword.substring(0, len) + "*".repeat(originalPassword.length() - len);
+
+        // 비밀번호와 닉네임을 함께 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("fetchedPassword", maskedPassword);
+        response.put("nickName", member.getNickName());
+        return response;
+    }
 
     public boolean updatePassword(String id, String securityQuestion, String securityAnswer, String newPassword) {
         if (!isValidIdAndAnswer(id, securityAnswer)) {
@@ -106,4 +126,16 @@ public class MemberService {
         //멤버 삭제
         return mapper.deleteByMemberId(id)==1;
     }
+  
+    public List<String> getQuestions(String id) {
+        return mapper.getQuestions(id);
+    }
+  
+    public void logout(Member login) {
+        mapper.logout(login);
+    }
+
+  public List<String> getLiveUser() {
+        return mapper.getLiveUser();
+  }
 }
