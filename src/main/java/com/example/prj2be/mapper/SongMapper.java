@@ -40,7 +40,7 @@ public interface SongMapper {
   <script>
   SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
   FROM song s JOIN artist a ON s.artistCode = a.id
-              JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistName
+              JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistId
   <trim prefix="WHERE" suffixOverrides="AND">
   <foreach collection="genreIncludeList" item="elem" open="(" separator="OR" close=") AND" nullable="true">
   s.genre LIKE #{elem}
@@ -99,13 +99,13 @@ public interface SongMapper {
   ORDER BY 5 DESC;
   """)
   List<Map<String, Object>> getByRequestList();
-          
+
   @Select("""
   SELECT id,title,album,mood,`release`,genre
   FROM song 
 """)
   List<Song> chartlist();
-          
+
   @Select("""
   SELECT id
   FROM artist
@@ -131,9 +131,9 @@ public interface SongMapper {
   @Update("""
   UPDATE songpoint
   SET songPoint = songPoint + 1
-  WHERE title = #{title} AND artistId = #{artistId}
+  WHERE title = #{title} AND artistId = #{artistCode}
   """)
-  Integer updateSongPoint(Song song);
+  Integer updateSongPoint(Song song, Integer artistCode);
 
   @Select("""
 SELECT song.id, title, name, genre,`release`, album
@@ -165,9 +165,9 @@ WHERE album = #{album}
 
   @Insert("""
   INSERT INTO songpoint (title, artistId)
-  VALUE (#{title}, #{artistId})
+  VALUE (#{title}, #{artistCode})
   """)
-  Integer insertSongPoint(Song song);
+  Integer insertSongPoint(Song song, Integer artistCode);
 
   @Update("""
   UPDATE songrequest

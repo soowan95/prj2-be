@@ -1,7 +1,7 @@
 package com.example.prj2be.service;
 
-import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
+import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +44,14 @@ public class PlaylistService {
 
     public List<Map<String, Object>> getFavoriteList(String id) {
         return mapper.selectFavoriteList(id);
+    }
+
+    public List<Song> getFavoriteListName(String listId) {
+        return mapper.selectByFavoriteListName(listId);
+    }
+
+
+    public boolean deleteByFavoriteList(String songId, String playlistId) {
+        return mapper.deleteByFavoriteList(songId, playlistId)==1;
     }
 }

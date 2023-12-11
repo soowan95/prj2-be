@@ -3,7 +3,7 @@ package com.example.prj2be.domain;
 import lombok.Data;
 
 @Data
-public class Like {
+public class PlaylistLike {
     private Integer id;
     private String memberId;
     private String likelistId;

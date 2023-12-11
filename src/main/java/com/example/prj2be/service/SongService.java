@@ -2,6 +2,7 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.AllSongDTO;
 import com.example.prj2be.domain.Song;
+import com.example.prj2be.mapper.ArtistMapper;
 import com.example.prj2be.mapper.CommentMapper;
 import com.example.prj2be.mapper.FileMapper;
 import com.example.prj2be.mapper.SongMapper;
@@ -25,7 +26,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class SongService {
-
     private final SongMapper songMapper;
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
@@ -250,9 +250,6 @@ public class SongService {
     public List<Song> chartlist() {
         return songMapper.chartlist();
     }
-
-
-
 
     public boolean deleteMember(String id) {
         // 멤버가 작성한 댓글 삭제
