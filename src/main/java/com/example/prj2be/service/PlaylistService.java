@@ -1,7 +1,5 @@
 package com.example.prj2be.service;
 
-import com.example.prj2be.domain.PlaylistLike;
-import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.LikeMapper;
@@ -65,4 +63,17 @@ public class PlaylistService {
     public boolean deleteByFavoriteList(String songId, String playlistId) {
         return mapper.deleteByFavoriteList(songId, playlistId)==1;
     }
+
+    public Integer updateHitsCount(String id) {
+
+        return mapper.updateHitsCount(id);
+    }
+
+    public Integer getCountById(String id) {
+        return mapper.getCountById(id);
+    }
+
+//    public boolean update(MyPlaylist myPlaylist ) {
+//        return mapper.myPlaylist(myPlaylist.getMyplaylistcount()) == 1;
+//    }
 }
