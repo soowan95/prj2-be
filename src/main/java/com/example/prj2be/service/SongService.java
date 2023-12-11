@@ -29,6 +29,7 @@ import java.util.Map;
 public class SongService {
     private final SongMapper songMapper;
     private final CommentMapper commentMapper;
+    private final ArtistMapper artistMapper;
     private final FileMapper fileMapper;
     private final S3Client s3;
   
@@ -38,30 +39,27 @@ public class SongService {
     @Value("${aws.s3.bucket.name}")
     private String bucket;
 
-    public Boolean insertSong(Song song) throws IOException {
-
-        // 한글 코드 파싱해서 저장
-        song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
-        song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));
-        song.setLyricHangulCode(Parse.hangulCode(song.getLyric()));
-
-        songMapper.insertSongPoint(song);
-        songMapper.updateSongRequest(song);
-
-        // artistCode 찾기 위함
-        if (song.getArtistGroup().isBlank()) song.setArtistGroup("solo");
-
-        // 자동완성 위한 전역에 새로 저장한 song 추가
-        AllSongDTO.getSongList().add(song);
-
-        Integer artistCode = songMapper.getArtistCode(song);
-
-        return songMapper.insertSong(song, artistCode) == 1;
-
+    public Boolean insertSong(Song song) {
+      // 한글 코드 파싱해서 저장
+      song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
+      song.setTitleHangulCode(Parse.hangulCode(song.getTitle()));
+      song.setLyricHangulCode(Parse.hangulCode(song.getLyric()));
+  
+      // 가수 코드
+      Integer artistCode = songMapper.getArtistCode(song);
+  
+      songMapper.insertSongPoint(song, artistCode);
+      songMapper.updateSongRequest(song);
+  
+      // artistCode 찾기 위함
+      if (song.getArtistGroup().isBlank()) song.setArtistGroup("solo");
+  
+      // 자동완성 위한 전역에 새로 저장한 song 추가
+      AllSongDTO.getSongList().add(song);
+  
+      return songMapper.insertSong(song, artistCode) == 1;
     }
-
-
-
+  
     // 파일 업로드  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
     private void upload(Integer id, MultipartFile file) throws IOException {
 
@@ -74,12 +72,8 @@ public class SongService {
                 .build();
 
         s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
     }
-
-
-
-
+  
     // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
     //  -> 기존 수완이가 작성한 코드에 fileName만 추가하면 되는거였음..
     public void insertArtist(Song song, MultipartFile files) throws IOException {
@@ -91,12 +85,9 @@ public class SongService {
         }
     }
 
-
-
     public Integer getArtistCode(Song song) {
         return songMapper.getArtistCode(song);
     }
-
 
     public List<Song> getSongLimit100() {
         List<Song> songList = songMapper.getSongLimit100();
@@ -243,9 +234,10 @@ public class SongService {
 
 
     public boolean updateSongPointById(Integer songId) {
-        Song song = songMapper.getSongById(songId);
+      
+        Integer artistCode = artistMapper.getArtistCodeByNG(song.getArtistName(), song.getArtistGroup());
 
-        return songMapper.updateSongPoint(song) >= 1;
+        return songMapper.updateSongPoint(song, artistCode) >= 1;
     }
 
     public List<Song> chartlist() {
@@ -261,7 +253,7 @@ public class SongService {
 
         return songMapper.deleteById(id) == 1;
     }
-
+  
     public List<Map<String, Object>> albumList(String album) {
         List<Map<String, Object>> albumList = songMapper.getByAlbumList(album);
         for (int i = 0; i < albumList.size(); i++) {

@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface ArtistMapper {
-
+  
   @Select("""
   SELECT id
   FROM artist

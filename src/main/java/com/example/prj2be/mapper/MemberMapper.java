@@ -14,7 +14,6 @@ public interface MemberMapper {
     String selectByEmail(String email);
 
     @Select("""
-                        
             select * from member
             where nickName = #{nickName}
             """)

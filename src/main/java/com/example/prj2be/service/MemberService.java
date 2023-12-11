@@ -10,7 +10,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +79,24 @@ public class MemberService {
     public boolean isValidIdAndAnswer(String id, String answer) {
         Member member = mapper.selectById(id);
         return member != null && member.getSecurityAnswer().equals(answer);
+    }
+    public Map<String, String> getPassword(String id, String securityQuestion, String securityAnswer) {
+        if (!isValidIdAndAnswer(id, securityAnswer)) {
+            return null;
+        }
+
+        Member member = mapper.selectById(id);
+
+        // 가져온 비밀번호 반만 보여주기
+        String originalPassword = member.getPassword();
+        int len = originalPassword.length() / 2;
+        String maskedPassword = originalPassword.substring(0, len) + "*".repeat(originalPassword.length() - len);
+
+        // 비밀번호와 닉네임을 함께 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("fetchedPassword", maskedPassword);
+        response.put("nickName", member.getNickName());
+        return response;
     }
 
     public boolean updatePassword(String id, String securityQuestion, String securityAnswer, String newPassword) {
