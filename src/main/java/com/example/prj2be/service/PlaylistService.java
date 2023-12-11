@@ -1,5 +1,7 @@
 package com.example.prj2be.service;
 
+import com.example.prj2be.domain.Like;
+import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.mapper.LikeMapper;
@@ -29,13 +31,19 @@ public class PlaylistService {
   
     public List<MyPlaylist> getMyPlayList(String id) {
         List<MyPlaylist> playList = mapper.getMyPlayList(id);
+
         for (MyPlaylist list : playList) {
             list.setCountLike(likeMapper.countByBoardId(list.getListId()));
-            //countByBoardId는 라이크가 몇개인지
-
+            //첫페이지 //countByBoardId는 라이크가 몇개인지
+//            list.setSongId(likeMapper.countBySongId(list.getSongId()));
+            list.setIsLike(likeMapper.isLike(list.getId(), list.getListId()) == 1);
+            //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
+            list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
+            //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
         }
+
+
         return playList;
-        // 모르니까 수완이에게 물어보자
     }
   
     public List<Map<String,Object>> getRecommended() {
@@ -46,10 +54,14 @@ public class PlaylistService {
         return mapper.selectFavoriteList(id);
     }
 
+    public MyPlaylist getByListId(Integer listId) {
+        MyPlaylist list = mapper.getByListId(listId);
+        list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
+        return list;
+      
     public List<Song> getFavoriteListName(String listId) {
         return mapper.selectByFavoriteListName(listId);
     }
-
 
     public boolean deleteByFavoriteList(String songId, String playlistId) {
         return mapper.deleteByFavoriteList(songId, playlistId)==1;

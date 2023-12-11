@@ -19,12 +19,6 @@ public interface myPlaylistMapper {
             """)
     List<MyPlaylist> getMyPlayList(String id);
 //    where에 memeber에 Id가 같으면 SELECT실행
-            
-    @Select("""
-    SELECT *
-    FROM myplaylist
-    """)
-    List<MyPlaylist> getAllList();
 
     @Select("""
             select title,lyric,album,`release`,genre, artist.name
@@ -48,7 +42,22 @@ group by pl.id;
     List<Map<String, Object>> selectFavoriteList(String id);
 
     @Select("""
+    SELECT songId FROM myplaylist m join memberplaylist p on m.playlistId = p.id
+    join song s on m.songId = s.id
+    where m.playlistId = #{id};
+""")
+    List<Integer> chartlist(Integer id);
 
+    @Select("""
+    
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName
+    FROM memberplaylist a
+            join member b on a.memberId = b.id 
+    WHERE a.id = #{id}
+    """)
+    MyPlaylist getByListId(Integer listId);
+            
+    @Select("""
             SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, a.name, s.lyric, s.album, s.`release`, s.songUrl,myl.songId,myl.playlistId
 FROM myplaylist myl JOIN memberplaylist mpl ON myl.playlistId = mpl.id
 JOIN song s ON myl.songId = s.id
@@ -62,7 +71,4 @@ WHERE mpl.id = #{listId}
 delete from myplaylist where songId = #{songId} and playlistId = #{playlistId} 
 """)
     int deleteByFavoriteList(String songId, String playlistId);
-
-
-
 }

@@ -23,7 +23,7 @@ public class PlaylistController {
     private final PlaylistService service;
 
     @GetMapping("get")
-    public List<MyPlaylist> getList(@RequestParam String id) {
+    public List<MyPlaylist> getList(String id) {
         return service.getMyPlayList(id);
     }
 
@@ -36,7 +36,12 @@ public class PlaylistController {
     public List<Map<String,Object>> favoriteList(String id) {
         return service.getFavoriteList(id);
     }
-
+  
+    @GetMapping("getByListId")
+    public MyPlaylist getByListId(@RequestParam Integer listId) {
+        return service.getByListId(listId);
+    }
+  
     @GetMapping("favoriteListName")
     public List<Song> favoriteListName(String listId) {
         List<Song> songs = service.getFavoriteListName(listId);
@@ -61,6 +66,4 @@ public class PlaylistController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
-
 }

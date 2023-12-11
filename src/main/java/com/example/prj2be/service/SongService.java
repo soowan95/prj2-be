@@ -6,6 +6,7 @@ import com.example.prj2be.mapper.ArtistMapper;
 import com.example.prj2be.mapper.CommentMapper;
 import com.example.prj2be.mapper.FileMapper;
 import com.example.prj2be.mapper.SongMapper;
+import com.example.prj2be.mapper.myPlaylistMapper;
 import com.example.prj2be.util.Parse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ public class SongService {
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
     private final S3Client s3;
-
+  
     @Value("${image.file.prefix}")
     private String urlPrefix;
 
@@ -269,5 +270,4 @@ public class SongService {
 
         return albumList;
     }
-
 }

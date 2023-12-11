@@ -22,12 +22,14 @@ public class likeController {
     public ResponseEntity <Map<String, Object>>like(@SessionAttribute(value = "login", required = false)Member login,
                                                     @RequestBody PlaylistLike playlistLike) {
 
+
         if(login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        return ResponseEntity.ok().body(service.update(playlistLike));
+        return ResponseEntity.ok().body(service.update(like));
     }
+
+
     @GetMapping("board/{likelistId}")
 //  --> 좋아요 눌렀을 때
     public ResponseEntity<Map<String, Object>> get(
