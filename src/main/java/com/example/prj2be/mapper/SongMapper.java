@@ -129,7 +129,7 @@ public interface SongMapper {
   @Update("""
   UPDATE songpoint
   SET songPoint = songPoint + 1
-  WHERE title = #{title} AND artistId = #{artistCode}
+  WHERE title = #{song.title} AND artistId = #{artistCode}
   """)
   Integer updateSongPoint(Song song, Integer artistCode);
 
@@ -165,6 +165,7 @@ WHERE album = #{album}
   VALUE (#{title}, #{artistCode})
   """)
   Integer insertSongPoint(Song song, Integer artistCode);
+
 
   @Update("""
   UPDATE songrequest
