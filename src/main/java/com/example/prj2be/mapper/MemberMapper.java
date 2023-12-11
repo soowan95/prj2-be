@@ -73,4 +73,21 @@ public interface MemberMapper {
     WHERE id = #{id}
     """)
     List<String> getQuestions(String id);
+            
+    @Update("""
+    UPDATE member SET online = TRUE WHERE id = #{id}
+    """)
+    void login(Member member);
+
+    @Update("""
+    UPDATE member SET online = FALSE WHERE id = #{id}
+    """)
+    void logout(Member login);
+
+    @Select("""
+    SELECT nickName
+    FROM member
+    WHERE online = TRUE
+    """)
+    List<String> getLiveUser();
 }
