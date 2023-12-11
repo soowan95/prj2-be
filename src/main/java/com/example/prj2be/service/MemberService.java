@@ -28,17 +28,16 @@ public class MemberService {
     }
 
 
-    public boolean login(Member member, WebRequest request) {
+    public Member login(Member member, WebRequest request) {
         mapper.login(member);
         Member dbMember = mapper.selectById(member.getId());
         if (dbMember != null){
             if (dbMember.getPassword().equals(member.getPassword())){
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
-                return true;
             }
         }
-        return false;
+        return dbMember;
     }
 
     public boolean validate(Member member) {

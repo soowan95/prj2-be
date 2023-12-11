@@ -24,8 +24,7 @@ public class KakaoService {
       memberService.add(member);
     }
 
-    System.out.println(member);
     member.setPassword("1234");
-    return memberService.login(member, request);
+    return memberService.login(member, request) != null;
   };
 }

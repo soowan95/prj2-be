@@ -207,6 +207,21 @@ public class SongService {
       case "ㅎ" -> {
         return songList.stream().filter(a -> getCode(category, a) == 14).toList();
       }
+      case "ㄲ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 15).toList();
+      }
+      case "ㄸ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 16).toList();
+      }
+      case "ㅃ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 17).toList();
+      }
+      case "ㅆ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 18).toList();
+      }
+      case "ㅉ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 19).toList();
+      }
     }
     ;
 

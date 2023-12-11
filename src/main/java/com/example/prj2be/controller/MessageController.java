@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class MessageController {
   @MessageMapping("/chat/enter")
   public void enter(ChatMessage message) {
     List<String> liveUser = memberService.getLiveUser();
-    if (messageService.countSender(message) == 0 && ChatMessage.MessageType.ENTER.equals(message.getType()) && message.getSender() != null) {
+    if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
       message.setIsOnline(liveUser);
       message.setMessage(message.getSender() + "님이 입장하였습니다.");
       sendingOperations.convertAndSend("/topic/chat/room", message);
@@ -34,9 +35,9 @@ public class MessageController {
   @MessageMapping("/chat/leave")
   public void leave(ChatMessage message) {
     List<String> liveUser = memberService.getLiveUser();
-    if (ChatMessage.MessageType.LEAVE.equals(message.getType()) && message.getSender() != null) {
-      message.setMessage(message.getSender() + "님이 퇴장하였습니다.");
+    if (ChatMessage.MessageType.LEAVE.equals(message.getType())) {
       message.setIsOnline(liveUser);
+      message.setMessage(message.getSender() + "님이 퇴장하였습니다.");
       sendingOperations.convertAndSend("/topic/chat/room", message);
     }
     messageService.dropSender(message);

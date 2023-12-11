@@ -97,9 +97,9 @@ public class MemberController {
       }
       
     @PostMapping("login")
-    public ResponseEntity login(@RequestBody Member member, WebRequest request) {
-      if (service.login(member, request)) {
-          return ResponseEntity.ok().build();
+    public ResponseEntity<Member> login(@RequestBody Member member, WebRequest request) {
+      if (service.login(member, request) != null) {
+          return ResponseEntity.ok(service.login(member, request));
       } else {
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
       }
