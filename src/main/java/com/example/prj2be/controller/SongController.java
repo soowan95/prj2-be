@@ -140,12 +140,7 @@ public class SongController {
     }
 
   }
-  @PostMapping("upload")
-  public void upload(@RequestParam MultipartFile file) throws IOException{
 
-
-
-  }
 
 
   @GetMapping("albumList")
