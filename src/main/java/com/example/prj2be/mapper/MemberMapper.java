@@ -67,6 +67,13 @@ public interface MemberMapper {
             """)
     int deleteByMemberId(String id);
 
+    @Select("""
+    SELECT securityQuestion
+    FROM member
+    WHERE id = #{id}
+    """)
+    List<String> getQuestions(String id);
+            
     @Update("""
     UPDATE member SET online = TRUE WHERE id = #{id}
     """)

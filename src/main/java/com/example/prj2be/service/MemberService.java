@@ -106,7 +106,11 @@ public class MemberService {
         //멤버 삭제
         return mapper.deleteByMemberId(id)==1;
     }
-
+  
+    public List<String> getQuestions(String id) {
+        return mapper.getQuestions(id);
+    }
+  
     public void logout(Member login) {
         mapper.logout(login);
     }
