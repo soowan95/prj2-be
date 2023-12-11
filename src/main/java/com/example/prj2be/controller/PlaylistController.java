@@ -2,6 +2,7 @@ package com.example.prj2be.controller;
 
 
 import com.example.prj2be.domain.Member;
+import com.example.prj2be.domain.MemberPlayList;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
 import com.example.prj2be.service.PlaylistService;
@@ -27,10 +28,6 @@ public class PlaylistController {
         return service.getMyPlayList(id);
     }
 
-    @GetMapping("recommended")
-    public List<Map<String,Object>> recommendedList() {
-        return service.getRecommended();
-    }
 
     @GetMapping("favorite")
     public List<Map<String,Object>> favoriteList(String id) {
@@ -65,5 +62,14 @@ public class PlaylistController {
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("recommendplaylist")
+    public List<MemberPlayList> getRecommendPlaylist() {
+
+     return service.getRecommendPlaylist();
+
+
+
     }
 }

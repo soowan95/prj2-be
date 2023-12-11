@@ -1,14 +1,15 @@
 package com.example.prj2be.service;
 
-import com.example.prj2be.domain.PlaylistLike;
-import com.example.prj2be.domain.Member;
-import com.example.prj2be.domain.MyPlaylist;
-import com.example.prj2be.domain.Song;
+import com.example.prj2be.domain.*;
+import com.example.prj2be.mapper.FileMapper;
 import com.example.prj2be.mapper.LikeMapper;
+import com.example.prj2be.mapper.SongMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,15 @@ public class PlaylistService {
 
     private final myPlaylistMapper mapper;
     private final LikeMapper likeMapper;
+    private final SongMapper songMapper;
+    private final FileMapper fileMapper;
+    private final S3Client s3Client;
+
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
 
     public boolean validate(MyPlaylist playlist) {
         if (playlist == null) {
@@ -44,9 +54,6 @@ public class PlaylistService {
         return playList;
     }
   
-    public List<Map<String,Object>> getRecommended() {
-        return mapper.selectRecommended();
-    }
 
     public List<Map<String, Object>> getFavoriteList(String id) {
         return mapper.selectFavoriteList(id);
@@ -64,5 +71,21 @@ public class PlaylistService {
 
     public boolean deleteByFavoriteList(String songId, String playlistId) {
         return mapper.deleteByFavoriteList(songId, playlistId)==1;
+    }
+
+
+    public List<MemberPlayList> getRecommendPlaylist() {
+        List<MemberPlayList> recommendPlaylist = mapper.getRecommendPlaylist();
+
+        for (MemberPlayList memberPlayList : recommendPlaylist) {
+            Song song = new Song();
+            song.setArtistGroup(memberPlayList.getGroup());
+            song.setArtistName(memberPlayList.getName());
+            if (memberPlayList.getPicture() != null) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
+            else memberPlayList.setPictureUrl("https://image.genie.co.kr/Y/IMAGE/Playlist/Channel/GENIE/PLAYLIST_20231128121036.png/dims/resize/Q_80,0");
+        }
+
+        return recommendPlaylist;
+
     }
 }
