@@ -149,6 +149,17 @@ public class SongController {
     return songService.albumList(album);
   }
 
+  @GetMapping("songEdit")
+  public void songEdit(@RequestParam String artistName,
+                       @RequestParam String artistGroup){
+
+    Song song = new Song();
+    song.setArtistGroup(artistGroup);
+    song.setArtistName(artistName);
+    songService.getArtistCode(song);
+  }
+
+
 
 
 
