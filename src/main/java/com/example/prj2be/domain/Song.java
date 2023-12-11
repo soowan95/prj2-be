@@ -1,7 +1,9 @@
 package com.example.prj2be.domain;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -13,9 +15,11 @@ public class Song {
   private String lyric;
   private String album;
   private String mood;
+  private Integer artistId;
   private String artistName;
   private String artistGroup;
-  private Date release;
+  private String artistFileUrl;
+  private LocalDateTime release;
   private Integer titleHangulCode;
   private Integer artistHangulCode;
   private Integer lyricHangulCode;
@@ -24,4 +28,6 @@ public class Song {
   private String requestTitle;
   private String requestArtist;
   private Integer indexForPlay;
+
+
 }
