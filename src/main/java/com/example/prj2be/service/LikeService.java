@@ -16,14 +16,14 @@ public class LikeService {
 
     private final LikeMapper mapper;
   
-    public Map<String,Object> update(Like like) {
+    public Map<String,Object> update(PlaylistLike like) {
 
         int count = 0;
         if(mapper.delete(like) == 0) { //지워서 0 이면 1을 count에 1을 추가 해라
             count = mapper.insert(like); // 1
         }
 
-        int countLike = mapper.countByBoardId(playlistLike.getLikelistId());
+        int countLike = mapper.countByBoardId(like.getLikelistId());
       
         return Map.of("isLike", mapper.isLike(like.getMemberId(), like.getLikelistId()) == 1,
                 //memberId와 listId에 대한 좋아요 여부 확인 mepper.islike메서드가 이면 ture 0이면 false

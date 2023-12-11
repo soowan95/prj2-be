@@ -40,7 +40,7 @@ public interface SongMapper {
   <script>
   SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
   FROM song s JOIN artist a ON s.artistCode = a.id
-              JOIN songpoint sp ON s.title = sp.title AND a.name = sp.artistId
+              JOIN songpoint sp ON s.title = sp.title AND a.id = sp.artistId
   <trim prefix="WHERE" suffixOverrides="AND">
   <foreach collection="genreIncludeList" item="elem" open="(" separator="OR" close=") AND" nullable="true">
   s.genre LIKE #{elem}

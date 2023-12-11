@@ -26,7 +26,7 @@ public class likeController {
         if(login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok().body(service.update(like));
+        return ResponseEntity.ok().body(service.update(playlistLike));
     }
 
 

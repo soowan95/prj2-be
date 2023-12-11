@@ -41,4 +41,11 @@ public class MessageController {
     }
     messageService.dropSender(message);
   }
+
+  @MessageMapping("/chat/msg")
+  public void mssage(ChatMessage message) {
+    List<String> liveUser = memberService.getLiveUser();
+    message.setIsOnline(liveUser);
+    sendingOperations.convertAndSend("/topic/chat/room", message);
+  }
 }

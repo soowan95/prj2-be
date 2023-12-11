@@ -1,6 +1,6 @@
 package com.example.prj2be.service;
 
-import com.example.prj2be.domain.Like;
+import com.example.prj2be.domain.PlaylistLike;
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
@@ -20,7 +20,6 @@ public class PlaylistService {
 
     private final myPlaylistMapper mapper;
     private final LikeMapper likeMapper;
-
 
     public boolean validate(MyPlaylist playlist) {
         if (playlist == null) {
@@ -42,7 +41,6 @@ public class PlaylistService {
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
         }
 
-
         return playList;
     }
   
@@ -58,6 +56,7 @@ public class PlaylistService {
         MyPlaylist list = mapper.getByListId(listId);
         list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
         return list;
+    }
       
     public List<Song> getFavoriteListName(String listId) {
         return mapper.selectByFavoriteListName(listId);
