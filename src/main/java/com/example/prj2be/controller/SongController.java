@@ -159,8 +159,12 @@ public class SongController {
     songService.getArtistCode(song);
   }
 
+  @PutMapping("songEdit")
+  public void songEdit(@RequestBody Song song,
+                       @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+    System.out.println("song = " + song);
+    songService.updateSong(song, file);
 
 
-
-
+  }
 }
