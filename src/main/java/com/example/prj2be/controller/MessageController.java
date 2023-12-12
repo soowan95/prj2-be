@@ -28,7 +28,7 @@ public class MessageController {
       message.setMessage(message.getSender() + "님이 입장하였습니다.");
       sendingOperations.convertAndSend("/topic/chat/room", message);
     }
-    if (messageService.countSender(message) == 0 && message.getSender() != null) messageService.addSender(message);
+//    if (messageService.countSender(message) == 0 && message.getSender() != null) messageService.addSender(message);
   }
 
   @MessageMapping("/chat/leave")

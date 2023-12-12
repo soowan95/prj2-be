@@ -4,12 +4,21 @@ import com.example.prj2be.domain.Member;
 import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.MemberMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,24 +31,20 @@ public class MemberService {
     private final MemberMapper mapper;
     private final myPlaylistMapper playlistMapper;
     private final LikeMapper likeMapper;
+    private final S3Client s3;
+
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
 
     public Member getMember(String id){
         return mapper.selectById(id);
     }
 
 
-    public boolean login(Member member, WebRequest request) {
-        mapper.login(member);
-        Member dbMember = mapper.selectById(member.getId());
-        if (dbMember != null){
-            if (dbMember.getPassword().equals(member.getPassword())){
-                dbMember.setPassword("");
-                request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     public boolean validate(Member member) {
         if (member == null) {
@@ -60,9 +65,72 @@ public class MemberService {
         return true;
     }
 
-    public boolean add(Member member) {
-        return mapper.insert(member) == 1;
+    public boolean kakaoAdd(Member member) {
+        return mapper.kakaoInsert(member) ==1;
     }
+
+
+
+
+    public void upload(String id, MultipartFile file) throws IOException {
+        String key = "prj2/user/" + id +  "/" + file.getOriginalFilename();
+
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
+
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+    }
+
+    public void add(Member member, MultipartFile profilePhoto) throws IOException {
+
+        mapper.insert(member,profilePhoto.getOriginalFilename());
+        upload(member.getId(),profilePhoto);
+    }
+
+    public boolean login(Member member, WebRequest request) {
+        mapper.login(member);
+        Member dbMember = mapper.selectById(member.getId());
+        String photoUrl = "";
+        if (dbMember.getProfilePhoto().equals("userdefault.jpg")) photoUrl = urlPrefix + "prj2/user/default/" + dbMember.getProfilePhoto();
+        else photoUrl = urlPrefix + "prj2/user/" + dbMember.getId() + "/" + dbMember.getProfilePhoto();
+        dbMember.setProfilePhoto(photoUrl);
+        if (dbMember != null){
+            if (dbMember.getPassword().equals(member.getPassword())){
+                dbMember.setPassword("");
+                request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean update(Member member, MultipartFile profilePhoto, WebRequest request) throws IOException {
+        String prePhoto = mapper.getPhotoNameById(member);
+        member.setProfilePhoto(profilePhoto.getOriginalFilename());
+        mapper.update(member);
+        if(!prePhoto.equals("userdefault.jpg")) {
+            deleteObject(member.getId(), prePhoto);
+        }
+        upload(member.getId(),profilePhoto);
+        member.setProfilePhoto(urlPrefix + "prj2/user/" + member.getId() + "/" + member.getProfilePhoto());
+        member.setPassword("");
+        request.setAttribute("login", member, RequestAttributes.SCOPE_SESSION);
+        return true;
+    }
+
+    public void deleteObject(String id, String profilePhoto) {
+            String key = "prj2/user/"+id+"/"+ profilePhoto;
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+            s3.deleteObject(objectRequest);
+    }
+
 
     public String getId(String id) {
         return mapper.selectId(id);
@@ -108,9 +176,7 @@ public class MemberService {
         return true;
     }
 
-    public boolean update(Member member) {
-        return mapper.update(member) == 1;
-    }
+
       
     public int checkId(String id) {
         return mapper.checkId(id);

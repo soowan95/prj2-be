@@ -81,11 +81,15 @@ public class PlaylistService {
             Song song = new Song();
             song.setArtistGroup(memberPlayList.getGroup());
             song.setArtistName(memberPlayList.getName());
-            if (memberPlayList.getPicture() != null) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
-            else memberPlayList.setPictureUrl("https://image.genie.co.kr/Y/IMAGE/Playlist/Channel/GENIE/PLAYLIST_20231128121036.png/dims/resize/Q_80,0");
+            if (!memberPlayList.getPicture().equals("artistdefault.png")) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
+            else memberPlayList.setPictureUrl(urlPrefix+"prj2/artist/default/"+memberPlayList.getPicture());
         }
 
         return recommendPlaylist;
 
+    }
+
+    public List<Map<String,Object>> getTopPlaylist(String listId) {
+        return mapper.getTopPlaylist(listId);
     }
 }

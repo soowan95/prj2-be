@@ -70,7 +70,7 @@ delete from myplaylist where songId = #{songId} and playlistId = #{playlistId}
     int deleteByFavoriteList(String songId, String playlistId);
 
     @Select("""
-select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(myl.songId) as songs, count.count, a.`group`
+select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, count.count, a.`group`, a.picture
 from song join artist a on song.artistCode = a.id
           join myplaylist myl on song.id = myl.songId
           join memberplaylist mpl on myl.playlistId = mpl.id
@@ -78,8 +78,17 @@ from song join artist a on song.artistCode = a.id
           join member on mpl.memberId = member.id
           join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
 group by myl.playlistId
-order by count;
+order by count desc;
 
 """)
     List<MemberPlayList> getRecommendPlaylist();
+
+    @Select("""
+        SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, s.lyric, s.album, s.`release`, s.songUrl,myl.songId, myl.playlistId, a.picture, mpl.memberId,mpl.myplaylistcount
+        FROM myplaylist myl JOIN memberplaylist mpl ON myl.playlistId = mpl.id
+        JOIN song s ON myl.songId = s.id
+        JOIN artist a ON s.artistCode = a.id
+        WHERE mpl.id = #{listId}
+""")
+    List<Map<String, Object>> getTopPlaylist(String listId);
 }

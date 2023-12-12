@@ -16,6 +16,8 @@ public class Member {
     private String securityQuestion;
     private String securityAnswer;
     private Boolean online;
+    private String profilePhoto;
+
 
     public boolean isAdmin() {
         if (auth != null) {

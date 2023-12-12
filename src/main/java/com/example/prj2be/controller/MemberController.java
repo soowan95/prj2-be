@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +25,11 @@ public class MemberController {
     private final MemberService service;
 
     @PostMapping("signup")
-    public void signup(@RequestBody Member member) {
-        service.add(member);
+    public void signup(Member member,
+                       @RequestParam(value = "profilePhoto",required = false)MultipartFile profilePhoto) throws IOException {
+
+
+        service.add(member,profilePhoto);
     }
 
     @GetMapping(value = "check")
@@ -122,12 +127,14 @@ public class MemberController {
 
 
     @PutMapping("edit")
-    public ResponseEntity edit(@RequestBody Member member,
-                               @SessionAttribute(value = "login",required = false)Member login) {
+    public ResponseEntity edit(Member member,
+                               @SessionAttribute(value = "login",required = false)Member login,
+                               @RequestParam(value = "photo",required = false)MultipartFile profilePhoto,
+                               WebRequest request) throws IOException {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (service.update(member)) {
+        if (service.update(member,profilePhoto,request)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
@@ -166,4 +173,6 @@ public class MemberController {
     public List<String> getQuestions(@RequestParam String id) {
         return service.getQuestions(id);
     }
+
+
 }

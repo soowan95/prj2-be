@@ -64,12 +64,16 @@ public class PlaylistController {
         }
     }
 
-    @GetMapping("recommendplaylist")
+    @GetMapping("recommendOrderByLike")
     public List<MemberPlayList> getRecommendPlaylist() {
 
      return service.getRecommendPlaylist();
 
+    }
 
 
+    @GetMapping("topPlaylist")
+    public List<Map<String,Object>> topPlaylist(String listId) {
+        return service.getTopPlaylist(listId);
     }
 }
