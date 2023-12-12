@@ -24,7 +24,7 @@ public class MessageController {
   @MessageMapping("/chat/enter")
   public void enter(ChatMessage message) {
     List<String> liveUser = memberService.getLiveUser();
-    if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
+    if (ChatMessage.MessageType.ENTER.equals(message.getType()) && messageService.countSender(message) == 0) {
       message.setIsOnline(liveUser);
       message.setMessage(message.getSender() + "님이 입장하였습니다.");
       sendingOperations.convertAndSend("/topic/chat/room", message);
