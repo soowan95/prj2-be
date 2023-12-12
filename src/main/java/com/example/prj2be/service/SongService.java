@@ -61,7 +61,6 @@ public class SongService {
     songMapper.insertSongPoint(song, artistCode);
 
     return songMapper.insertSong(song, artistCode) == 1;
-
   }
 
   // 파일 업로드  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
@@ -76,7 +75,6 @@ public class SongService {
             .build();
 
     s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
   }
 
   // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
