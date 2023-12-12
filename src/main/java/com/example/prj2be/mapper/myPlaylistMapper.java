@@ -3,10 +3,7 @@ package com.example.prj2be.mapper;
 import com.example.prj2be.domain.MemberPlayList;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Map;
@@ -91,4 +88,20 @@ order by count desc;
         WHERE mpl.id = #{listId}
 """)
     List<Map<String, Object>> getTopPlaylist(String listId);
+
+
+    @Update("""
+update memberplaylist
+set myplaylistcount = myplaylistcount + 1
+where id = #{id}
+""")
+    Integer updateHitsCount(String id);
+
+
+    @Select("""
+    SELECT myplaylistcount
+    FROM memberplaylist
+    WHERE id = #{id}
+    """)
+    Integer getCountById(String id);
 }

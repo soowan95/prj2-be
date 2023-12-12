@@ -76,4 +76,10 @@ public class PlaylistController {
     public List<Map<String,Object>> topPlaylist(String listId) {
         return service.getTopPlaylist(listId);
     }
+
+    @PutMapping("hitscount")
+    public Integer hitsCount(@RequestParam String id) {
+        service.updateHitsCount(id);
+        return service.getCountById(id);
+    }
 }

@@ -92,4 +92,11 @@ public class PlaylistService {
     public List<Map<String,Object>> getTopPlaylist(String listId) {
         return mapper.getTopPlaylist(listId);
     }
+    public Integer getCountById(String id) {
+        return mapper.getCountById(id);
+    }
+    public Integer updateHitsCount(String id) {
+
+        return mapper.updateHitsCount(id);
+    }
 }
