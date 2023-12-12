@@ -246,7 +246,6 @@ public class SongService {
   public Song getSongById(Integer id) {
     // /prj2/artist/50/카라.jpeg
     Song song = songMapper.getSongById(id);
-    System.out.println("song = " + song);
     song.setArtistFileUrl(urlPrefix + "prj2/artist/" + song.getArtistId() + "/" + song.getArtistFileUrl());
     return song;
   }
