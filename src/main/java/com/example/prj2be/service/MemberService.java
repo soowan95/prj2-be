@@ -43,20 +43,24 @@ public class MemberService {
     public Member getMember(String id) {
         return mapper.selectById(id);
     }
-  
-    public boolean login(Member member, WebRequest request) {
+
+    public Member login(Member member, WebRequest request) {
+
         mapper.login(member);
         Member dbMember = mapper.selectById(member.getId());
-
-
-        if (dbMember != null) {
-            if (dbMember.getPassword().equals(member.getPassword())) {
+        String photoUrl = "";
+        if (dbMember.getProfilePhoto().equals("userdefault.jpg")) photoUrl = urlPrefix + "prj2/user/default/" + dbMember.getProfilePhoto();
+        else photoUrl = urlPrefix + "prj2/user/" + dbMember.getId() + "/" + dbMember.getProfilePhoto();
+        dbMember.setProfilePhoto(photoUrl);
+        if (dbMember != null){
+            if (dbMember.getPassword().equals(member.getPassword())){
                 List<Auth> auth = mapper.selectAuthById(member.getId());
                 dbMember.setAuth(auth);
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
             }
         }
+
         return dbMember;
     }
 
@@ -100,24 +104,6 @@ public class MemberService {
         mapper.insert(member,profilePhoto.getOriginalFilename());
         upload(member.getId(),profilePhoto);
     }
-
-    public boolean login(Member member, WebRequest request) {
-        mapper.login(member);
-        Member dbMember = mapper.selectById(member.getId());
-        String photoUrl = "";
-        if (dbMember.getProfilePhoto().equals("userdefault.jpg")) photoUrl = urlPrefix + "prj2/user/default/" + dbMember.getProfilePhoto();
-        else photoUrl = urlPrefix + "prj2/user/" + dbMember.getId() + "/" + dbMember.getProfilePhoto();
-        dbMember.setProfilePhoto(photoUrl);
-        if (dbMember != null){
-            if (dbMember.getPassword().equals(member.getPassword())){
-                dbMember.setPassword("");
-                request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public boolean update(Member member, MultipartFile profilePhoto, WebRequest request) throws IOException {
         String prePhoto = mapper.getPhotoNameById(member);
