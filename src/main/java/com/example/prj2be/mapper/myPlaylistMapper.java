@@ -82,12 +82,14 @@ delete from myplaylist where songId = #{songId} and playlistId = #{playlistId}
 """)
     String countBymemberId(String memberId);
 
+
     @Update("""
 update memberplaylist
 set myplaylistcount = myplaylistcount + 1
 where id = #{id}
 """)
     Integer updateHitsCount(String id);
+
 
     @Select("""
     SELECT myplaylistcount
