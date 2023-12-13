@@ -2,10 +2,7 @@ package com.example.prj2be.mapper;
 
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Map;
@@ -46,11 +43,12 @@ group by pl.id;
     join song s on m.songId = s.id
     where m.playlistId = #{id};
 """)
+    //myplaylist에 playlistId이 입력값이 같은면 songId를 출력하는 것
     List<Integer> chartlist(Integer id);
 
     @Select("""
     
-            SELECT a.memberId as id, a.listName, a.id listId, b.nickName
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount
     FROM memberplaylist a
             join member b on a.memberId = b.id 
     WHERE a.id = #{id}
@@ -71,4 +69,39 @@ WHERE mpl.id = #{listId}
 delete from myplaylist where songId = #{songId} and playlistId = #{playlistId} 
 """)
     int deleteByFavoriteList(String songId, String playlistId);
+
+    @Insert("""
+    INSERT INTO hits (memberId, playlistId)
+    values (#{memberId}, #{playlistId})
+    """)
+    int Inserthits(MyPlaylist myPlaylist);
+
+    @Select("""
+    SELECT count(id) FROM hits
+    WHERE memberId = {#memberId}
+""")
+    String countBymemberId(String memberId);
+
+
+    @Update("""
+update memberplaylist
+set myplaylistcount = myplaylistcount + 1
+where id = #{id}
+""")
+    Integer updateHitsCount(String id);
+
+
+    @Select("""
+    SELECT myplaylistcount
+    FROM memberplaylist
+    WHERE id = #{id}
+    """)
+    Integer getCountById(String id);
+
+//    @Update("""
+//    update memberplaylist
+//    set myplaylistcount = myplaylistcount + 1
+//    WHERE id = {id}
+//    """)
+//    Integer myPlaylist();
 }

@@ -183,4 +183,13 @@ WHERE album = #{album}
   ORDER BY 5 DESC ;
   """)
   List<Map<String, Object>> getMySongRequestList(String memberId);
+          
+  @Update("""
+UPDATE song
+SET title = #{song.title},
+    album = #{song.album},
+    artistCode = #{artistCode}
+WHERE id = #{song.id}
+""")
+  int updateSong(Song song, Integer artistCode);
 }

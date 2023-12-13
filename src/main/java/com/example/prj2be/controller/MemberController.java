@@ -95,7 +95,10 @@ public class MemberController {
 
         return ResponseEntity.ok().build();
       }
-      
+
+
+
+      // 권한 코드 작성 하기! ↓
     @PostMapping("login")
     public ResponseEntity login(@RequestBody Member member, WebRequest request) {
       if (service.login(member, request)) {

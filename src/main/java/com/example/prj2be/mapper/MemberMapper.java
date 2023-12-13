@@ -1,5 +1,6 @@
 package com.example.prj2be.mapper;
 
+import com.example.prj2be.domain.Auth;
 import org.apache.ibatis.annotations.*;
 import com.example.prj2be.domain.Member;
 
@@ -89,4 +90,11 @@ public interface MemberMapper {
     WHERE online = TRUE
     """)
     List<String> getLiveUser();
+
+
+    @Select("""
+SELECT * FROM auth
+WHERE loginId = #{id}
+""")
+    List<Auth> selectAuthById(String id);
 }
