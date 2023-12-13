@@ -149,7 +149,22 @@ public class SongController {
     return songService.albumList(album);
   }
 
+  @GetMapping("songEdit")
+  public void songEdit(@RequestParam String artistName,
+                       @RequestParam String artistGroup){
+
+    Song song = new Song();
+    song.setArtistGroup(artistGroup);
+    song.setArtistName(artistName);
+    songService.getArtistCode(song);
+  }
+
+  @PutMapping("songEdit")
+  public void songEdit(@RequestBody Song song,
+                       @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+    System.out.println("song = " + song);
+    songService.updateSong(song, file);
 
 
-
+  }
 }

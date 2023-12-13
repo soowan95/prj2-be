@@ -175,4 +175,13 @@ WHERE album = #{album}
   WHERE (title = #{title} OR title = #{requestTitle}) AND (artist = #{artistName} OR artist = #{requestArtist})
   """)
   void updateSongRequest(Song song);
-  }
+
+  @Update("""
+UPDATE song
+SET title = #{song.title},
+    album = #{song.album},
+    artistCode = #{artistCode}
+WHERE id = #{song.id}
+""")
+  int updateSong(Song song, Integer artistCode);
+}
