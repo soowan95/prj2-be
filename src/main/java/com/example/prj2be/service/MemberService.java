@@ -133,6 +133,7 @@ public class MemberService {
         return mapper.selectId(id);
     }
 
+
     public String getEmail(String email) {
         return mapper.selectByEmail(email);
     }
