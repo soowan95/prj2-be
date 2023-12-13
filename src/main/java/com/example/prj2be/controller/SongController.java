@@ -98,7 +98,15 @@ public class SongController {
 
     return songService.requestList();
   }
-  
+
+  @GetMapping("mySongRequestList")
+  public ResponseEntity<List<Map<String, Object>>> mySongRequestList(@SessionAttribute(value = "login", required = false) Member login){
+    if (login == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    return ResponseEntity.ok(songService.mySongRequestList(login.getId()));
+  }
+
   @GetMapping("{id}")
   public ResponseEntity<Song> getSongById(@PathVariable Integer id) {
     Song song = songService.getSongById(id);
@@ -115,7 +123,7 @@ public class SongController {
     if (songService.updateSongPointById(song.getId())) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
   }
-  
+
   @GetMapping("chartlist")
   public  List<Song> chartlist(Integer id) {
     return songService.
@@ -149,7 +157,22 @@ public class SongController {
     return songService.albumList(album);
   }
 
+  @GetMapping("songEdit")
+  public void songEdit(@RequestParam String artistName,
+                       @RequestParam String artistGroup){
+
+    Song song = new Song();
+    song.setArtistGroup(artistGroup);
+    song.setArtistName(artistName);
+    songService.getArtistCode(song);
+  }
+
+  @PutMapping("songEdit")
+  public void songEdit(@RequestBody Song song,
+                       @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+    System.out.println("song = " + song);
+    songService.updateSong(song, file);
 
 
-
+  }
 }

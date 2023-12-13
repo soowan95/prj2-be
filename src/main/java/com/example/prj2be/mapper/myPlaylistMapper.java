@@ -40,11 +40,12 @@ group by pl.id;
     join song s on m.songId = s.id
     where m.playlistId = #{id};
 """)
+    //myplaylist에 playlistId이 입력값이 같은면 songId를 출력하는 것
     List<Integer> chartlist(Integer id);
 
     @Select("""
     
-            SELECT a.memberId as id, a.listName, a.id listId, b.nickName
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount
     FROM memberplaylist a
             join member b on a.memberId = b.id 
     WHERE a.id = #{id}
@@ -88,7 +89,18 @@ order by count desc;
         WHERE mpl.id = #{listId}
 """)
     List<Map<String, Object>> getTopPlaylist(String listId);
+            
+    @Insert("""
+    INSERT INTO hits (memberId, playlistId)
+    values (#{memberId}, #{playlistId})
+    """)
+    int Inserthits(MyPlaylist myPlaylist);
 
+    @Select("""
+    SELECT count(id) FROM hits
+    WHERE memberId = {#memberId}
+""")
+    String countBymemberId(String memberId);
 
     @Update("""
 update memberplaylist

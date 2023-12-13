@@ -18,6 +18,7 @@ public interface LikeMapper {
                 INSERT INTO playlistlike (memberId, likelistId)
                 values (#{memberId}, #{likelistId})
             """)
+    //values에 받아오는 memverId와 likellistId를 playlistlike에 넣는 코드
     int insert(PlaylistLike playlistLike);
 
 

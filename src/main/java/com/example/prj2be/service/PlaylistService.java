@@ -73,7 +73,6 @@ public class PlaylistService {
         return mapper.deleteByFavoriteList(songId, playlistId)==1;
     }
 
-
     public List<MemberPlayList> getRecommendPlaylist() {
         List<MemberPlayList> recommendPlaylist = mapper.getRecommendPlaylist();
 
@@ -86,17 +85,17 @@ public class PlaylistService {
         }
 
         return recommendPlaylist;
-
     }
 
     public List<Map<String,Object>> getTopPlaylist(String listId) {
         return mapper.getTopPlaylist(listId);
     }
+  
     public Integer getCountById(String id) {
         return mapper.getCountById(id);
     }
+  
     public Integer updateHitsCount(String id) {
-
         return mapper.updateHitsCount(id);
     }
 }

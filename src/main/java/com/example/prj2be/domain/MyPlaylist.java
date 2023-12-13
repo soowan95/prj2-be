@@ -6,6 +6,7 @@ import lombok.Data;
 public class MyPlaylist {
     private String id;
     private String listId;
+    private String memberId;
     private String listName;
     private Boolean isLike;
     private Integer songId;
@@ -13,5 +14,5 @@ public class MyPlaylist {
     private Integer countLike;
     private Integer totalSongCount;
     private String nickName;
-    private Integer HitsCount;
+    private Integer myplaylistcount;
 }

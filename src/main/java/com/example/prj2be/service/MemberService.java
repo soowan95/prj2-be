@@ -1,5 +1,6 @@
 package com.example.prj2be.service;
 
+import com.example.prj2be.domain.Auth;
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.MemberMapper;
@@ -39,12 +40,26 @@ public class MemberService {
     @Value("${aws.s3.bucket.name}")
     private String bucket;
 
-    public Member getMember(String id){
+    public Member getMember(String id) {
         return mapper.selectById(id);
     }
+  
+    public boolean login(Member member, WebRequest request) {
+        mapper.login(member);
+        Member dbMember = mapper.selectById(member.getId());
 
 
-
+        if (dbMember != null) {
+            if (dbMember.getPassword().equals(member.getPassword())) {
+                List<Auth> auth = mapper.selectAuthById(member.getId());
+                dbMember.setAuth(auth);
+                dbMember.setPassword("");
+                request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean validate(Member member) {
         if (member == null) {
@@ -68,9 +83,6 @@ public class MemberService {
     public boolean kakaoAdd(Member member) {
         return mapper.kakaoInsert(member) ==1;
     }
-
-
-
 
     public void upload(String id, MultipartFile file) throws IOException {
         String key = "prj2/user/" + id +  "/" + file.getOriginalFilename();
@@ -143,11 +155,12 @@ public class MemberService {
     public String getNickName(String nickName) {
         return mapper.selectByNickName(nickName);
     }
-  
+
     public boolean isValidIdAndAnswer(String id, String answer) {
         Member member = mapper.selectById(id);
         return member != null && member.getSecurityAnswer().equals(answer);
     }
+
     public Map<String, String> getPassword(String id, String securityQuestion, String securityAnswer) {
         if (!isValidIdAndAnswer(id, securityAnswer)) {
             return null;
@@ -175,9 +188,11 @@ public class MemberService {
         mapper.updatePassword(id, securityQuestion, securityAnswer, newPassword);
         return true;
     }
+  
+    public boolean update(Member member) {
+        return mapper.update(member) == 1;
+    }
 
-
-      
     public int checkId(String id) {
         return mapper.checkId(id);
     }
@@ -190,18 +205,18 @@ public class MemberService {
         likeMapper.deleteByMemberId(id);
 
         //멤버 삭제
-        return mapper.deleteByMemberId(id)==1;
+        return mapper.deleteByMemberId(id) == 1;
     }
-  
+
     public List<String> getQuestions(String id) {
         return mapper.getQuestions(id);
     }
-  
+
     public void logout(Member login) {
         mapper.logout(login);
     }
 
-  public List<String> getLiveUser() {
+    public List<String> getLiveUser() {
         return mapper.getLiveUser();
-  }
+    }
 }
