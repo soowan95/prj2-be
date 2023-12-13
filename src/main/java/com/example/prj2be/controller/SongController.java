@@ -98,7 +98,15 @@ public class SongController {
 
     return songService.requestList();
   }
-  
+
+  @GetMapping("mySongRequestList")
+  public ResponseEntity<List<Map<String, Object>>> mySongRequestList(@SessionAttribute(value = "login", required = false) Member login){
+    if (login == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    return ResponseEntity.ok(songService.mySongRequestList(login.getId()));
+  }
+
   @GetMapping("{id}")
   public ResponseEntity<Song> getSongById(@PathVariable Integer id) {
     Song song = songService.getSongById(id);
@@ -115,7 +123,7 @@ public class SongController {
     if (songService.updateSongPointById(song.getId())) return ResponseEntity.ok().build();
     return ResponseEntity.internalServerError().build();
   }
-  
+
   @GetMapping("chartlist")
   public  List<Song> chartlist(Integer id) {
     return songService.

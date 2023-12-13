@@ -176,6 +176,14 @@ WHERE album = #{album}
   """)
   void updateSongRequest(Song song);
 
+  @Select("""
+  SELECT *
+  FROM songrequest
+  WHERE member = #{memberId}
+  ORDER BY 5 DESC ;
+  """)
+  List<Map<String, Object>> getMySongRequestList(String memberId);
+          
   @Update("""
 UPDATE song
 SET title = #{song.title},

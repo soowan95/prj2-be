@@ -274,6 +274,9 @@ public class SongService {
     return albumList;
   }
 
+  public List<Map<String, Object>> mySongRequestList(String memberId) {
+    return songMapper.getMySongRequestList(memberId);
+  }
 
   public void updateSong(Song song, MultipartFile file) throws IOException {
     Integer artistCode = songMapper.getArtistCode(song);
