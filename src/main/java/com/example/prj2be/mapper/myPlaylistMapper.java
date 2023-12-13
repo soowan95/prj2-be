@@ -1,5 +1,6 @@
 package com.example.prj2be.mapper;
 
+import com.example.prj2be.domain.MemberPlayList;
 import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.*;
@@ -17,11 +18,7 @@ public interface myPlaylistMapper {
     List<MyPlaylist> getMyPlayList(String id);
 //    where에 memeber에 Id가 같으면 SELECT실행
 
-    @Select("""
-            select title,lyric,album,`release`,genre, artist.name
-            from song join artist on song.artistCode = artist.id
-            """)
-    List<Map<String, Object>> selectRecommended();
+
 
     @Delete("""
             delete from memberplaylist
@@ -70,6 +67,29 @@ delete from myplaylist where songId = #{songId} and playlistId = #{playlistId}
 """)
     int deleteByFavoriteList(String songId, String playlistId);
 
+    @Select("""
+select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, count.count, a.`group`, a.picture
+from song join artist a on song.artistCode = a.id
+          join myplaylist myl on song.id = myl.songId
+          join memberplaylist mpl on myl.playlistId = mpl.id
+          join playlistlike pll on mpl.id = pll.likelistId
+          join member on mpl.memberId = member.id
+          join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
+group by myl.playlistId
+order by count desc;
+
+""")
+    List<MemberPlayList> getRecommendPlaylist();
+
+    @Select("""
+        SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, s.lyric, s.album, s.`release`, s.songUrl,myl.songId, myl.playlistId, a.picture, mpl.memberId,mpl.myplaylistcount
+        FROM myplaylist myl JOIN memberplaylist mpl ON myl.playlistId = mpl.id
+        JOIN song s ON myl.songId = s.id
+        JOIN artist a ON s.artistCode = a.id
+        WHERE mpl.id = #{listId}
+""")
+    List<Map<String, Object>> getTopPlaylist(String listId);
+            
     @Insert("""
     INSERT INTO hits (memberId, playlistId)
     values (#{memberId}, #{playlistId})
@@ -81,7 +101,6 @@ delete from myplaylist where songId = #{songId} and playlistId = #{playlistId}
     WHERE memberId = {#memberId}
 """)
     String countBymemberId(String memberId);
-
 
     @Update("""
 update memberplaylist
@@ -97,11 +116,4 @@ where id = #{id}
     WHERE id = #{id}
     """)
     Integer getCountById(String id);
-
-//    @Update("""
-//    update memberplaylist
-//    set myplaylistcount = myplaylistcount + 1
-//    WHERE id = {id}
-//    """)
-//    Integer myPlaylist();
 }

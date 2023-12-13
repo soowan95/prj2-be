@@ -15,9 +15,9 @@ public class Member {
     private String securityQuestion;
     private String securityAnswer;
     private Boolean online;
+    private String profilePhoto;
     private List<Auth> auth;
-
-
+  
     public boolean isAdmin() {
         if (auth != null) {
             return auth.stream()

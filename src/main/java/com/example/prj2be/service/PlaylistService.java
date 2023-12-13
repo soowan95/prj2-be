@@ -1,12 +1,15 @@
 package com.example.prj2be.service;
 
-import com.example.prj2be.domain.MyPlaylist;
-import com.example.prj2be.domain.Song;
+import com.example.prj2be.domain.*;
+import com.example.prj2be.mapper.FileMapper;
 import com.example.prj2be.mapper.LikeMapper;
+import com.example.prj2be.mapper.SongMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,15 @@ public class PlaylistService {
 
     private final myPlaylistMapper mapper;
     private final LikeMapper likeMapper;
+    private final SongMapper songMapper;
+    private final FileMapper fileMapper;
+    private final S3Client s3Client;
+
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
 
     public boolean validate(MyPlaylist playlist) {
         if (playlist == null) {
@@ -42,9 +54,6 @@ public class PlaylistService {
         return playList;
     }
   
-    public List<Map<String,Object>> getRecommended() {
-        return mapper.selectRecommended();
-    }
 
     public List<Map<String, Object>> getFavoriteList(String id) {
         return mapper.selectFavoriteList(id);
@@ -64,16 +73,29 @@ public class PlaylistService {
         return mapper.deleteByFavoriteList(songId, playlistId)==1;
     }
 
-    public Integer updateHitsCount(String id) {
+    public List<MemberPlayList> getRecommendPlaylist() {
+        List<MemberPlayList> recommendPlaylist = mapper.getRecommendPlaylist();
 
-        return mapper.updateHitsCount(id);
+        for (MemberPlayList memberPlayList : recommendPlaylist) {
+            Song song = new Song();
+            song.setArtistGroup(memberPlayList.getGroup());
+            song.setArtistName(memberPlayList.getName());
+            if (!memberPlayList.getPicture().equals("artistdefault.png")) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
+            else memberPlayList.setPictureUrl(urlPrefix+"prj2/artist/default/"+memberPlayList.getPicture());
+        }
+
+        return recommendPlaylist;
     }
 
+    public List<Map<String,Object>> getTopPlaylist(String listId) {
+        return mapper.getTopPlaylist(listId);
+    }
+  
     public Integer getCountById(String id) {
         return mapper.getCountById(id);
     }
-
-//    public boolean update(MyPlaylist myPlaylist ) {
-//        return mapper.myPlaylist(myPlaylist.getMyplaylistcount()) == 1;
-//    }
+  
+    public Integer updateHitsCount(String id) {
+        return mapper.updateHitsCount(id);
+    }
 }
