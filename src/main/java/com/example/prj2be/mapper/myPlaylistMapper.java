@@ -11,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface myPlaylistMapper {
     @Select("""
-            SELECT a.memberId as id, a.listName, a.id listId FROM memberplaylist a
+            SELECT a.myplaylistcount,a.memberId as id, a.listName, a.id listId, b.nickName FROM memberplaylist a
             join member b on a.memberId = b.id
             where b.id = #{id}
             """)
@@ -116,4 +116,9 @@ where id = #{id}
     WHERE id = #{id}
     """)
     Integer getCountById(String id);
+
+    @Insert("""
+    insert into myplaylist (songId, playlistId) VALUES (#{id}, #{listId})
+""")
+    int insertMyPlaylist(Integer listId, Integer id);
 }

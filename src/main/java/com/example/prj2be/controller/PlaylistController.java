@@ -82,4 +82,10 @@ public class PlaylistController {
         service.updateHitsCount(id);
         return service.getCountById(id);
     }
+
+    @PostMapping("insertMyPlaylist")
+    public void insertMyPlaylist(Integer listId, Integer id) {
+       service.insertMyPlaylist(listId, id);
+    }
+
 }

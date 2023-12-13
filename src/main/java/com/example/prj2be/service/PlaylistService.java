@@ -98,4 +98,8 @@ public class PlaylistService {
     public Integer updateHitsCount(String id) {
         return mapper.updateHitsCount(id);
     }
+
+    public void insertMyPlaylist(Integer listId, Integer id) {
+        mapper.insertMyPlaylist(listId, id);
+    }
 }
