@@ -66,4 +66,10 @@ public class PlaylistController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PutMapping("hitscount")
+    public Integer hitsCount(@RequestParam String id) {
+        service.updateHitsCount(id);
+        return service.getCountById(id);
+    }
 }
