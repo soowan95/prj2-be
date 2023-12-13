@@ -285,4 +285,18 @@ public class SongService {
 
     return albumList;
   }
+
+  public List<Map<String, Object>> mySongRequestList(String memberId) {
+    return songMapper.getMySongRequestList(memberId);
+  }
+
+  public void updateSong(Song song, MultipartFile file) throws IOException {
+    Integer artistCode = songMapper.getArtistCode(song);
+    if (artistCode == null) {
+      songMapper.insertArtist(song, file.getOriginalFilename());
+      upload(song.getArtistId(), file);
+    }
+    artistCode = song.getArtistId();
+    songMapper.updateSong(song, artistCode);
+  }
 }

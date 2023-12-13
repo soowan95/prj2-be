@@ -21,7 +21,7 @@ public class KakaoService {
     if (memberService.checkId(member.getId()) != 1) {
       member.setPassword("1234");
       member.setInserted(LocalDateTime.now());
-      memberService.add(member);
+      memberService.kakaoAdd(member);
     }
 
     member.setPassword("1234");

@@ -1,7 +1,9 @@
 package com.example.prj2be.mapper;
 
+import com.example.prj2be.domain.Auth;
 import org.apache.ibatis.annotations.*;
 import com.example.prj2be.domain.Member;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,10 +22,10 @@ public interface MemberMapper {
     String selectByNickName(String nickName);
 
     @Insert("""
-            INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer)
-            VALUES (#{id}, #{password}, #{nickName}, #{email}, #{securityQuestion}, #{securityAnswer})
+            INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer, profilePhoto)
+            VALUES (#{member.id}, #{member.password}, #{member.nickName}, #{member.email}, #{member.securityQuestion}, #{member.securityAnswer}, #{profilePhoto})
             """)
-    int insert(Member member);
+    int insert(Member member, String profilePhoto);
 
     @Select("""
             SELECT id FROM member
@@ -48,7 +50,7 @@ public interface MemberMapper {
 
     @Update("""
             update member
-            set nickName = #{nickName}, email=#{email}
+            set nickName = #{nickName}, email=#{email}, profilePhoto = #{profilePhoto}
             where id = #{id}
             """)
     int update(Member member);
@@ -89,4 +91,23 @@ public interface MemberMapper {
     WHERE online = TRUE
     """)
     List<String> getLiveUser();
+            
+    @Insert("""
+            INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer, profilePhoto)
+            VALUES (#{id}, #{password}, #{nickName}, #{email}, #{securityQuestion}, #{securityAnswer}, #{profile})
+            """)
+    int kakaoInsert(Member member);
+
+    @Select("""
+select profilePhoto
+from member
+where id = #{id}
+""")
+    String getPhotoNameById(Member member);
+            
+    @Select("""
+SELECT * FROM auth
+WHERE loginId = #{id}
+""")
+    List<Auth> selectAuthById(String id);
 }

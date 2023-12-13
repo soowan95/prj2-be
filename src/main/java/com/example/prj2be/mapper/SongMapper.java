@@ -175,4 +175,21 @@ WHERE album = #{album}
   WHERE (title = #{title} OR title = #{requestTitle}) AND (artist = #{artistName} OR artist = #{requestArtist})
   """)
   void updateSongRequest(Song song);
-  }
+
+  @Select("""
+  SELECT *
+  FROM songrequest
+  WHERE member = #{memberId}
+  ORDER BY 5 DESC ;
+  """)
+  List<Map<String, Object>> getMySongRequestList(String memberId);
+          
+  @Update("""
+UPDATE song
+SET title = #{song.title},
+    album = #{song.album},
+    artistCode = #{artistCode}
+WHERE id = #{song.id}
+""")
+  int updateSong(Song song, Integer artistCode);
+}
