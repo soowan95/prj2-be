@@ -61,7 +61,6 @@ public class SongService {
     songMapper.insertSongPoint(song, artistCode);
 
     return songMapper.insertSong(song, artistCode) == 1;
-
   }
 
   // 파일 업로드  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
@@ -76,7 +75,6 @@ public class SongService {
             .build();
 
     s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
   }
 
   // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
@@ -207,6 +205,21 @@ public class SongService {
       case "ㅎ" -> {
         return songList.stream().filter(a -> getCode(category, a) == 14).toList();
       }
+      case "ㄲ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 15).toList();
+      }
+      case "ㄸ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 16).toList();
+      }
+      case "ㅃ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 17).toList();
+      }
+      case "ㅆ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 18).toList();
+      }
+      case "ㅉ" -> {
+        return songList.stream().filter(a -> getCode(category, a) == 19).toList();
+      }
     }
     ;
 
@@ -233,7 +246,6 @@ public class SongService {
   public Song getSongById(Integer id) {
     // /prj2/artist/50/카라.jpeg
     Song song = songMapper.getSongById(id);
-    System.out.println("song = " + song);
     song.setArtistFileUrl(urlPrefix + "prj2/artist/" + song.getArtistId() + "/" + song.getArtistFileUrl());
     return song;
   }

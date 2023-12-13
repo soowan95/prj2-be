@@ -24,4 +24,28 @@ public class Parse {
     else if (i >= 54616 && i < 55204) return 14; // ㅎ
     return 0;
   }
+
+  public static String passwordCode(String p) {
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i < p.length(); i++) {
+      int j = p.charAt(i) - 25;
+      if (j < 10) sb.append("0").append(j);
+      else sb.append(j);
+    }
+
+    return sb.toString();
+  }
+
+  public static String parsePasswordCode(String p) {
+
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i * 2 < p.length(); i++) {
+      String s = p.substring(i*2, i*2+2);
+      sb.append((char) (Integer.parseInt(s) + 25));
+    }
+
+    return sb.toString();
+  }
 }

@@ -55,10 +55,9 @@ public class MemberService {
                 dbMember.setAuth(auth);
                 dbMember.setPassword("");
                 request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
-                return true;
             }
         }
-        return false;
+        return dbMember;
     }
 
     public boolean validate(Member member) {
