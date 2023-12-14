@@ -24,8 +24,8 @@ public class PlaylistController {
     private final PlaylistService service;
 
     @GetMapping("get")
-    public List<MyPlaylist> getList(String id) {
-        return service.getMyPlayList(id);
+    public List<MyPlaylist> getList(String id, String songId) {
+        return service.getMyPlayList(id, songId);
     }
 
 
@@ -82,4 +82,23 @@ public class PlaylistController {
         service.updateHitsCount(id);
         return service.getCountById(id);
     }
+
+    @PostMapping("insertMyPlaylist")
+    public void insertMyPlaylist(Integer listId, Integer id) {
+       service.insertMyPlaylist(listId, id);
+    }
+
+    @PostMapping("createPlaylist")
+    public void createPlaylist(@RequestBody MemberPlayList memberPlayList) {
+        service.createPlaylist(memberPlayList);
+    }
+    @GetMapping(value = "check", params = "listName")
+    public ResponseEntity checkNickName(String listName) {
+        if (service.getListName(listName) == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
 }

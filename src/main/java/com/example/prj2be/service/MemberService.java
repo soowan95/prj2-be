@@ -122,12 +122,12 @@ public class MemberService {
     }
 
     public void deleteObject(String id, String profilePhoto) {
-            String key = "prj2/user/"+id+"/"+ profilePhoto;
-            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(key)
-                    .build();
-            s3.deleteObject(objectRequest);
+        String key = "prj2/user/"+id+"/"+ profilePhoto;
+        DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+        s3.deleteObject(objectRequest);
     }
 
 
@@ -177,7 +177,7 @@ public class MemberService {
         mapper.updatePassword(id, securityQuestion, securityAnswer, newPasswordCode);
         return true;
     }
-  
+
     public boolean update(Member member) {
         return mapper.update(member) == 1;
     }

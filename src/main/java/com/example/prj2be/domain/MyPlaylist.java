@@ -15,4 +15,5 @@ public class MyPlaylist {
     private Integer totalSongCount;
     private String nickName;
     private Integer myplaylistcount;
+    private Boolean isSongContain;
 }
