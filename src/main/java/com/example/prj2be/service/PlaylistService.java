@@ -38,7 +38,7 @@ public class PlaylistService {
         return true;
     }
   
-    public List<MyPlaylist> getMyPlayList(String id) {
+    public List<MyPlaylist> getMyPlayList(String id, String songId) {
         List<MyPlaylist> playList = mapper.getMyPlayList(id);
 
         for (MyPlaylist list : playList) {
@@ -49,13 +49,14 @@ public class PlaylistService {
             //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
-
-            // 훈일이 형님꺼랑 conflict 발생 예정 둘다 apply 하면 됨
+          
             Integer songId = mapper.getSongIdBylistId(list.getListId()).get(0);
             Integer artistCode = songMapper.getArtistCodeBySongId(songId);
             String picture = artistMapper.getPictureById(artistCode);
             if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
             else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+          
+            list.setIsSongContain(mapper.getCountBySongId(songId, list.getListId()) >= 1);
         }
 
         return playList;
@@ -110,9 +111,16 @@ public class PlaylistService {
     public List<LocalDate> getRelease(Integer listId) {
         return mapper.getRelease(listId);
     }
+  
+    public void insertMyPlaylist(Integer listId, Integer id) {
+        mapper.insertMyPlaylist(listId, id);
+    }
 
-//    public LocalDateTime getByRealease(Integer listId) {
-//        if()
-//        return mapper.getByRealease(listId);
-//    }
+    public String getListName(String listName) {
+        return mapper.selectByListName(listName);
+    }
+
+    public void createPlaylist(MemberPlayList memberPlayList) {
+        mapper.createPlaylist(memberPlayList);
+    }
 }

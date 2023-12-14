@@ -13,7 +13,7 @@ import java.util.Map;
 @Mapper
 public interface myPlaylistMapper {
     @Select("""
-            SELECT a.memberId as id, a.listName, a.id listId FROM memberplaylist a
+            SELECT a.myplaylistcount,a.memberId as id, a.listName, a.id listId, b.nickName FROM memberplaylist a
             join member b on a.memberId = b.id
             where b.id = #{id}
             """)
@@ -134,11 +134,28 @@ where id = #{id}
     WHERE playlistId = #{listId}
     """)
     List<Integer> getSongIdBylistId(String listId);
+            
+    @Insert("""
+    insert into myplaylist (songId, playlistId) VALUES (#{id}, #{listId})
+""")
+    int insertMyPlaylist(Integer listId, Integer id);
 
-//    @Select("""
-//    SELECT realease FROM myplaylist
-//    where playlistId = #{id}
-//""")
-//    LocalDateTime getByRealease(Integer listId);
+    @Select("""
+select * from memberplaylist
+where listName = #{listName}
+""")
+    String selectByListName(String listName);
+
+    @Insert("""
+insert into memberplaylist (memberId, listName) VALUES (#{memberId}, #{listName})
+""")
+    int createPlaylist(MemberPlayList memberPlayList);
+
+    @Select("""
+    SELECT COUNT(*)
+    FROM myplaylist
+    WHERE songId = #{songId} AND playlistId = #{listId}
+    """)
+    Integer getCountBySongId(String songId, String listId);
 }
 

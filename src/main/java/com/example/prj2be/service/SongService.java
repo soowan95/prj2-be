@@ -246,7 +246,13 @@ public class SongService {
   public Song getSongById(Integer id) {
     // /prj2/artist/50/카라.jpeg
     Song song = songMapper.getSongById(id);
-    song.setArtistFileUrl(urlPrefix + "prj2/artist/" + song.getArtistId() + "/" + song.getArtistFileUrl());
+    String photoUrl = "";
+    if(song.getArtistFileUrl().equals("artistdefault.png")) {
+      photoUrl = urlPrefix+"prj2/artist/default/"+song.getArtistFileUrl();
+    } else {
+      photoUrl = urlPrefix+"prj2/artist/"+song.getId()+"/"+song.getArtistFileUrl();
+    }
+    song.setArtistFileUrl(photoUrl);
     return song;
   }
 
