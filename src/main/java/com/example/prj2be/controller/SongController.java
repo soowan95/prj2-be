@@ -126,8 +126,7 @@ public class SongController {
 
   @GetMapping("chartlist")
   public  List<Song> chartlist(Integer id) {
-    return songService.
-            chartlist(id);
+    return songService.chartlist(id);
   }
 
 
@@ -168,11 +167,10 @@ public class SongController {
   }
 
   @PutMapping("songEdit")
-  public void songEdit(@RequestBody Song song,
+  public void songEdit(Song song,
                        @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
-    System.out.println("song = " + song);
+
+
     songService.updateSong(song, file);
-
-
   }
 }
