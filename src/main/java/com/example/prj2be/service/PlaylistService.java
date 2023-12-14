@@ -1,16 +1,14 @@
 package com.example.prj2be.service;
 
 import com.example.prj2be.domain.*;
-import com.example.prj2be.mapper.FileMapper;
-import com.example.prj2be.mapper.LikeMapper;
-import com.example.prj2be.mapper.SongMapper;
-import com.example.prj2be.mapper.myPlaylistMapper;
+import com.example.prj2be.mapper.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +21,7 @@ public class PlaylistService {
     private final myPlaylistMapper mapper;
     private final LikeMapper likeMapper;
     private final SongMapper songMapper;
+    private final ArtistMapper artistMapper;
     private final FileMapper fileMapper;
     private final S3Client s3Client;
 
@@ -50,6 +49,13 @@ public class PlaylistService {
             //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
+
+            // 훈일이 형님꺼랑 conflict 발생 예정 둘다 apply 하면 됨
+            Integer songId = mapper.getSongIdBylistId(list.getListId()).get(0);
+            Integer artistCode = songMapper.getArtistCodeBySongId(songId);
+            String picture = artistMapper.getPictureById(artistCode);
+            if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
+            else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
         }
 
         return playList;
@@ -101,8 +107,8 @@ public class PlaylistService {
         return mapper.updateHitsCount(id);
     }
 
-    public void getRelease(Integer listId) {
-        mapper.getRelease(listId);
+    public List<LocalDate> getRelease(Integer listId) {
+        return mapper.getRelease(listId);
     }
 
 //    public LocalDateTime getByRealease(Integer listId) {

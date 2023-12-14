@@ -5,6 +5,7 @@ import com.example.prj2be.domain.Member;
 import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.MemberMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
+import com.example.prj2be.util.Parse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +54,7 @@ public class MemberService {
         else photoUrl = urlPrefix + "prj2/user/" + dbMember.getId() + "/" + dbMember.getProfilePhoto();
         dbMember.setProfilePhoto(photoUrl);
         if (dbMember != null){
-            if (dbMember.getPassword().equals(member.getPassword())){
+            if (Parse.parsePasswordCode(dbMember.getPassword()).equals(member.getPassword())){
                 List<Auth> auth = mapper.selectAuthById(member.getId());
                 dbMember.setAuth(auth);
                 dbMember.setPassword("");
@@ -100,6 +101,7 @@ public class MemberService {
     }
 
     public void add(Member member, MultipartFile profilePhoto) throws IOException {
+        member.setPassword(Parse.passwordCode(member.getPassword()));
 
         mapper.insert(member,profilePhoto.getOriginalFilename());
         upload(member.getId(),profilePhoto);
@@ -120,12 +122,12 @@ public class MemberService {
     }
 
     public void deleteObject(String id, String profilePhoto) {
-            String key = "prj2/user/"+id+"/"+ profilePhoto;
-            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(key)
-                    .build();
-            s3.deleteObject(objectRequest);
+        String key = "prj2/user/"+id+"/"+ profilePhoto;
+        DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+        s3.deleteObject(objectRequest);
     }
 
 
@@ -154,7 +156,7 @@ public class MemberService {
         Member member = mapper.selectById(id);
 
         // 가져온 비밀번호 반만 보여주기
-        String originalPassword = member.getPassword();
+        String originalPassword = Parse.parsePasswordCode(member.getPassword());
         int len = originalPassword.length() / 2;
         String maskedPassword = originalPassword.substring(0, len) + "*".repeat(originalPassword.length() - len);
 
@@ -170,10 +172,12 @@ public class MemberService {
             return false;
         }
 
-        mapper.updatePassword(id, securityQuestion, securityAnswer, newPassword);
+        String newPasswordCode = Parse.passwordCode(newPassword);
+
+        mapper.updatePassword(id, securityQuestion, securityAnswer, newPasswordCode);
         return true;
     }
-  
+
     public boolean update(Member member) {
         return mapper.update(member) == 1;
     }

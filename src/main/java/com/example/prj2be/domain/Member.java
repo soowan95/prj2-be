@@ -24,7 +24,6 @@ public class Member {
                     .map(a -> a.getName())
                     .anyMatch(n -> n.equals("admin"));
         }
-
         return false;
     }
 }
