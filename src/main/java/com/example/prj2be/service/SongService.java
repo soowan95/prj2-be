@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -76,6 +77,15 @@ public class SongService {
                 .build();
 
         s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+    }
+
+    public void deleteObject(Integer id, String profilePhoto) {
+        String key = "prj2/artist/"+id+"/"+ profilePhoto;
+        DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+        s3.deleteObject(objectRequest);
     }
 
     // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
@@ -294,16 +304,17 @@ public class SongService {
     public void updateSong(Song song, MultipartFile file) throws IOException {
         Integer artistCode = songMapper.getArtistCode(song);
         if (artistCode == null) {
-            songMapper.insertArtist(song, fileName(""));
-           // songMapper.insertArtist(song, file.getOriginalFilename());
-           // upload(song.getArtistId(), file);
+            songMapper.insertArtist(song, file.getOriginalFilename());
             artistCode = song.getArtistId();
         }
-        songMapper.updateSong(song, artistCode);
-    }
+        if (artistMapper.getPictureByCode(artistCode).equals("artistdefault.png")) upload(artistCode, file);
+        else {
+            deleteObject(artistCode, artistMapper.getPictureByCode(artistCode));
+            upload(artistCode, file);
+        }
 
-    // songEdit에서 artistName과 artistGroup 500에러떠서 씀...
-    private String fileName(String s) {
-        return null;
+        artistMapper.updatePicture(artistCode, file.getOriginalFilename());
+
+        songMapper.updateSong(song, artistCode);
     }
 }
