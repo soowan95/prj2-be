@@ -158,12 +158,7 @@ public class SongService {
         return newList;
     }
   
-    return songList
-            .stream()
-            .filter(a -> getByCategory(category, a).toLowerCase().replaceAll(" +", "").contains(keyword.toLowerCase().replaceAll(" +", "")))
-            .sorted((a, b) -> getByCategory(category, a).compareTo(getByCategory(category, b)))
-            .toList();
-  }
+
 
     public Integer getCode(String category, Song s) {
         if (category.equals("가수")) return s.getArtistHangulCode();
@@ -240,9 +235,12 @@ public class SongService {
                 return songList.stream().filter(a -> getCode(category, a) == 19).toList();
             }
         }
-        ;
 
-        return songList.stream().filter(a -> getByCategory(category, a).contains(keyword)).toList();
+        return songList
+                .stream()
+                .filter(a -> getByCategory(category, a).toLowerCase().replaceAll(" +", "").contains(keyword.toLowerCase().replaceAll(" +", "")))
+                .sorted((a, b) -> getByCategory(category, a).compareTo(getByCategory(category, b)))
+                .toList();
     }
 
     public boolean insertRequest(Map<String, String> request) {
@@ -269,7 +267,7 @@ public class SongService {
     if(song.getArtistFileUrl().equals("artistdefault.png")) {
       photoUrl = urlPrefix+"prj2/artist/default/"+song.getArtistFileUrl();
     } else {
-      photoUrl = urlPrefix+"prj2/artist/"+song.getId()+"/"+song.getArtistFileUrl();
+      photoUrl = urlPrefix+"prj2/artist/"+songMapper.getArtistCode(song)+"/"+song.getArtistFileUrl();
     }
     song.setArtistFileUrl(photoUrl);
     return song;
@@ -289,16 +287,16 @@ public class SongService {
         for (Integer i : songIds) { // songIds의 아이디를 하나하나 i에 담은 것
             chartList.add(songMapper.getSongById(i)); //songIds 아이디의 곡 하나하나 정보들을 chartList에 add로 담은 것
         }
+
+        for (Song s : chartList) {
+            if (s.getArtistFileUrl().equals("artistdefault.png")) s.setArtistFileUrl(urlPrefix + "prj2/artist/default/" + s.getArtistFileUrl());
+            else s.setArtistFileUrl(urlPrefix + "prj2/artist/" + s.getArtistId() + "/" + s.getArtistFileUrl());
+        }
+
         return chartList;
     }
 
-    for (Song s : chartList) {
-      if (s.getArtistFileUrl().equals("artistdefault.png")) s.setArtistFileUrl(urlPrefix + "prj2/artist/default/" + s.getArtistFileUrl());
-      else s.setArtistFileUrl(urlPrefix + "prj2/artist/" + s.getArtistId() + "/" + s.getArtistFileUrl());
-    }
 
-    return chartList;
-  }
 
     public boolean deleteMember(String id) {
         // 멤버가 작성한 댓글 삭제

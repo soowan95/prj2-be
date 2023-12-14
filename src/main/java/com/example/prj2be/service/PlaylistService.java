@@ -50,9 +50,9 @@ public class PlaylistService {
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
           
-            Integer songId = mapper.getSongIdBylistId(list.getListId()).get(0);
-            Integer artistCode = songMapper.getArtistCodeBySongId(songId);
-            String picture = artistMapper.getPictureById(artistCode);
+            Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
+            Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
+            String picture = artistMapper.getPictureByCode(artistCode);
             if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
             else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
           
