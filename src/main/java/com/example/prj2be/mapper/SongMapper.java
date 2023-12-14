@@ -165,7 +165,7 @@ WHERE album = #{album}
 
   @Insert("""
   INSERT INTO songpoint (title, artistId)
-  VALUE (#{title}, #{artistCode})
+  VALUE (#{song.title}, #{artistCode})
   """)
   Integer insertSongPoint(Song song, Integer artistCode);
 
