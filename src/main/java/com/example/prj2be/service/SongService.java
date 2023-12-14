@@ -270,6 +270,12 @@ public class SongService {
     for (Integer i : songIds) { // songIds의 아이디를 하나하나 i에 담은 것
       chartList.add(songMapper.getSongById(i)); //songIds 아이디의 곡 하나하나 정보들을 chartList에 add로 담은 것
     }
+
+    for (Song s : chartList) {
+      if (s.getArtistFileUrl().equals("artistdefault.png")) s.setArtistFileUrl(urlPrefix + "prj2/artist/default/" + s.getArtistFileUrl());
+      else s.setArtistFileUrl(urlPrefix + "prj2/artist/" + s.getArtistId() + "/" + s.getArtistFileUrl());
+    }
+
     return chartList;
   }
 

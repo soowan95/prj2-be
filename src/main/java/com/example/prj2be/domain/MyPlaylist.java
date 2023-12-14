@@ -2,6 +2,9 @@ package com.example.prj2be.domain;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 public class MyPlaylist {
     private String id;
@@ -15,5 +18,8 @@ public class MyPlaylist {
     private Integer totalSongCount;
     private String nickName;
     private Integer myplaylistcount;
+    private LocalDate release;
+    private LocalDate update;
+    private String photo;
     private Boolean isSongContain;
 }

@@ -5,6 +5,8 @@ import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public interface myPlaylistMapper {
     int deleteByMemberId(String id);
 
     @Select("""
-            SELECT COUNT(songId) as songs , ml.memberId, ml.listName, myl.playlistId
+            SELECT COUNT(songId) as songs , ml.memberId, ml.listName,ml.id as listId, myl.playlistId
 FROM memberplaylist ml JOIN playlistlike pl ON ml.id = pl.likelistId
                         JOIN myplaylist myl ON ml.id = myl.playlistId
 where pl.memberId = #{id}
@@ -44,11 +46,11 @@ group by pl.id;
     List<Integer> chartlist(Integer id);
 
     @Select("""
-    
+  
             SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount
-    FROM memberplaylist a
-            join member b on a.memberId = b.id 
-    WHERE a.id = #{id}
+   FROM memberplaylist a
+            join member b on a.memberId = b.id
+   where a.id = #{id};
     """)
     MyPlaylist getByListId(Integer listId);
             
@@ -117,6 +119,22 @@ where id = #{id}
     """)
     Integer getCountById(String id);
 
+    @Select("""
+    SELECT realease
+    FROM myplaylist
+    WHERE playlistId = #{listId}
+    ORDER BY realease;
+"""
+    )
+    List<LocalDate> getRelease(Integer listId);
+
+    @Select("""
+    SELECT songId
+    FROM myplaylist
+    WHERE playlistId = #{listId}
+    """)
+    List<Integer> getSongIdBylistId(String listId);
+            
     @Insert("""
     insert into myplaylist (songId, playlistId) VALUES (#{id}, #{listId})
 """)
@@ -140,3 +158,4 @@ insert into memberplaylist (memberId, listName) VALUES (#{memberId}, #{listName}
     """)
     Integer getCountBySongId(String songId, String listId);
 }
+

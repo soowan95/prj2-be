@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,11 @@ public class PlaylistController {
   
     @GetMapping("getByListId")
     public MyPlaylist getByListId(@RequestParam Integer listId) {
-        return service.getByListId(listId);
+        MyPlaylist playlist = service.getByListId(listId);
+        List<LocalDate> dates = service.getRelease(listId);
+        playlist.setRelease(dates.get(0));
+        playlist.setUpdate(dates.get(dates.size()-1));
+        return playlist;
     }
   
     @GetMapping("favoriteListName")

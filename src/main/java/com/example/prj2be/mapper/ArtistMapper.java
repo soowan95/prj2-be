@@ -11,4 +11,11 @@ public interface ArtistMapper {
   WHERE name = #{artistName} AND `group` = #{artistGroup}
   """)
   Integer getArtistCodeByNG(String artistName, String artistGroup);
+
+  @Select("""
+  SELECT picture
+  FROM artist
+  WHERE id = #{artistCode}
+  """)
+    String getPictureById(Integer artistCode);
 }

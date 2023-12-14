@@ -192,4 +192,11 @@ SET title = #{song.title},
 WHERE id = #{song.id}
 """)
   int updateSong(Song song, Integer artistCode);
+
+  @Select("""
+  SELECT artistCode
+  FROM song
+  WHERE id = #{songId}
+  """)
+  Integer getArtistCodeBySongId(Integer songId);
 }
