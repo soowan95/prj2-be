@@ -13,9 +13,11 @@ import java.util.Map;
 @Mapper
 public interface myPlaylistMapper {
     @Select("""
-            SELECT a.myplaylistcount,a.memberId as id, a.listName, a.id listId, b.nickName FROM memberplaylist a
-            join member b on a.memberId = b.id
-            where b.id = #{id}
+            select distinct myplaylistcount, memberId as id, mpl.listName, mpl.id as listId, member.nickName, coverimage
+                              from memberplaylist mpl
+                                  join myplaylist myl on mpl.id = myl.playlistId
+                                  join member on mpl.memberId = member.id
+                              where member.id = #{id}
             """)
     List<MyPlaylist> getMyPlayList(String id);
 //    where에 memeber에 Id가 같으면 SELECT실행
