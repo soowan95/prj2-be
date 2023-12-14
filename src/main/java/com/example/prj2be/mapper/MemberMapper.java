@@ -117,4 +117,11 @@ WHERE loginId = #{id}
     WHERE id = #{id}
     """)
     void kakaoUpdatePassword(String id, String s);
+
+    @Select("""
+    SELECT *
+    FROM member
+    WHERE nickName = #{sender}
+    """)
+    Member getByNickName(String sender);
 }

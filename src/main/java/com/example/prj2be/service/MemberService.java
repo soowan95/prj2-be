@@ -214,4 +214,9 @@ public class MemberService {
     public void kakaoUpdatePassword(String id, String s) {
         mapper.kakaoUpdatePassword(id, s);
     }
+
+    // 채팅창에 프로필 띄우기 위함
+    public Member getByNickName(String sender) {
+        return mapper.getByNickName(sender);
+    }
 }
