@@ -254,12 +254,18 @@ public class SongService {
         return songMapper.getByRequestList();
     }
 
-    public Song getSongById(Integer id) {
-        // /prj2/artist/50/카라.jpeg
-        Song song = songMapper.getSongById(id);
-        song.setArtistFileUrl(urlPrefix + "prj2/artist/" + song.getArtistId() + "/" + song.getArtistFileUrl());
-        return song;
+  public Song getSongById(Integer id) {
+    // /prj2/artist/50/카라.jpeg
+    Song song = songMapper.getSongById(id);
+    String photoUrl = "";
+    if(song.getArtistFileUrl().equals("artistdefault.png")) {
+      photoUrl = urlPrefix+"prj2/artist/default/"+song.getArtistFileUrl();
+    } else {
+      photoUrl = urlPrefix+"prj2/artist/"+song.getId()+"/"+song.getArtistFileUrl();
     }
+    song.setArtistFileUrl(photoUrl);
+    return song;
+  }
 
     public boolean updateSongPointById(Integer songId) {
         Song song = songMapper.getSongById(songId);
@@ -277,6 +283,14 @@ public class SongService {
         }
         return chartList;
     }
+
+    for (Song s : chartList) {
+      if (s.getArtistFileUrl().equals("artistdefault.png")) s.setArtistFileUrl(urlPrefix + "prj2/artist/default/" + s.getArtistFileUrl());
+      else s.setArtistFileUrl(urlPrefix + "prj2/artist/" + s.getArtistId() + "/" + s.getArtistFileUrl());
+    }
+
+    return chartList;
+  }
 
     public boolean deleteMember(String id) {
         // 멤버가 작성한 댓글 삭제

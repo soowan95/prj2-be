@@ -121,7 +121,7 @@ public interface SongMapper {
   Integer insertSong(Song song, Integer artistCode);
 
   @Select("""
-  SELECT s.id, s.title, s.lyric, s.album, s.mood, s.`release`, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
+  SELECT s.id, s.title, s.lyric, s.album, s.mood, s.release, s.genre, a.name `artistName`,a.`group` `artistGroup` , s.titleHangulCode, s.artistHangulCode, s.lyricHangulCode
           , a.picture artistFileUrl, s.artistCode artistId
   FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE s.id = #{id}
@@ -165,7 +165,7 @@ WHERE album = #{album}
 
   @Insert("""
   INSERT INTO songpoint (title, artistId)
-  VALUE (#{title}, #{artistCode})
+  VALUE (#{song.title}, #{artistCode})
   """)
   Integer insertSongPoint(Song song, Integer artistCode);
 
@@ -192,6 +192,11 @@ SET title = #{song.title},
 WHERE id = #{song.id}
 """)
   int updateSong(Song song, Integer artistCode);
-
-
+          
+  @Select("""
+  SELECT artistCode
+  FROM song
+  WHERE id = #{songId}
+  """)
+  Integer getArtistCodeBySongId(Integer songId);
 }
