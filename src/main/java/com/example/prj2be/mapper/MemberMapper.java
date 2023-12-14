@@ -110,4 +110,11 @@ SELECT * FROM auth
 WHERE loginId = #{id}
 """)
     List<Auth> selectAuthById(String id);
+
+    @Select("""
+    SELECT *
+    FROM member
+    WHERE nickName = #{sender}
+    """)
+    Member getByNickName(String sender);
 }

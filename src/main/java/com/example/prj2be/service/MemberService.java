@@ -208,4 +208,9 @@ public class MemberService {
     public List<String> getLiveUser() {
         return mapper.getLiveUser();
     }
+
+    // 채팅창에 프로필 띄우기 위함
+    public Member getByNickName(String sender) {
+        return mapper.getByNickName(sender);
+    }
 }

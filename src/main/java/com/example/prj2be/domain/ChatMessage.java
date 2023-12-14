@@ -14,5 +14,6 @@ public class ChatMessage {
   private MessageType type;
   private String sender;
   private String message;
+  private String profile;
   private List<String> isOnline;
 }
