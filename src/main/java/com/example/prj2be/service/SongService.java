@@ -20,6 +20,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -221,9 +222,12 @@ public class SongService {
         return songList.stream().filter(a -> getCode(category, a) == 19).toList();
       }
     }
-    ;
 
-    return songList.stream().filter(a -> getByCategory(category, a).contains(keyword)).toList();
+    return songList
+            .stream()
+            .filter(a -> getByCategory(category, a).toLowerCase().replaceAll(" +", "").contains(keyword.toLowerCase().replaceAll(" +", "")))
+            .sorted((a, b) -> getByCategory(category, a).compareTo(getByCategory(category, b)))
+            .toList();
   }
 
   public boolean insertRequest(Map<String, String> request) {
