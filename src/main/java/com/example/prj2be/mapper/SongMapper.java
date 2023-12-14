@@ -57,7 +57,7 @@ public interface SongMapper {
 
   @Select("""
   <script>
-  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`
   FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE 
   <if test='category == "가수"'>
@@ -81,7 +81,7 @@ public interface SongMapper {
   List<Song> getByCategoryAndKeyword(String category, String keyword, List<String> genreIncludeList, List<String> moodIncludeList);
 
   @Select("""
-  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`
   FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE (genre LIKE #{genre} OR mood LIKE #{mood}) AND s.id != #{id}
   """)

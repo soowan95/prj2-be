@@ -94,7 +94,7 @@ public interface MemberMapper {
             
     @Insert("""
             INSERT INTO member (id, password, nickName, email, securityQuestion, securityAnswer, profilePhoto)
-            VALUES (#{id}, #{password}, #{nickName}, #{email}, #{securityQuestion}, #{securityAnswer}, #{profile})
+            VALUES (#{id}, #{password}, #{nickName}, #{email}, #{securityQuestion}, #{securityAnswer}, #{profilePhoto})
             """)
     int kakaoInsert(Member member);
 
@@ -110,4 +110,18 @@ SELECT * FROM auth
 WHERE loginId = #{id}
 """)
     List<Auth> selectAuthById(String id);
+
+    @Update("""
+    UPDATE member
+    SET password = #{s}
+    WHERE id = #{id}
+    """)
+    void kakaoUpdatePassword(String id, String s);
+
+    @Select("""
+    SELECT *
+    FROM member
+    WHERE nickName = #{sender}
+    """)
+    Member getByNickName(String sender);
 }

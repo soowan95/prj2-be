@@ -21,6 +21,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -156,6 +157,13 @@ public class SongService {
 
         return newList;
     }
+  
+    return songList
+            .stream()
+            .filter(a -> getByCategory(category, a).toLowerCase().replaceAll(" +", "").contains(keyword.toLowerCase().replaceAll(" +", "")))
+            .sorted((a, b) -> getByCategory(category, a).compareTo(getByCategory(category, b)))
+            .toList();
+  }
 
     public Integer getCode(String category, Song s) {
         if (category.equals("가수")) return s.getArtistHangulCode();

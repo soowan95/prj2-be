@@ -18,8 +18,8 @@ public class KakaoContoroller {
   private final KakaoService kakaoService;
 
   @PostMapping("login")
-  public ResponseEntity kakaoLogin(@RequestBody Member member, WebRequest request) {
-    if (kakaoService.kakaoLogin(member, request)) return ResponseEntity.ok().build();
+  public ResponseEntity<Member> kakaoLogin(@RequestBody Member member, WebRequest request) {
+    if (kakaoService.kakaoLogin(member, request) != null) return ResponseEntity.ok(kakaoService.kakaoLogin(member, request));
 
     return ResponseEntity.internalServerError().build();
   }

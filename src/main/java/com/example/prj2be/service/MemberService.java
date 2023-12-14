@@ -50,7 +50,8 @@ public class MemberService {
         mapper.login(member);
         Member dbMember = mapper.selectById(member.getId());
         String photoUrl = "";
-        if (dbMember.getProfilePhoto().equals("userdefault.jpg")) photoUrl = urlPrefix + "prj2/user/default/" + dbMember.getProfilePhoto();
+        if (dbMember.getProfilePhoto().matches("http.*")) photoUrl = dbMember.getProfilePhoto();
+        else if (dbMember.getProfilePhoto().equals("userdefault.jpg")) photoUrl = urlPrefix + "prj2/user/default/" + dbMember.getProfilePhoto();
         else photoUrl = urlPrefix + "prj2/user/" + dbMember.getId() + "/" + dbMember.getProfilePhoto();
         dbMember.setProfilePhoto(photoUrl);
         if (dbMember != null){
@@ -85,7 +86,8 @@ public class MemberService {
     }
 
     public boolean kakaoAdd(Member member) {
-        return mapper.kakaoInsert(member) ==1;
+        member.setPassword(Parse.passwordCode(member.getPassword()));
+        return mapper.kakaoInsert(member) == 1;
     }
 
     public void upload(String id, MultipartFile file) throws IOException {
@@ -207,5 +209,14 @@ public class MemberService {
 
     public List<String> getLiveUser() {
         return mapper.getLiveUser();
+    }
+
+    public void kakaoUpdatePassword(String id, String s) {
+        mapper.kakaoUpdatePassword(id, s);
+    }
+
+    // 채팅창에 프로필 띄우기 위함
+    public Member getByNickName(String sender) {
+        return mapper.getByNickName(sender);
     }
 }
