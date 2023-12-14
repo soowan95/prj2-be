@@ -49,13 +49,15 @@ public class PlaylistService {
             //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
-          
-            Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
-            Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
-            String picture = artistMapper.getPictureByCode(artistCode);
-            if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
-            else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
-          
+
+            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty()) {
+                Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
+                Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
+                String picture = artistMapper.getPictureByCode(artistCode);
+                if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
+                else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+            }
+
             list.setIsSongContain(mapper.getCountBySongId(songId, list.getListId()) >= 1);
         }
 
