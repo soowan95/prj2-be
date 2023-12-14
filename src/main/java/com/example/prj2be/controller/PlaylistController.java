@@ -36,6 +36,7 @@ public class PlaylistController {
   
     @GetMapping("getByListId")
     public MyPlaylist getByListId(@RequestParam Integer listId) {
+        service.getRelease(listId);
         return service.getByListId(listId);
     }
   

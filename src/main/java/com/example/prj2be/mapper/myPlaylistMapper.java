@@ -5,6 +5,7 @@ import com.example.prj2be.domain.MyPlaylist;
 import com.example.prj2be.domain.Song;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +45,12 @@ group by pl.id;
     List<Integer> chartlist(Integer id);
 
     @Select("""
-    
-            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount
-    FROM memberplaylist a
-            join member b on a.memberId = b.id 
-    WHERE a.id = #{id}
+  
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount, c.`realease`
+   FROM memberplaylist a
+            join member b on a.memberId = b.id
+            join myplaylist c on a.id = c.playlistId
+   where a.id = #{id};
     """)
     MyPlaylist getByListId(Integer listId);
             
@@ -116,4 +118,19 @@ where id = #{id}
     WHERE id = #{id}
     """)
     Integer getCountById(String id);
+
+    @Select("""
+    select realease from myplaylist a join memberplaylist b on a.playlistId = b.id
+    where a.playlistId = #{listId}
+    group by b.listName
+"""
+    )
+    LocalDateTime getRelease(Integer listId);
+
+//    @Select("""
+//    SELECT realease FROM myplaylist
+//    where playlistId = #{id}
+//""")
+//    LocalDateTime getByRealease(Integer listId);
 }
+

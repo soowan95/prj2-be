@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,7 @@ public class PlaylistService {
     public MyPlaylist getByListId(Integer listId) {
         MyPlaylist list = mapper.getByListId(listId);
         list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
+
         return list;
     }
       
@@ -98,4 +100,13 @@ public class PlaylistService {
     public Integer updateHitsCount(String id) {
         return mapper.updateHitsCount(id);
     }
+
+    public void getRelease(Integer listId) {
+        mapper.getRelease(listId);
+    }
+
+//    public LocalDateTime getByRealease(Integer listId) {
+//        if()
+//        return mapper.getByRealease(listId);
+//    }
 }
