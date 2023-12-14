@@ -121,4 +121,22 @@ where id = #{id}
     insert into myplaylist (songId, playlistId) VALUES (#{id}, #{listId})
 """)
     int insertMyPlaylist(Integer listId, Integer id);
+
+    @Select("""
+select * from memberplaylist
+where listName = #{listName}
+""")
+    String selectByListName(String listName);
+
+    @Insert("""
+insert into memberplaylist (memberId, listName) VALUES (#{memberId}, #{listName})
+""")
+    int createPlaylist(MemberPlayList memberPlayList);
+
+    @Select("""
+    SELECT COUNT(*)
+    FROM myplaylist
+    WHERE songId = #{songId} AND playlistId = #{listId}
+    """)
+    Integer getCountBySongId(String songId, String listId);
 }
