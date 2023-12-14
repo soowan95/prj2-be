@@ -337,4 +337,10 @@ public class SongService {
 
         songMapper.updateSong(song, artistCode);
     }
+
+    public void updateSongOnlyInfo(Song song) {
+        Integer artistCode = songMapper.getArtistCode(song);
+
+        songMapper.updateSong(song, artistCode);
+    }
 }
