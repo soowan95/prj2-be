@@ -294,10 +294,16 @@ public class SongService {
     public void updateSong(Song song, MultipartFile file) throws IOException {
         Integer artistCode = songMapper.getArtistCode(song);
         if (artistCode == null) {
-            songMapper.insertArtist(song, file.getOriginalFilename());
-            //upload(song.getArtistId(), file);
+            songMapper.insertArtist(song, fileName(""));
+           // songMapper.insertArtist(song, file.getOriginalFilename());
+           // upload(song.getArtistId(), file);
             artistCode = song.getArtistId();
         }
         songMapper.updateSong(song, artistCode);
+    }
+
+    // songEdit에서 artistName과 artistGroup 500에러떠서 씀...
+    private String fileName(String s) {
+        return null;
     }
 }
