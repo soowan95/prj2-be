@@ -13,9 +13,9 @@ import java.util.Map;
 @Mapper
 public interface myPlaylistMapper {
     @Select("""
-            select distinct myplaylistcount, memberId as id, mpl.listName, mpl.id as listId, member.nickName, coverimage
+            select distinct myplaylistcount, memberId as id, mpl.listName, mpl.id as listId, member.nickName, mpl.coverimage
                               from memberplaylist mpl
-                                  join myplaylist myl on mpl.id = myl.playlistId
+                                  left join myplaylist myl on mpl.id = myl.playlistId
                                   join member on mpl.memberId = member.id
                               where member.id = #{id}
             """)
@@ -49,7 +49,7 @@ group by pl.id;
 
     @Select("""
   
-            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount, a.coverimage
    FROM memberplaylist a
             join member b on a.memberId = b.id
    where a.id = #{id};
@@ -72,7 +72,7 @@ delete from myplaylist where songId = #{songId} and playlistId = #{playlistId}
     int deleteByFavoriteList(String songId, String playlistId);
 
     @Select("""
-select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, count.count, a.`group`, a.picture
+select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, count.count, a.`group`, a.picture, mpl.coverimage `cover`, mpl.id
 from song join artist a on song.artistCode = a.id
           join myplaylist myl on song.id = myl.songId
           join memberplaylist mpl on myl.playlistId = mpl.id
@@ -148,10 +148,7 @@ where listName = #{listName}
 """)
     String selectByListName(String listName);
 
-    @Insert("""
-insert into memberplaylist (memberId, listName) VALUES (#{memberId}, #{listName})
-""")
-    int createPlaylist(MemberPlayList memberPlayList);
+
 
     @Select("""
     SELECT COUNT(*)
@@ -159,5 +156,19 @@ insert into memberplaylist (memberId, listName) VALUES (#{memberId}, #{listName}
     WHERE songId = #{songId} AND playlistId = #{listId}
     """)
     Integer getCountBySongId(String songId, String listId);
+
+    @Select("""
+select coverimage
+from memberplaylist
+where id = #{id}
+""")
+    String getCoverImageByPlaylistId(MemberPlayList memberPlayList);
+
+    @Insert("""
+insert into memberplaylist (memberId, listName, coverimage) values (#{memberId},#{listName},#{picture})
+""")
+    int createPlaylist(MemberPlayList memberPlayList);
+
+
 }
 

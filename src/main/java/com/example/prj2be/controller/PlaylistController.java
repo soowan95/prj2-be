@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -96,11 +97,14 @@ public class PlaylistController {
     }
 
     @PostMapping("createPlaylist")
-    public ResponseEntity createPlaylist(@RequestBody MemberPlayList memberPlayList,
-                                                 @RequestParam(value = "coverimage",required = false)MultipartFile coverImage,
-                                                 WebRequest request) {
+    public ResponseEntity createPlaylist(MemberPlayList memberPlayList,
+                                         @RequestParam(value = "coverimage",required = false)MultipartFile coverImage
+                                         ) throws IOException {
 
-        if (service.createPlaylist(memberPlayList,coverImage,request)) {
+//        MyPlaylist myPlaylist = new MyPlaylist();
+//        myPlaylist.setListName(listName);
+//        myPlaylist.setMemberId(memberId);
+        if (service.createPlaylist(memberPlayList,coverImage)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
