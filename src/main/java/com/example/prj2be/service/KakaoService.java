@@ -23,6 +23,7 @@ public class KakaoService {
     if (memberService.checkId(member.getId()) != 1) {
       member.setPassword(password);
       member.setInserted(LocalDateTime.now());
+      member.setNickName("k-" + member.getNickName());
       memberService.kakaoAdd(member);
     } else {
       memberService.kakaoUpdatePassword(member.getId(), Parse.passwordCode(password));
