@@ -2,6 +2,7 @@ package com.example.prj2be.controller;
 
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.service.MemberService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,15 @@ public class MemberController {
     @PostMapping("signupOnlyInfo")
     public void signupOnlyInfo(@RequestBody Member member) {
       service.addOnlyInfo(member);
+    }
+
+
+    @PostMapping("check")
+    public ResponseEntity<Void> checkPassword(@RequestBody JsonNode password,
+                                              @SessionAttribute("login") Member login) {
+      if (service.isValidPassword(login, password)) return ResponseEntity.ok().build();
+
+      return ResponseEntity.badRequest().build();
     }
 
     @GetMapping(value = "check")
@@ -172,13 +182,12 @@ public class MemberController {
 
 
     @DeleteMapping
-    public ResponseEntity delete (String id,
-                                  HttpSession session,
+    public ResponseEntity delete (HttpSession session,
                                   @SessionAttribute(value = "login",required = false)Member login) {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (service.deleteMember(id)) {
+        if (service.deleteMember(login.getId())) {
             session.invalidate();
             return ResponseEntity.ok().build();
         }
@@ -189,6 +198,4 @@ public class MemberController {
     public List<String> getQuestions(@RequestParam String id) {
         return service.getQuestions(id);
     }
-
-
 }

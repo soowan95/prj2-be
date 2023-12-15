@@ -199,4 +199,10 @@ WHERE id = #{song.id}
   WHERE id = #{songId}
   """)
   Integer getArtistCodeBySongId(Integer songId);
+
+  @Delete("""
+  DELETE FROM songrequest
+  WHERE member = #{id}
+  """)
+  void deleteRequestById(String id);
 }

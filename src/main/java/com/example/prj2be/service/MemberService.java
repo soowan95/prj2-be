@@ -2,11 +2,10 @@ package com.example.prj2be.service;
 
 import com.example.prj2be.domain.Auth;
 import com.example.prj2be.domain.Member;
-import com.example.prj2be.mapper.LikeMapper;
-import com.example.prj2be.mapper.MemberMapper;
-import com.example.prj2be.mapper.MessageMapper;
-import com.example.prj2be.mapper.myPlaylistMapper;
+import com.example.prj2be.domain.MyPlaylist;
+import com.example.prj2be.mapper.*;
 import com.example.prj2be.util.Parse;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,8 @@ public class MemberService {
     private final myPlaylistMapper playlistMapper;
     private final MessageMapper messageMapper;
     private final LikeMapper likeMapper;
+    private final CommentMapper commentMapper;
+    private final SongMapper songMapper;
     private final S3Client s3;
 
     @Value("${image.file.prefix}")
@@ -228,11 +230,31 @@ public class MemberService {
     }
 
     public boolean deleteMember(String id) {
-        // 이 멤버의 플레이리스트 삭제
-        playlistMapper.deleteByMemberId(id);
+        Member member = new Member();
+        member.setId(id);
+        member = mapper.getMemberById(member);
 
-        // 이 멤버의 좋아요 클릭 삭제
-        likeMapper.deleteByMemberId(id);
+        // chat방에서 나가기
+        messageMapper.dropByNickName(member.getNickName());
+
+        // 플레이리스트 중 내가 누른 좋아요 삭제
+        likeMapper.deleteByMemberId(member.getId());
+
+        // 내 플레이리스트에 눌린 좋아요 삭제
+        List<MyPlaylist> myPlayList = playlistMapper.getMyPlayList(member.getId());
+        myPlayList.stream().map(MyPlaylist::getListId).forEach((likeMapper::deleteByListId));
+
+        // 내 플레이리스트에 담긴 곡 삭제
+        myPlayList.stream().map(MyPlaylist::getListId).forEach((playlistMapper::deleteSongByMyPlaylist));
+
+        // 내 플레이리스트 삭제
+        playlistMapper.deleteByMemberId(member.getId());
+
+        // 내가 쓴 댓글 삭제
+        commentMapper.deleteByMemberId(member.getId());
+
+        // 내가 보낸 곡 요청 삭제
+        songMapper.deleteRequestById(member.getId());
 
         //멤버 삭제
         return mapper.deleteByMemberId(id) == 1;
@@ -257,5 +279,10 @@ public class MemberService {
     // 채팅창에 프로필 띄우기 위함
     public Member getByNickName(String sender) {
         return mapper.getByNickName(sender);
+    }
+
+    public Boolean isValidPassword(Member login, JsonNode password) {
+        Member memberById = mapper.getMemberById(login);
+        return Parse.passwordCode(password.get("password").toString().replaceAll("\"", "")).equals(memberById.getPassword());
     }
 }
