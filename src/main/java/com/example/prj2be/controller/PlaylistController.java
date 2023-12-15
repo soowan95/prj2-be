@@ -41,9 +41,6 @@ public class PlaylistController {
     @GetMapping("getByListId")
     public MyPlaylist getByListId(@RequestParam Integer listId) {
         MyPlaylist playlist = service.getByListId(listId);
-        List<LocalDate> dates = service.getRelease(listId);
-        playlist.setRelease(dates.get(0));
-        playlist.setUpdate(dates.get(dates.size()-1));
         return playlist;
     }
   

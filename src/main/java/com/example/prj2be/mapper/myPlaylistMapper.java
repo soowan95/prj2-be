@@ -49,7 +49,7 @@ group by pl.id;
 
     @Select("""
   
-            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount, a.coverimage
+            SELECT a.memberId as id, a.listName, a.id listId, b.nickName, a.myplaylistcount, a.coverimage, a.inserted
    FROM memberplaylist a
             join member b on a.memberId = b.id
    where a.id = #{id};
@@ -120,15 +120,6 @@ where id = #{id}
     WHERE id = #{id}
     """)
     Integer getCountById(String id);
-
-    @Select("""
-    SELECT realease
-    FROM myplaylist
-    WHERE playlistId = #{listId}
-    ORDER BY realease;
-"""
-    )
-    List<LocalDate> getRelease(Integer listId);
 
     @Select("""
     SELECT songId

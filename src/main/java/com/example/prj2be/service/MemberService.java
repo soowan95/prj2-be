@@ -123,25 +123,23 @@ public class MemberService {
         if (member.getNickName() == null) member.setNickName(dbMember.getNickName());
         if (member.getEmail() == null) member.setEmail(dbMember.getEmail());
 
-        String prePhoto = mapper.getPhotoNameById(member);
+        String prePhoto = dbMember.getProfilePhoto();
         member.setProfilePhoto(profilePhoto.getOriginalFilename());
 
         if (!member.getNickName().equals(dbMember.getNickName())) {
             messageMapper.dropByNickName(dbMember.getNickName());
-            mapper.updateOnlyInfo(member);
+            mapper.update(member);
             messageMapper.addByNickName(member.getNickName());
-        } else mapper.updateOnlyInfo(member);
+        } else mapper.update(member);
 
         if(!prePhoto.equals("userdefault.jpg")) {
             deleteObject(member.getId(), prePhoto);
         }
         upload(member.getId(),profilePhoto);
-        member.setProfilePhoto(urlPrefix + "prj2/user/" + member.getId() + "/" + member.getProfilePhoto());
+        member.setProfilePhoto(urlPrefix + "prj2/user/" + member.getId() + "/" + profilePhoto.getOriginalFilename());
         member.setPassword("");
 
-        Member newMember = mapper.getMemberById(member);
-
-        request.setAttribute("login", newMember, RequestAttributes.SCOPE_SESSION);
+        request.setAttribute("login", member, RequestAttributes.SCOPE_SESSION);
         return true;
     }
 
