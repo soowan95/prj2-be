@@ -157,6 +157,26 @@ where listName = #{listName}
     """)
     Integer getCountBySongId(String songId, String listId);
 
+    // 플레이리스트 삭제 매퍼
+    @Delete("""
+delete from memberplaylist
+where id = #{listId}
+""")
+    Integer deleteByListId(String listId);
+
+    @Delete("""
+delete from myplaylist
+where playlistId = #{listId}
+""")
+    Integer deleteSongByMyPlaylist(String listId);
+
+    @Delete("""
+delete from playlistlike
+where likelistId = #{listId}
+""")
+    Integer deleteLikeCountByPlaylistLike(String listId);
+    // 플레이리스트 삭제 매퍼 끝
+            
     @Select("""
 select coverimage
 from memberplaylist
@@ -168,7 +188,5 @@ where id = #{id}
 insert into memberplaylist (memberId, listName, coverimage) values (#{memberId},#{listName},#{picture})
 """)
     int createPlaylist(MemberPlayList memberPlayList);
-
-
 }
 

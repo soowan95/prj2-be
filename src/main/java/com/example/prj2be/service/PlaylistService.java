@@ -158,4 +158,14 @@ public class PlaylistService {
         upload(memberPlayList.getId(),coverimage);
         return true;
     }
+
+    public boolean deletePlaylist(String listId) {
+
+        // 지우려는 플레이리스트의 노래 제거
+        mapper.deleteSongByMyPlaylist(listId);
+        // 플레이리스트의 좋아요 갯수 제거
+        mapper.deleteLikeCountByPlaylistLike(listId);
+        // 이 멤버의 플레이리스트 제거
+        return mapper.deleteByListId(listId)==1;
+    }
 }

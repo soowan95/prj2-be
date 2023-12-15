@@ -119,4 +119,10 @@ public class PlaylistController {
         }
     }
 
+
+    @DeleteMapping("{listId}")
+    public void deletePlaylist(@PathVariable String listId) {
+        service.deletePlaylist(listId);
+    }
+
 }
