@@ -146,10 +146,16 @@ public class SongController {
     } else {
       return ResponseEntity.internalServerError().build();
     }
-
   }
 
-
+  @PostMapping("insertOnlyInfo")
+  public ResponseEntity insertOnlyInfo(@RequestBody Song song) {
+    if (songService.insertSong(song)) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.internalServerError().build();
+    }
+  }
 
   @GetMapping("albumList")
   public List<Map<String,Object>> albumList(@RequestParam String album){
@@ -172,5 +178,10 @@ public class SongController {
 
 
     songService.updateSong(song, file);
+  }
+
+  @PutMapping("songEditOnlyInfo")
+  public void songEdit(@RequestBody Song song) {
+    songService.updateSongOnlyInfo(song);
   }
 }

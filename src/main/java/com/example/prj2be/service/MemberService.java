@@ -4,6 +4,7 @@ import com.example.prj2be.domain.Auth;
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.mapper.LikeMapper;
 import com.example.prj2be.mapper.MemberMapper;
+import com.example.prj2be.mapper.MessageMapper;
 import com.example.prj2be.mapper.myPlaylistMapper;
 import com.example.prj2be.util.Parse;
 import jakarta.servlet.http.HttpSession;
@@ -32,6 +33,7 @@ public class MemberService {
 
     private final MemberMapper mapper;
     private final myPlaylistMapper playlistMapper;
+    private final MessageMapper messageMapper;
     private final LikeMapper likeMapper;
     private final S3Client s3;
 
@@ -109,17 +111,56 @@ public class MemberService {
         upload(member.getId(),profilePhoto);
     }
 
+    public void addOnlyInfo(Member member) {
+        member.setPassword(Parse.passwordCode(member.getPassword()));
+
+        mapper.insert(member, "userdefault.jpg");
+    }
+
     public boolean update(Member member, MultipartFile profilePhoto, WebRequest request) throws IOException {
+        Member dbMember = mapper.getMemberById(member);
+
+        if (member.getNickName() == null) member.setNickName(dbMember.getNickName());
+        if (member.getEmail() == null) member.setEmail(dbMember.getEmail());
+
         String prePhoto = mapper.getPhotoNameById(member);
         member.setProfilePhoto(profilePhoto.getOriginalFilename());
-        mapper.update(member);
+
+        if (!member.getNickName().equals(dbMember.getNickName())) {
+            messageMapper.dropByNickName(dbMember.getNickName());
+            mapper.updateOnlyInfo(member);
+            messageMapper.addByNickName(member.getNickName());
+        } else mapper.updateOnlyInfo(member);
+
         if(!prePhoto.equals("userdefault.jpg")) {
             deleteObject(member.getId(), prePhoto);
         }
         upload(member.getId(),profilePhoto);
         member.setProfilePhoto(urlPrefix + "prj2/user/" + member.getId() + "/" + member.getProfilePhoto());
         member.setPassword("");
-        request.setAttribute("login", member, RequestAttributes.SCOPE_SESSION);
+
+        Member newMember = mapper.getMemberById(member);
+
+        request.setAttribute("login", newMember, RequestAttributes.SCOPE_SESSION);
+        return true;
+    }
+
+    public Boolean updateOnlyInfo(Member member, WebRequest request) {
+        Member dbMember = mapper.getMemberById(member);
+
+        if (member.getNickName() == null) member.setNickName(dbMember.getNickName());
+        if (member.getEmail() == null) member.setEmail(dbMember.getEmail());
+
+        if (!member.getNickName().equals(dbMember.getNickName())) {
+            messageMapper.dropByNickName(dbMember.getNickName());
+            mapper.updateOnlyInfo(member);
+            messageMapper.addByNickName(member.getNickName());
+        } else mapper.updateOnlyInfo(member);
+
+        Member newMember = mapper.getMemberById(member);
+
+        request.setAttribute("login", newMember, RequestAttributes.SCOPE_SESSION);
+
         return true;
     }
 

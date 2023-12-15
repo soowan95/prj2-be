@@ -55,6 +55,13 @@ public interface MemberMapper {
             """)
     int update(Member member);
 
+    @Update("""
+    UPDATE member
+    SET nickName = #{nickName}, email = #{email}
+    WHERE id = #{id}
+    """)
+    void updateOnlyInfo(Member member);
+
     @Select("""
             SELECT COUNT(id)
             FROM member
@@ -124,4 +131,11 @@ WHERE loginId = #{id}
     WHERE nickName = #{sender}
     """)
     Member getByNickName(String sender);
+
+    @Select("""
+    SELECT *
+    FROM member
+    WHERE id = #{id}
+    """)
+    Member getMemberById(Member member);
 }

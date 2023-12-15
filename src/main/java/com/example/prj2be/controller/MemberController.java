@@ -28,8 +28,12 @@ public class MemberController {
     public void signup(Member member,
                        @RequestParam(value = "profilePhoto",required = false)MultipartFile profilePhoto) throws IOException {
 
-
         service.add(member,profilePhoto);
+    }
+
+    @PostMapping("signupOnlyInfo")
+    public void signupOnlyInfo(@RequestBody Member member) {
+      service.addOnlyInfo(member);
     }
 
     @GetMapping(value = "check")
@@ -142,6 +146,15 @@ public class MemberController {
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PutMapping("editOnlyInfo")
+    public ResponseEntity<Void> editOnlyInfo(@RequestBody Member member,
+                                             @SessionAttribute(value = "login", required = false) Member login,
+                                             WebRequest request) {
+      if (login == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      if (service.updateOnlyInfo(member, request)) return ResponseEntity.ok().build();
+      return ResponseEntity.internalServerError().build();
     }
 
     @GetMapping
