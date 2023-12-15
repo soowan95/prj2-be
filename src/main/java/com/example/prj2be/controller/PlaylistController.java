@@ -11,7 +11,10 @@ import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -94,8 +97,18 @@ public class PlaylistController {
     }
 
     @PostMapping("createPlaylist")
-    public void createPlaylist(@RequestBody MemberPlayList memberPlayList) {
-        service.createPlaylist(memberPlayList);
+    public ResponseEntity createPlaylist(MemberPlayList memberPlayList,
+                                         @RequestParam(value = "coverimage",required = false)MultipartFile coverImage
+                                         ) throws IOException {
+
+//        MyPlaylist myPlaylist = new MyPlaylist();
+//        myPlaylist.setListName(listName);
+//        myPlaylist.setMemberId(memberId);
+        if (service.createPlaylist(memberPlayList,coverImage)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
     }
     @GetMapping(value = "check", params = "listName")
     public ResponseEntity checkNickName(String listName) {

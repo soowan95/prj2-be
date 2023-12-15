@@ -6,8 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,13 +30,34 @@ public class PlaylistService {
     private final SongMapper songMapper;
     private final ArtistMapper artistMapper;
     private final FileMapper fileMapper;
-    private final S3Client s3Client;
+    private final S3Client s3;
 
     @Value("${image.file.prefix}")
     private String urlPrefix;
 
     @Value("${aws.s3.bucket.name}")
     private String bucket;
+
+    public void upload(String id, MultipartFile file) throws IOException {
+        String key = "prj2/playlist/" + id +  "/" + file.getOriginalFilename();
+
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
+
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+    }
+
+    public void deleteObject(String id, String profilePhoto) {
+        String key = "prj2/user/"+id+"/"+ profilePhoto;
+        DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+        s3.deleteObject(objectRequest);
+    }
 
     public boolean validate(MyPlaylist playlist) {
         if (playlist == null) {
@@ -50,12 +78,14 @@ public class PlaylistService {
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
 
-            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty()) {
+            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().contains("defaultplaylist")) {
                 Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
                 Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
                 String picture = artistMapper.getPictureByCode(artistCode);
                 if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
                 else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+            } else if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && !list.getCoverimage().contains("defaultplaylist")) {
+                list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
             }
 
             list.setIsSongContain(mapper.getCountBySongId(songId, list.getListId()) >= 1);
@@ -91,8 +121,8 @@ public class PlaylistService {
             Song song = new Song();
             song.setArtistGroup(memberPlayList.getGroup());
             song.setArtistName(memberPlayList.getName());
-            if (!memberPlayList.getPicture().equals("artistdefault.png")) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
-            else memberPlayList.setPictureUrl(urlPrefix+"prj2/artist/default/"+memberPlayList.getPicture());
+            if (memberPlayList.getCover().equals("defaultplaylist.jpg")) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
+            else memberPlayList.setPictureUrl(urlPrefix+"prj2/playlist/"+memberPlayList.getId()+"/"+memberPlayList.getCover());
         }
 
         return recommendPlaylist;
@@ -122,7 +152,10 @@ public class PlaylistService {
         return mapper.selectByListName(listName);
     }
 
-    public void createPlaylist(MemberPlayList memberPlayList) {
+    public boolean createPlaylist(MemberPlayList memberPlayList, MultipartFile coverimage) throws IOException{
+        memberPlayList.setPicture(coverimage.getOriginalFilename());
         mapper.createPlaylist(memberPlayList);
+        upload(memberPlayList.getId(),coverimage);
+        return true;
     }
 }

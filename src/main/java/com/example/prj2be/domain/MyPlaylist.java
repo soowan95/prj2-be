@@ -22,4 +22,5 @@ public class MyPlaylist {
     private LocalDate update;
     private String photo;
     private Boolean isSongContain;
+    private String coverimage;
 }
