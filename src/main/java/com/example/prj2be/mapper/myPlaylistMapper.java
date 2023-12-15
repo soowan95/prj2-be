@@ -157,5 +157,26 @@ insert into memberplaylist (memberId, listName) VALUES (#{memberId}, #{listName}
     WHERE songId = #{songId} AND playlistId = #{listId}
     """)
     Integer getCountBySongId(String songId, String listId);
+
+
+    // 플레이리스트 삭제 매퍼
+    @Delete("""
+delete from memberplaylist
+where id = #{listId}
+""")
+    Integer deleteByListId(String listId);
+
+    @Delete("""
+delete from myplaylist
+where playlistId = #{listId}
+""")
+    Integer deleteSongByMyPlaylist(String listId);
+
+    @Delete("""
+delete from playlistlike
+where likelistId = #{listId}
+""")
+    Integer deleteLikeCountByPlaylistLike(String listId);
+    // 플레이리스트 삭제 매퍼 끝
 }
 
