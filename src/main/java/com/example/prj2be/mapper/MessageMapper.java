@@ -29,7 +29,7 @@ public interface MessageMapper {
   void dropSender(ChatMessage message);
 
   @Delete("""
-  DELETE FROM chat WHERE sender = #{sender}
+  DELETE FROM chat WHERE sender = #{nickName}
   """)
   void dropByNickName(String nickName);
 }

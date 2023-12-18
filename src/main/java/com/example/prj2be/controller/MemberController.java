@@ -27,7 +27,7 @@ public class MemberController {
 
     @PostMapping("signup")
     public void signup(Member member,
-                       @RequestParam(value = "profilePhoto",required = false)MultipartFile profilePhoto) throws IOException {
+                       @RequestParam(value = "file",required = false)MultipartFile profilePhoto) throws IOException {
 
         service.add(member,profilePhoto);
     }
