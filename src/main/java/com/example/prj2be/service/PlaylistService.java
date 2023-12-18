@@ -97,6 +97,9 @@ public class PlaylistService {
 
     public List<Map<String, Object>> getFavoriteList(String id) {
         return mapper.selectFavoriteList(id);
+
+
+
     }
 
     public MyPlaylist getByListId(Integer listId) {
@@ -140,8 +143,8 @@ public class PlaylistService {
         return mapper.updateHitsCount(id);
     }
   
-    public void insertMyPlaylist(Integer listId, Integer id) {
-        mapper.insertMyPlaylist(listId, id);
+    public void insertMyPlaylist(String listId, Integer songId) {
+        mapper.insertMyPlaylist(listId, songId);
     }
 
     public String getListName(String listName) {
