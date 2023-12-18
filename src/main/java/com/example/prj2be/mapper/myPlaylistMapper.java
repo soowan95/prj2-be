@@ -73,7 +73,7 @@ delete from myplaylist where songId = #{songId} and playlistId = #{playlistId}
     int deleteByFavoriteList(String songId, String playlistId);
 
     @Select("""
-select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, count.count, a.`group`, a.picture, mpl.coverimage `cover`, mpl.id
+select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, count.count, a.`group`, mpl.coverimage `cover`, mpl.id
 from song join artist a on song.artistCode = a.id
           join myplaylist myl on song.id = myl.songId
           join memberplaylist mpl on myl.playlistId = mpl.id

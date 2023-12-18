@@ -139,12 +139,15 @@ public class PlaylistService {
     public List<MemberPlayList> getRecommendPlaylist() {
         List<MemberPlayList> recommendPlaylist = mapper.getRecommendPlaylist();
 
-        for (MemberPlayList memberPlayList : recommendPlaylist) {
-            Song song = new Song();
-            song.setArtistGroup(memberPlayList.getGroup());
-            song.setArtistName(memberPlayList.getName());
-            if (memberPlayList.getCover().equals("defaultplaylist.jpg")) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
-            else memberPlayList.setPictureUrl(urlPrefix+"prj2/playlist/"+memberPlayList.getId()+"/"+memberPlayList.getCover());
+        for (MemberPlayList list : recommendPlaylist) {
+            if (!mapper.getSongIdBylistId(list.getId()).isEmpty() && list.getCover().equals("defaultplaylist.jpg")) {
+                Integer mySongId = mapper.getSongIdBylistId(list.getId()).get(0);
+                Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
+                String picture = artistMapper.getPictureByCode(artistCode);
+                if (picture.equals("artistdefault.png")) list.setPicture(urlPrefix + "prj2/artist/default/" + picture);
+                else list.setPicture(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+            } else if (!list.getCover().equals("defaultplaylist.jpg")) list.setPicture(urlPrefix + "prj2/playlist/" + list.getId() + "/" + list.getCover());
+            else list.setPicture(urlPrefix + "prj2/playlist/default/" + list.getCover());
         }
 
         return recommendPlaylist;

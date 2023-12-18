@@ -184,4 +184,10 @@ public class SongController {
   public void songEdit(@RequestBody Song song) {
     songService.updateSongOnlyInfo(song);
   }
+
+  @PutMapping("updateRequest")
+  public ResponseEntity<Void> updateRequest(@RequestBody Song song) {
+    if(songService.updateRequest(song)) return ResponseEntity.ok().build();
+    return ResponseEntity.internalServerError().build();
+  }
 }

@@ -343,4 +343,8 @@ public class SongService {
 
         songMapper.updateSong(song, artistCode);
     }
+
+    public boolean updateRequest(Song song) {
+        return songMapper.updateRequest(song) == 1;
+    }
 }

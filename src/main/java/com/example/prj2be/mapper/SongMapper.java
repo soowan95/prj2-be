@@ -205,4 +205,11 @@ WHERE id = #{song.id}
   WHERE member = #{id}
   """)
   void deleteRequestById(String id);
+
+  @Update("""
+  UPDATE songrequest
+  SET updated = NOW()
+  WHERE member = #{member} AND title = #{title} AND artist = #{artistName}
+  """)
+  Integer updateRequest(Song song);
 }
