@@ -28,6 +28,21 @@ public interface CommentMapper {
         """)
     List<Comment> selectBySongId(String songId);
 
+    @Select("""
+    SELECT
+            c.id,
+            c.comment,
+            c.inserted,
+            c.songId,
+            c.memberId,
+            m.nickName memberNickName
+    FROM comment c JOIN member m ON c.memberId = m.id
+    WHERE songId = #{songId}
+    ORDER BY c.id DESC
+    LIMIT #{from}, 5
+    """)
+    List<Comment> selectByPaging(Integer from, String songId);
+
     @Delete("""
         DELETE FROM comment
         WHERE memberId = #{memberId}
