@@ -31,7 +31,7 @@ public interface myPlaylistMapper {
     int deleteByMemberId(String id);
 
     @Select("""
-            SELECT COUNT(songId) as songs , ml.memberId, ml.listName,ml.id as listId, ml.coverimage, member.nickName
+            SELECT COUNT(songId) as countLike , ml.memberId, ml.listName,ml.id as listId, ml.coverimage, member.nickName
 FROM memberplaylist ml JOIN playlistlike pl ON ml.id = pl.likelistId
                         JOIN myplaylist myl ON ml.id = myl.playlistId
                         JOIN member on ml.memberId = member.id
@@ -81,10 +81,25 @@ from song join artist a on song.artistCode = a.id
           join member on mpl.memberId = member.id
           join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
 group by myl.playlistId
-order by count desc;
+order by count desc
+limit 5;
 
 """)
     List<MemberPlayList> getRecommendPlaylist();
+
+@Select("""
+select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,song.title,song.lyric,song.album,song.`release`,song.genre,song.mood,COUNT(distinct myl.songId) as songs, a.`group`, a.picture, mpl.coverimage `cover`, mpl.id,mpl.myplaylistcount as playlistCount
+from song join artist a on song.artistCode = a.id
+          join myplaylist myl on song.id = myl.songId
+          join memberplaylist mpl on myl.playlistId = mpl.id
+          join playlistlike pll on mpl.id = pll.likelistId
+          join member on mpl.memberId = member.id
+          join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
+group by myl.playlistId
+order by myplaylistcount desc
+limit 5;
+""")
+    List<MemberPlayList> getRecommendByViews();
 
     @Select("""
         SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, s.lyric, s.album, s.`release`, s.songUrl,myl.songId, myl.playlistId, a.picture, mpl.memberId,mpl.myplaylistcount
@@ -186,5 +201,18 @@ insert into memberplaylist (memberId, listName, coverimage) values (#{memberId},
     INSERT INTO memberplaylist (memberId, listName, coverimage) value (#{memberId}, #{listName}, #{picture})
     """)
     Integer createPlaylistWithDefaultImg(MemberPlayList memberPlayList);
+
+
+    @Update("""
+    update memberplaylist set listName = #{listName}, coverimage = #{picture}
+    where id = #{id}
+""")
+    int editPlaylist(MemberPlayList memberPlayList);
+
+    @Update("""
+update memberplaylist set listName = #{listName}
+where id = #{id}
+""")
+    int editPlaylistWithDefaultImg(MemberPlayList memberPlayList);
 }
 

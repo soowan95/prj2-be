@@ -77,6 +77,12 @@ public class PlaylistController {
     }
 
 
+    @GetMapping("recommendOrderByViews")
+    public List<MemberPlayList> getRecommendByViews() {
+        return service.getRecommendByViews();
+    }
+
+
     @GetMapping("topPlaylist")
     public List<Map<String,Object>> topPlaylist(String listId) {
         return service.getTopPlaylist(listId);
@@ -118,6 +124,17 @@ public class PlaylistController {
     @DeleteMapping("{listId}")
     public void deletePlaylist(@PathVariable String listId) {
         service.deletePlaylist(listId);
+    }
+
+
+    @PutMapping("editPlaylist")
+    public ResponseEntity edltPlaylist(MemberPlayList memberPlayList,
+                                       @RequestParam(value = "coverimage",required = false) MultipartFile coverImage) throws IOException {
+        if(coverImage != null ? service.editPlaylist(memberPlayList,coverImage) : service.editPlaylistWithDefaultImg(memberPlayList)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

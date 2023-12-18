@@ -114,17 +114,25 @@ public class PlaylistService {
     public MyPlaylist getByListId(Integer listId) {
         MyPlaylist list = mapper.getByListId(listId);
 
-        if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().equals("defaultplaylist.jpg")) {
-            Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
-            Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
-            String picture = artistMapper.getPictureByCode(artistCode);
-            if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
-            else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
-        } else if (!list.getCoverimage().equals("defaultplaylist.jpg")) list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
-        else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
+            list.setCountLike(likeMapper.countByBoardId(String.valueOf(listId)));
+            //첫페이지 //countByBoardId는 라이크가 몇개인지
+//            list.setSongId(likeMapper.countBySongId(list.getSongId()));
+            list.setIsLike(likeMapper.isLike(list.getId(), list.getListId()) == 1);
+            //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
+            list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
+            //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
 
-        list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
+            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().equals("defaultplaylist.jpg")) {
+                Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
+                Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
+                String picture = artistMapper.getPictureByCode(artistCode);
+                if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
+                else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+            } else if (!list.getCoverimage().equals("defaultplaylist.jpg"))
+                list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
+            else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
 
+            list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
         return list;
     }
       
@@ -149,6 +157,24 @@ public class PlaylistService {
 
         return recommendPlaylist;
     }
+
+    public List<MemberPlayList> getRecommendByViews() {
+        List<MemberPlayList> recommendPlaylist = mapper.getRecommendByViews();
+
+        for (MemberPlayList memberPlayList : recommendPlaylist) {
+            Song song = new Song();
+            song.setArtistGroup(memberPlayList.getGroup());
+            song.setArtistName(memberPlayList.getName());
+            if (memberPlayList.getCover().equals("defaultplaylist.jpg")) memberPlayList.setPictureUrl(urlPrefix + "prj2/artist/"+songMapper.getArtistCode(song)+ "/"+memberPlayList.getPicture());
+            else memberPlayList.setPictureUrl(urlPrefix+"prj2/playlist/"+memberPlayList.getId()+"/"+memberPlayList.getCover());
+        }
+
+        return recommendPlaylist;
+    }
+
+
+
+
 
     public List<Map<String,Object>> getTopPlaylist(String listId) {
         return mapper.getTopPlaylist(listId);
@@ -196,5 +222,18 @@ public class PlaylistService {
         deleteObject(listId, mapper.getCoverImageByPlaylistId(memberPlayList));
         // 이 멤버의 플레이리스트 제거
         return mapper.deleteByListId(listId)==1;
+    }
+
+    public boolean editPlaylist(MemberPlayList memberPlayList, MultipartFile coverImage) throws IOException {
+        memberPlayList.setPicture(coverImage.getOriginalFilename());
+        mapper.editPlaylist(memberPlayList);
+        upload(memberPlayList.getId(), coverImage);
+        return true;
+    }
+
+    public boolean editPlaylistWithDefaultImg(MemberPlayList memberPlayList) {
+        memberPlayList.setPicture("defaultplaylist.jpg");
+        mapper.editPlaylistWithDefaultImg(memberPlayList);
+        return true;
     }
 }
