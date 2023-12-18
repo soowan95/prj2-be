@@ -24,4 +24,5 @@ public class MemberPlayList {
     private String group;
     private String picture;
     private String cover;
+    private Integer playlistCount;
 }
