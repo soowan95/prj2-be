@@ -34,7 +34,7 @@ public class PlaylistController {
 
 
     @GetMapping("favorite")
-    public List<Map<String,Object>> favoriteList(String id) {
+    public List<MyPlaylist> favoriteList(String id) {
         return service.getFavoriteList(id);
     }
   
@@ -98,10 +98,7 @@ public class PlaylistController {
                                          @RequestParam(value = "coverimage",required = false)MultipartFile coverImage
                                          ) throws IOException {
 
-//        MyPlaylist myPlaylist = new MyPlaylist();
-//        myPlaylist.setListName(listName);
-//        myPlaylist.setMemberId(memberId);
-        if (service.createPlaylist(memberPlayList,coverImage)) {
+        if (coverImage != null ? service.createPlaylist(memberPlayList,coverImage) : service.createPlaylistWithDefaultImg(memberPlayList)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();

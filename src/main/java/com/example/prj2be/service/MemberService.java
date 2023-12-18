@@ -31,6 +31,8 @@ import java.util.function.Consumer;
 @Transactional(rollbackFor = Exception.class)
 public class MemberService {
 
+    private final PlaylistService playlistService;
+
     private final MemberMapper mapper;
     private final myPlaylistMapper playlistMapper;
     private final MessageMapper messageMapper;
@@ -247,6 +249,9 @@ public class MemberService {
         // 내 플레이리스트에 담긴 곡 삭제
         myPlayList.stream().map(MyPlaylist::getListId).forEach((playlistMapper::deleteSongByMyPlaylist));
 
+        // s3에 올린 플레이리스트 사진 삭제
+        myPlayList.forEach(a -> playlistService.deleteObject(a.getListId(), a.getCoverimage()));
+
         // 내 플레이리스트 삭제
         playlistMapper.deleteByMemberId(member.getId());
 
@@ -255,6 +260,9 @@ public class MemberService {
 
         // 내가 보낸 곡 요청 삭제
         songMapper.deleteRequestById(member.getId());
+
+        // s3에 올린 멤버 사진 삭제
+        deleteObject(member.getId(), member.getProfilePhoto());
 
         //멤버 삭제
         return mapper.deleteByMemberId(id) == 1;
