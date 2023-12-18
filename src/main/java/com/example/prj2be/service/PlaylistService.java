@@ -51,7 +51,7 @@ public class PlaylistService {
     }
 
     public void deleteObject(String id, String profilePhoto) {
-        String key = "prj2/user/"+id+"/"+ profilePhoto;
+        String key = "prj2/playlist/"+id+"/"+ profilePhoto;
         DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
@@ -78,15 +78,14 @@ public class PlaylistService {
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
 
-            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().contains("defaultplaylist")) {
+            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().equals("defaultplaylist.jpg")) {
                 Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
                 Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
                 String picture = artistMapper.getPictureByCode(artistCode);
                 if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
                 else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
-            } else if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && !list.getCoverimage().contains("defaultplaylist")) {
-                list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
-            }
+            } else if (!list.getCoverimage().equals("defaultplaylist.jpg")) list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
+            else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
 
             list.setIsSongContain(mapper.getCountBySongId(songId, list.getListId()) >= 1);
         }
@@ -95,15 +94,35 @@ public class PlaylistService {
     }
   
 
-    public List<Map<String, Object>> getFavoriteList(String id) {
-        return mapper.selectFavoriteList(id);
+    public List<MyPlaylist> getFavoriteList(String id) {
+        List<MyPlaylist> lists = mapper.selectFavoriteList(id);
 
+        for (MyPlaylist list : lists) {
+            if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().equals("defaultplaylist.jpg")) {
+                Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
+                Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
+                String picture = artistMapper.getPictureByCode(artistCode);
+                if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
+                else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+            } else if (!list.getCoverimage().equals("defaultplaylist.jpg")) list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
+            else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
+        }
 
-
+        return lists;
     }
 
     public MyPlaylist getByListId(Integer listId) {
         MyPlaylist list = mapper.getByListId(listId);
+
+        if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().equals("defaultplaylist.jpg")) {
+            Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
+            Integer artistCode = songMapper.getArtistCodeBySongId(mySongId);
+            String picture = artistMapper.getPictureByCode(artistCode);
+            if (picture.equals("artistdefault.png")) list.setPhoto(urlPrefix + "prj2/artist/default/" + picture);
+            else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
+        } else if (!list.getCoverimage().equals("defaultplaylist.jpg")) list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
+        else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
+
         list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
 
         return list;
@@ -158,12 +177,23 @@ public class PlaylistService {
         return true;
     }
 
+    public Boolean createPlaylistWithDefaultImg(MemberPlayList memberPlayList) {
+        memberPlayList.setPicture("defaultplaylist.jpg");
+        mapper.createPlaylistWithDefaultImg(memberPlayList);
+        return true;
+    }
+
     public boolean deletePlaylist(String listId) {
+
+        MemberPlayList memberPlayList = new MemberPlayList();
+        memberPlayList.setId(listId);
 
         // 지우려는 플레이리스트의 노래 제거
         mapper.deleteSongByMyPlaylist(listId);
         // 플레이리스트의 좋아요 갯수 제거
         mapper.deleteLikeCountByPlaylistLike(listId);
+        // s3에 올린 사진 삭제
+        deleteObject(listId, mapper.getCoverImageByPlaylistId(memberPlayList));
         // 이 멤버의 플레이리스트 제거
         return mapper.deleteByListId(listId)==1;
     }

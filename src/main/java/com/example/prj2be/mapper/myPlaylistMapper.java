@@ -31,14 +31,14 @@ public interface myPlaylistMapper {
     int deleteByMemberId(String id);
 
     @Select("""
-            SELECT COUNT(songId) as songs , ml.memberId, ml.listName,ml.id as listId,member.nickName
+            SELECT COUNT(songId) as songs , ml.memberId, ml.listName,ml.id as listId, ml.coverimage, member.nickName
 FROM memberplaylist ml JOIN playlistlike pl ON ml.id = pl.likelistId
                         JOIN myplaylist myl ON ml.id = myl.playlistId
                         JOIN member on ml.memberId = member.id
 where pl.memberId = #{id}
 group by pl.id;
             """)
-    List<Map<String, Object>> selectFavoriteList(String id);
+    List<MyPlaylist> selectFavoriteList(String id);
 
     @Select("""
     SELECT songId FROM myplaylist m join memberplaylist p on m.playlistId = p.id
@@ -179,6 +179,12 @@ where id = #{id}
     @Insert("""
 insert into memberplaylist (memberId, listName, coverimage) values (#{memberId},#{listName},#{picture})
 """)
+    @Options(keyProperty = "id", useGeneratedKeys = true)
     int createPlaylist(MemberPlayList memberPlayList);
+
+    @Insert("""
+    INSERT INTO memberplaylist (memberId, listName, coverimage) value (#{memberId}, #{listName}, #{picture})
+    """)
+    Integer createPlaylistWithDefaultImg(MemberPlayList memberPlayList);
 }
 
