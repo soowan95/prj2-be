@@ -18,8 +18,7 @@ public class MyPlaylist {
     private Integer totalSongCount;
     private String nickName;
     private Integer myplaylistcount;
-    private LocalDate release;
-    private LocalDate update;
+    private LocalDate inserted;
     private String photo;
     private Boolean isSongContain;
     private String coverimage;

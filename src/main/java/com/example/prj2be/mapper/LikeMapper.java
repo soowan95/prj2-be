@@ -54,6 +54,11 @@ public interface LikeMapper {
     where id = #{id} 
 """)
     Integer countBySongId(Integer id);
+
+    @Delete("""
+    DELETE FROM playlistlike WHERE likelistId = #{listId}
+    """)
+    void deleteByListId(String listId);
 }
 
 
