@@ -31,9 +31,10 @@ public interface myPlaylistMapper {
     int deleteByMemberId(String id);
 
     @Select("""
-            SELECT COUNT(songId) as songs , ml.memberId, ml.listName,ml.id as listId, ml.coverimage
+            SELECT COUNT(songId) as songs , ml.memberId, ml.listName,ml.id as listId, ml.coverimage, member.nickName
 FROM memberplaylist ml JOIN playlistlike pl ON ml.id = pl.likelistId
                         JOIN myplaylist myl ON ml.id = myl.playlistId
+                        JOIN member on ml.memberId = member.id
 where pl.memberId = #{id}
 group by pl.id;
             """)
@@ -63,7 +64,7 @@ JOIN song s ON myl.songId = s.id
 JOIN artist a ON s.artistCode = a.id
 WHERE mpl.id = #{listId}
 """)
-    List<Song> selectByFavoriteListName(String listId);
+    List<Song> selectByFavoriteListName(String listId); //favoriteName?
 
 
     @Delete("""
@@ -129,9 +130,9 @@ where id = #{id}
     List<Integer> getSongIdBylistId(String listId);
             
     @Insert("""
-    insert into myplaylist (songId, playlistId) VALUES (#{id}, #{listId})
+    insert into myplaylist (songId, playlistId) VALUES (#{songId}, #{listId})
 """)
-    int insertMyPlaylist(Integer listId, Integer id);
+    int insertMyPlaylist(String listId, Integer songId);
 
     @Select("""
 select * from memberplaylist

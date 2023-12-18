@@ -162,8 +162,8 @@ public class PlaylistService {
         return mapper.updateHitsCount(id);
     }
   
-    public void insertMyPlaylist(Integer listId, Integer id) {
-        mapper.insertMyPlaylist(listId, id);
+    public void insertMyPlaylist(String listId, Integer songId) {
+        mapper.insertMyPlaylist(listId, songId);
     }
 
     public String getListName(String listName) {

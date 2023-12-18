@@ -89,8 +89,9 @@ public class PlaylistController {
     }
 
     @PostMapping("insertMyPlaylist")
-    public void insertMyPlaylist(Integer listId, Integer id) {
-       service.insertMyPlaylist(listId, id);
+    public void insertMyPlaylist(@RequestBody MyPlaylist myPlaylist) {
+        System.out.println(myPlaylist);
+       service.insertMyPlaylist(myPlaylist.getListId(), myPlaylist.getSongId());
     }
 
     @PostMapping("createPlaylist")
