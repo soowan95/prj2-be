@@ -31,6 +31,7 @@ public class MessageController {
     if (ChatMessage.MessageType.ENTER.equals(message.getType()) && messageService.countSender(message) == 0) {
       message.setIsOnline(liveUser);
       message.setMessage(message.getSender() + "님이 입장하였습니다.");
+      message.setOnlineCount(memberService.getLiveUser().size());
       sendingOperations.convertAndSend("/topic/chat/room", message);
     }
     if (messageService.countSender(message) == 0 && message.getSender() != null) messageService.addSender(message);
@@ -42,6 +43,7 @@ public class MessageController {
     if (ChatMessage.MessageType.LEAVE.equals(message.getType())) {
       message.setIsOnline(liveUser);
       message.setMessage(message.getSender() + "님이 퇴장하였습니다.");
+      message.setOnlineCount(memberService.getLiveUser().size());
       sendingOperations.convertAndSend("/topic/chat/room", message);
     }
     messageService.dropSender(message);
@@ -51,6 +53,7 @@ public class MessageController {
   public void mssage(ChatMessage message) {
     List<String> liveUser = memberService.getLiveUser();
     message.setIsOnline(liveUser);
+    message.setOnlineCount(liveUser.size());
     Member member = memberService.getByNickName(message.getSender());
     String profile = member.getProfilePhoto();
     String id = member.getId();
