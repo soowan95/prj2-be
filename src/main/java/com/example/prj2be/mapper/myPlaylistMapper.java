@@ -82,8 +82,6 @@ from song join artist a on song.artistCode = a.id
           join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
 group by myl.playlistId
 order by count desc
-limit 5;
-
 """)
     List<MemberPlayList> getRecommendPlaylist();
 
