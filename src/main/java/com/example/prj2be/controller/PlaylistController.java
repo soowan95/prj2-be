@@ -39,9 +39,9 @@ public class PlaylistController {
     }
   
     @GetMapping("getByListId")
-    public MyPlaylist getByListId(@RequestParam Integer listId) {
-        MyPlaylist playlist = service.getByListId(listId);
-        return playlist;
+    public MyPlaylist getByListId(@RequestParam Integer listId,
+                                  @SessionAttribute("login") Member login) {
+        return service.getByListId(listId, login.getId());
     }
   
     @GetMapping("favoriteListName")
