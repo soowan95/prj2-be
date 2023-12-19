@@ -2,6 +2,7 @@ package com.example.prj2be.controller;
 
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.service.MemberService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,13 +26,28 @@ public class MemberController {
     private final MemberService service;
 
     @PostMapping("signup")
-    public void signup(@RequestBody Member member) {
-        System.out.println("member = " + member);
-        service.add(member);
+    public void signup(Member member,
+                       @RequestParam(value = "file",required = false)MultipartFile profilePhoto) throws IOException {
+
+        service.add(member,profilePhoto);
     }
 
-    @GetMapping(value = "check", params = "id")
-    public ResponseEntity checkId(String id) {
+    @PostMapping("signupOnlyInfo")
+    public void signupOnlyInfo(@RequestBody Member member) {
+      service.addOnlyInfo(member);
+    }
+
+
+    @PostMapping("check")
+    public ResponseEntity<Void> checkPassword(@RequestBody JsonNode password,
+                                              @SessionAttribute("login") Member login) {
+      if (service.isValidPassword(login, password)) return ResponseEntity.ok().build();
+
+      return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping(value = "check")
+    public ResponseEntity checkId(@RequestParam String id) {
         if (service.getId(id) == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -54,25 +73,37 @@ public class MemberController {
         }
     }
 
-    @GetMapping("logininfo")
-    public ResponseEntity<Member> logininfo(@SessionAttribute(value = "login", required = false) Member login) {
-        if (login == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @PostMapping("/get-password")
+    public ResponseEntity<Map<String, String>> foundPassword(
+            @RequestParam("id") String idForRecovery,
+            @RequestParam("q") String securityQuestion,
+            @RequestParam("a") String securityAnswer) {
+        if (idForRecovery == null || idForRecovery.isEmpty() ||
+                securityQuestion == null || securityQuestion.isEmpty() ||
+                securityAnswer == null || securityAnswer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        Map<String, String> response = service.getPassword(idForRecovery, securityQuestion, securityAnswer);
+
+        if (response != null) {
+            // 가져온 비밀번호 반환
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(login);
+            // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
-  
+
     @RequestMapping("/update-password")
-    public ResponseEntity updateMember(
+    public ResponseEntity updatePassword(
             @RequestParam("id") String idForRecovery,
             @RequestParam("q") String securityQuestion,
             @RequestParam("a") String securityAnswer,
-            @RequestParam("p") String newPassword
+        @RequestParam("p") String newPassword
     ) {
-        if (idForRecovery == null || idForRecovery.isEmpty() ||
-                securityQuestion == null || securityQuestion.isEmpty() ||
-                securityAnswer == null || securityAnswer.isEmpty() ||
+            if (idForRecovery == null || idForRecovery.isEmpty() ||
+                    securityQuestion == null || securityQuestion.isEmpty() ||
+                    securityAnswer == null || securityAnswer.isEmpty() ||
                 newPassword == null || newPassword.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -83,11 +114,14 @@ public class MemberController {
 
         return ResponseEntity.ok().build();
       }
-      
+
+
+
+      // 권한 코드 작성 하기! ↓
     @PostMapping("login")
-    public ResponseEntity login(@RequestBody Member member, WebRequest request) {
-      if (service.login(member, request)) {
-          return ResponseEntity.ok().build();
+    public ResponseEntity<Member> login(@RequestBody Member member, WebRequest request) {
+      if (service.login(member, request) != null) {
+          return ResponseEntity.ok(service.login(member, request));
       } else {
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
       }
@@ -95,14 +129,73 @@ public class MemberController {
 
 
     @PostMapping("logout")
-    public void logout(HttpSession session){
-        if (session != null){
-            session.invalidate();;
+    public void logout(HttpSession session,
+                       @SessionAttribute(value = "login", required = false) Member login) {
+        if (session != null) {
+            service.logout(login);
+            session.invalidate();
         }
     }
 
-  @GetMapping("login")
-      public Member login(@SessionAttribute(value = "login", required = false) Member login){
+     @GetMapping("login")
+     public Member login(@SessionAttribute(value = "login", required = false) Member login){
           return login;
   }
+
+
+    @PutMapping("edit")
+    public ResponseEntity edit(Member member,
+                               @SessionAttribute(value = "login",required = false)Member login,
+                               @RequestParam(value = "photo",required = false)MultipartFile profilePhoto,
+                               WebRequest request) throws IOException {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.update(member,profilePhoto,request)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("editOnlyInfo")
+    public ResponseEntity<Void> editOnlyInfo(@RequestBody Member member,
+                                             @SessionAttribute(value = "login", required = false) Member login,
+                                             WebRequest request) {
+      if (login == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      if (service.updateOnlyInfo(member, request)) return ResponseEntity.ok().build();
+      return ResponseEntity.internalServerError().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Member> view(String id,
+                                       @SessionAttribute(value = "login", required = false) Member login) {
+
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Member member = service.getMember(id);
+
+        return ResponseEntity.ok(member);
+    }
+
+
+    @DeleteMapping
+    public ResponseEntity delete (HttpSession session,
+                                  @SessionAttribute(value = "login",required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.deleteMember(login.getId())) {
+            session.invalidate();
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.internalServerError().build();
+    }
+
+    @GetMapping("questions")
+    public List<String> getQuestions(@RequestParam String id) {
+        return service.getQuestions(id);
+    }
 }
