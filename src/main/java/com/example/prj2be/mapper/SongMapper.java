@@ -135,20 +135,6 @@ public interface SongMapper {
   """)
   Integer updateSongPoint(Song song, Integer artistCode);
 
-  @Select("""
-select song.id,song.genre,song.artistCode,song.mood,song.`release`,song.lyric,song.title,artist.name,artist.`group`,artist.picture
-from
-song join artist on song.artistCode = artist.id
-WHERE album = #{album}
-""")
-  List<Map<String, Object>> getByAlbumList(String album);
-
-  @Delete("""
-    DELETE FROM song
-    WHERE id = #{id}
-    """)
-  int deleteById(String id);
-
   @Insert("""
   <script>
   INSERT INTO artist 
@@ -212,4 +198,13 @@ WHERE id = #{song.id}
   WHERE member = #{member} AND title = #{title} AND artist = #{artistName}
   """)
   Integer updateRequest(Song song);
+
+  @Select("""
+  SELECT s.title, s.lyric, s.album, s.mood, s.release, s.genre, a.name, a.`group`
+          , a.picture artistFileUrl, s.artistCode artistId
+  FROM song s JOIN artist a ON s.artistCode = a.id
+  WHERE a.id = #{artistCode}
+  ORDER BY s.`release` DESC
+  """)
+  List<Map<String, Object>> getSongListById(Integer artistCode);
 }

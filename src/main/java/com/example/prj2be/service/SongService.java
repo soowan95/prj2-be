@@ -32,8 +32,6 @@ import java.util.Map;
 public class SongService {
 
     private final SongMapper songMapper;
-    private final CommentMapper commentMapper;
-    private final FileMapper fileMapper;
     private final ArtistMapper artistMapper;
     private final myPlaylistMapper myPlaylistMapper;
     private final S3Client s3;
@@ -44,7 +42,22 @@ public class SongService {
     @Value("${aws.s3.bucket.name}")
     private String bucket;
 
-    public Boolean insertSong(Song song) {
+    public Boolean insertSong(Song song, MultipartFile files) throws IOException {
+        // 가수 정보 없으면 저장
+        Integer artistCode = songMapper.getArtistCode(song);
+
+        if (song.getArtistGroup().isBlank()) song.setArtistGroup("solo");
+
+        if (artistCode == null) {
+            if (files == null) {
+                songMapper.insertArtist(song, "artistdefault.png");
+                artistCode = song.getArtistId();
+            } else {
+                songMapper.insertArtist(song, files.getOriginalFilename());
+                upload(song.getArtistId(), files);
+                artistCode = song.getArtistId();
+            }
+        }
 
         // 한글 코드 파싱해서 저장
         song.setArtistHangulCode(Parse.hangulCode(song.getArtistName()));
@@ -53,13 +66,8 @@ public class SongService {
 
         songMapper.updateSongRequest(song);
 
-        // artistCode 찾기 위함
-        if (song.getArtistGroup().isBlank()) song.setArtistGroup("solo");
-
         // 자동완성 위한 전역에 새로 저장한 song 추가
         AllSongDTO.getSongList().add(song);
-
-        Integer artistCode = songMapper.getArtistCode(song);
 
         songMapper.insertSongPoint(song, artistCode);
 
@@ -87,17 +95,6 @@ public class SongService {
                 .key(key)
                 .build();
         s3.deleteObject(objectRequest);
-    }
-
-    // 기존에 있던거... 그냥 이걸 쓰면 되는건지....?
-    //  -> 기존 수완이가 작성한 코드에 fileName만 추가하면 되는거였음..
-    public void insertArtist(Song song, MultipartFile files) throws IOException {
-        if (files == null) {
-            songMapper.insertArtist(song, "");
-        } else {
-            songMapper.insertArtist(song, files.getOriginalFilename());
-            upload(song.getArtistId(), files);
-        }
     }
 
     public Integer getArtistCode(Song song) {
@@ -296,20 +293,9 @@ public class SongService {
         return chartList;
     }
 
-
-
-    public boolean deleteMember(String id) {
-        // 멤버가 작성한 댓글 삭제
-        commentMapper.deleteByMemberId(id);
-
-//    // songPage에 달린 댓글들 지우기
-//    commentMapper.deleteBySongId(id);
-
-        return songMapper.deleteById(id) == 1;
-    }
-
-    public List<Map<String, Object>> albumList(String album) {
-        List<Map<String, Object>> albumList = songMapper.getByAlbumList(album);
+    public List<Map<String, Object>> songListById(Integer id) {
+        Integer artistCode = songMapper.getArtistCode(songMapper.getSongById(id));
+        List<Map<String, Object>> albumList = songMapper.getSongListById(artistCode);
         for (int i = 0; i < albumList.size(); i++) {
             albumList.get(i).put("id", i + 1);
         }
@@ -340,6 +326,11 @@ public class SongService {
 
     public void updateSongOnlyInfo(Song song) {
         Integer artistCode = songMapper.getArtistCode(song);
+
+        if (artistCode == null) {
+            songMapper.insertArtist(song, "artistdefault.png");
+            artistCode = song.getArtistId();
+        }
 
         songMapper.updateSong(song, artistCode);
     }

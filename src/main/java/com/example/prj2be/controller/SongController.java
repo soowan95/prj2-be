@@ -134,23 +134,7 @@ public class SongController {
   public ResponseEntity insert(Song song,
                                @RequestParam(value = "files", required = false) MultipartFile files) throws IOException {
 
-
-    // 가수 정보 없으면 저장
-    Integer artistCode = songService.getArtistCode(song);
-    if (artistCode == null) {
-      songService.insertArtist(song, files);
-    }
-
-    if (songService.insertSong(song)) {
-      return ResponseEntity.ok().build();
-    } else {
-      return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  @PostMapping("insertOnlyInfo")
-  public ResponseEntity insertOnlyInfo(@RequestBody Song song) {
-    if (songService.insertSong(song)) {
+    if (songService.insertSong(song, files)) {
       return ResponseEntity.ok().build();
     } else {
       return ResponseEntity.internalServerError().build();
@@ -158,8 +142,8 @@ public class SongController {
   }
 
   @GetMapping("albumList")
-  public List<Map<String,Object>> albumList(@RequestParam String album){
-    return songService.albumList(album);
+  public List<Map<String,Object>> albumList(@RequestParam Integer id){
+    return songService.songListById(id);
   }
 
   @GetMapping("songEdit")
