@@ -69,7 +69,7 @@ public class SongService {
         // 자동완성 위한 전역에 새로 저장한 song 추가
         AllSongDTO.getSongList().add(song);
 
-        songMapper.insertSongPoint(song, artistCode);
+        songMapper.insertSongPoint(song.getId());
 
         return songMapper.insertSong(song, artistCode) == 1;
     }
@@ -271,11 +271,8 @@ public class SongService {
   }
 
     public boolean updateSongPointById(Integer songId) {
-        Song song = songMapper.getSongById(songId);
 
-        Integer artistCode = artistMapper.getArtistCodeByNG(song.getArtistName(), song.getArtistGroup());
-
-        return songMapper.updateSongPoint(song, artistCode) >= 1;
+        return songMapper.updateSongPoint(songId) >= 1;
     }
 
     public List<Song> chartlist(Integer id) {
@@ -297,7 +294,7 @@ public class SongService {
         Integer artistCode = songMapper.getArtistCode(songMapper.getSongById(id));
         List<Map<String, Object>> albumList = songMapper.getSongListById(artistCode);
         for (int i = 0; i < albumList.size(); i++) {
-            albumList.get(i).put("id", i + 1);
+            albumList.get(i).put("songId", i + 1);
         }
 
         return albumList;

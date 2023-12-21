@@ -13,7 +13,7 @@ import java.util.Map;
 @Mapper
 public interface myPlaylistMapper {
     @Select("""
-            select distinct myplaylistcount, memberId as id, mpl.listName, mpl.id as listId, member.nickName, mpl.coverimage
+            select distinct myplaylistcount, memberId as id, mpl.listName, mpl.id as listId, member.nickName, mpl.coverimage, mpl.isLock
                               from memberplaylist mpl
                                   left join myplaylist myl on mpl.id = myl.playlistId
                                   join member on mpl.memberId = member.id
@@ -77,9 +77,14 @@ select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,
 from song join artist a on song.artistCode = a.id
           join myplaylist myl on song.id = myl.songId
           join memberplaylist mpl on myl.playlistId = mpl.id
-          join playlistlike pll on mpl.id = pll.likelistId
+          left join playlistlike pll on mpl.id = pll.likelistId
           join member on mpl.memberId = member.id
-          join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
+          join (SELECT COUNT(playlistlike.likelistId) as count, ml.id
+                FROM playlistlike
+                    RIGHT JOIN memberplaylist ml
+                        ON playlistlike.likelistId = ml.id
+                GROUP BY ml.id) `count` on mpl.id = count.id
+where mpl.isLock = false
 group by myl.playlistId
 order by count desc
 """)
@@ -90,11 +95,11 @@ select a.name,a.picture,mpl.memberId, mpl.listName, pll.memberId,pll.likelistId,
 from song join artist a on song.artistCode = a.id
           join myplaylist myl on song.id = myl.songId
           join memberplaylist mpl on myl.playlistId = mpl.id
-          join playlistlike pll on mpl.id = pll.likelistId
+          left join playlistlike pll on mpl.id = pll.likelistId
           join member on mpl.memberId = member.id
-          join (SELECT COUNT(*) as count, likelistId FROM playlistlike GROUP BY likelistId) `count` on pll.likelistId = count.likelistId
+where mpl.isLock = false
 group by myl.playlistId
-order by myplaylistcount desc
+order by playlistcount desc
 """)
     List<MemberPlayList> getRecommendByViews();
 
@@ -148,9 +153,9 @@ where id = #{id}
 
     @Select("""
 select * from memberplaylist
-where listName = #{listName}
+where listName = #{listName} AND memberId = #{memberId}
 """)
-    String selectByListName(String listName);
+    String selectByListName(String listName, String memberId);
 
 
 
@@ -211,5 +216,10 @@ update memberplaylist set listName = #{listName}
 where id = #{id}
 """)
     int editPlaylistWithDefaultImg(MemberPlayList memberPlayList);
+
+    @Update("""
+    UPDATE memberplaylist SET isLock = !isLock WHERE id = #{listId}
+    """)
+    void updateIsLockByPlaylistId(String listId);
 }
 

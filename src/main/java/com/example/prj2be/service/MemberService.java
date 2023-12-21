@@ -161,6 +161,9 @@ public class MemberService {
 
         Member newMember = mapper.getMemberById(member);
 
+        if (!newMember.getProfilePhoto().matches("http://.*") && newMember.getProfilePhoto().equals("userdefault.jpg")) newMember.setProfilePhoto(urlPrefix + "prj2/user/defalut/" + newMember.getProfilePhoto());
+        else if (!newMember.getProfilePhoto().matches("http://.*") && !newMember.getProfilePhoto().equals("userdefault.jpg")) newMember.setProfilePhoto(urlPrefix + "prj2/user/" + newMember.getId() + "/" + newMember.getProfilePhoto());
+
         request.setAttribute("login", newMember, RequestAttributes.SCOPE_SESSION);
 
         return true;

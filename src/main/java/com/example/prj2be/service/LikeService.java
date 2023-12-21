@@ -26,7 +26,7 @@ public class LikeService {
 
         int countLike = mapper.countByBoardId(like.getLikelistId());
       
-        return Map.of("isLike", mapper.isLike(like.getMemberId(), like.getLikelistId()) == 1,
+        return Map.of("isLike", mapper.isLike(like.getMemberId(), like.getLikelistId()).isPresent(),
                 //memberId와 listId에 대한 좋아요 여부 확인 mepper.islike메서드가 이면 ture 0이면 false
                 "countLike",countLike,
                 //listId에 해당하는 데이터베이스 테이블에서의 특정 행의수를 나타낸다 즉 전제 좋아요 갯수 등을 나타낸다

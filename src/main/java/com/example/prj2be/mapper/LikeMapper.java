@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Optional;
+
 @Mapper
 public interface LikeMapper {
     @Delete("""
@@ -36,11 +38,11 @@ public interface LikeMapper {
     PlaylistLike selectByBoardIdAndMemberId(String likelistId, String memberId);
 
     @Select("""
-    SELECT COUNT(id)
+    SELECT *
     FROM playlistlike
     WHERE memberId = #{memberId} AND likelistId = #{likelistId}
     """)
-    Integer isLike(String memberId, String likelistId);
+    Optional<Integer> isLike(String memberId, String likelistId);
 
     @Delete("""
             delete from playlistlike

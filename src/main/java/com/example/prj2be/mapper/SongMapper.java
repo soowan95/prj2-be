@@ -18,7 +18,7 @@ public interface SongMapper {
   @Select("""
   SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, a.name, s.lyric, s.album, s.`release`, s.songUrl
   FROM song s JOIN artist a ON s.artistCode = a.id
-              JOIN songpoint sp ON s.title = sp.title AND a.id = sp.artistId
+              JOIN songpoint sp ON s.id = sp.songId
   ORDER BY sp.songPoint DESC 
   LIMIT 0, 100
   """)
@@ -38,9 +38,9 @@ public interface SongMapper {
 
   @Select("""
   <script>
-  SELECT s.title, s.genre, s.mood, s.id, a.name, a.`group`
+  SELECT s.title, s.genre, s.mood, s.id, a.name `artistName`, a.`group` `artistGroup`, s.songUrl
   FROM song s JOIN artist a ON s.artistCode = a.id
-              JOIN songpoint sp ON s.title = sp.title AND a.id = sp.artistId
+              JOIN songpoint sp ON s.id = sp.songId
   <trim prefix="WHERE" suffixOverrides="AND">
   <foreach collection="genreIncludeList" item="elem" open="(" separator="OR" close=") AND" nullable="true">
   s.genre LIKE #{elem}
@@ -131,9 +131,9 @@ public interface SongMapper {
   @Update("""
   UPDATE songpoint
   SET songPoint = songPoint + 1
-  WHERE title = #{song.title} AND artistId = #{artistCode}
+  WHERE songId = #{songId}
   """)
-  Integer updateSongPoint(Song song, Integer artistCode);
+  Integer updateSongPoint(Integer songId);
 
   @Insert("""
   <script>
@@ -150,10 +150,10 @@ public interface SongMapper {
   Integer insertArtist(Song song, String fileName);
 
   @Insert("""
-  INSERT INTO songpoint (title, artistId)
-  VALUE (#{song.title}, #{artistCode})
+  INSERT INTO songpoint (songId)
+  VALUE (#{songId})
   """)
-  Integer insertSongPoint(Song song, Integer artistCode);
+  Integer insertSongPoint(Integer songId);
 
   @Update("""
   UPDATE songrequest
@@ -200,7 +200,7 @@ WHERE id = #{song.id}
   Integer updateRequest(Song song);
 
   @Select("""
-  SELECT s.title, s.lyric, s.album, s.mood, s.release, s.genre, a.name, a.`group`
+  SELECT s.title, s.lyric, s.album, s.mood, s.release, s.genre, a.name, a.`group`, s.id
           , a.picture artistFileUrl, s.artistCode artistId
   FROM song s JOIN artist a ON s.artistCode = a.id
   WHERE a.id = #{artistCode}

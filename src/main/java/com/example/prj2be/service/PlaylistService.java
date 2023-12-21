@@ -71,12 +71,9 @@ public class PlaylistService {
 
         for (MyPlaylist list : playList) {
             list.setCountLike(likeMapper.countByBoardId(list.getListId()));
-            //첫페이지 //countByBoardId는 라이크가 몇개인지
-//            list.setSongId(likeMapper.countBySongId(list.getSongId()));
-            list.setIsLike(likeMapper.isLike(list.getId(), list.getListId()) == 1);
-            //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
-            //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
+            list.setIsSongContain(mapper.getCountBySongId(songId, list.getListId()) >= 1);
+            list.setIsLike(likeMapper.isLike(list.getId(), list.getListId()).isPresent());
 
             if (!mapper.getSongIdBylistId(list.getListId()).isEmpty() && list.getCoverimage().equals("defaultplaylist.jpg")) {
                 Integer mySongId = mapper.getSongIdBylistId(list.getListId()).get(0);
@@ -86,8 +83,6 @@ public class PlaylistService {
                 else list.setPhoto(urlPrefix + "prj2/artist/" + artistCode + "/" + picture);
             } else if (!list.getCoverimage().equals("defaultplaylist.jpg")) list.setPhoto(urlPrefix + "prj2/playlist/" + list.getListId() + "/" + list.getCoverimage());
             else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
-
-            list.setIsSongContain(mapper.getCountBySongId(songId, list.getListId()) >= 1);
         }
 
         return playList;
@@ -117,7 +112,7 @@ public class PlaylistService {
             list.setCountLike(likeMapper.countByBoardId(String.valueOf(listId)));
             //첫페이지 //countByBoardId는 라이크가 몇개인지
 //            list.setSongId(likeMapper.countBySongId(list.getSongId()));
-            list.setIsLike(likeMapper.isLike(id, list.getListId()) == 1);
+            list.setIsLike(likeMapper.isLike(id, list.getListId()).isPresent());
             //첫페이지에서 내가 좋아요 누른 거를 볼 수 있게 list의 id랑 list의 listId가 값이 1이면 ture 0이면 false
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
             //setTotalSongCount은 domain TotalSongCount에 저장할건데 chartlist의 ListId를 불러와서 갯수를 카운트하고 싶은데 String이라서 Integer로 형변환해서 카운트
@@ -133,6 +128,7 @@ public class PlaylistService {
             else list.setPhoto(urlPrefix + "prj2/playlist/default/" + list.getCoverimage());
 
             list.setTotalSongCount(mapper.chartlist(Integer.parseInt(list.getListId())).size());
+
         return list;
     }
       
@@ -195,8 +191,8 @@ public class PlaylistService {
         mapper.insertMyPlaylist(listId, songId);
     }
 
-    public String getListName(String listName) {
-        return mapper.selectByListName(listName);
+    public String getListName(String listName, String memberId) {
+        return mapper.selectByListName(listName, memberId);
     }
 
     public boolean createPlaylist(MemberPlayList memberPlayList, MultipartFile coverimage) throws IOException{
@@ -238,5 +234,10 @@ public class PlaylistService {
         memberPlayList.setPicture("defaultplaylist.jpg");
         mapper.editPlaylistWithDefaultImg(memberPlayList);
         return true;
+    }
+
+    public List<MyPlaylist> updateIsLock(MyPlaylist myPlaylist) {
+        mapper.updateIsLockByPlaylistId(myPlaylist.getListId());
+        return null;
     }
 }

@@ -111,9 +111,9 @@ public class PlaylistController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    @GetMapping(value = "check", params = "listName")
-    public ResponseEntity checkNickName(String listName) {
-        if (service.getListName(listName) == null) {
+    @GetMapping("check")
+    public ResponseEntity checkNickName(String listName, String memberId) {
+        if (service.getListName(listName, memberId) == null) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok().build();
@@ -137,4 +137,8 @@ public class PlaylistController {
         }
     }
 
+    @PutMapping("lock")
+    public List<MyPlaylist> updateIsLock(@RequestBody MyPlaylist myPlaylist) {
+        return service.updateIsLock(myPlaylist);
+    }
 }
