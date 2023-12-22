@@ -54,6 +54,7 @@ public class MessageController {
     List<String> liveUser = memberService.getLiveUser();
     message.setIsOnline(liveUser);
     message.setOnlineCount(liveUser.size());
+    message.setMessage(message.getMessage().replace("\\x7e", "~"));
     Member member = memberService.getByNickName(message.getSender());
     String profile = member.getProfilePhoto();
     String id = member.getId();

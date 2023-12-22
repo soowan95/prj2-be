@@ -15,11 +15,6 @@ public interface ArtistMapper {
   WHERE name = #{artistName} AND `group` = #{artistGroup}
   """)
   Integer getArtistCodeByNG(String artistName, String artistGroup);
-
-  @Insert("""
-insert into artist (picture) value (#{picture})
-""")
-  int insertArtistPhoto(Song song, MultipartFile file);
           
   @Select("""
   SELECT picture
